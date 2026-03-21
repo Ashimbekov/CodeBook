@@ -60,3 +60,5 @@ code {
 .main-content {
   flex: 1;
 }
+
+@import './responsive.css';
