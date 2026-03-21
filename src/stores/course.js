@@ -2,11 +2,13 @@ import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
 
 const courseImports = {
-  java: () => import('../data/java/index.js')
+  java: () => import('../data/java/index.js'),
+  algorithms: () => import('../data/algorithms/index.js')
 }
 
 const moduleImports = {
-  java: (moduleId) => import(`../data/java/modules/module-${moduleId}.js`)
+  java: (moduleId) => import(`../data/java/modules/module-${moduleId}.js`),
+  algorithms: (moduleId) => import(`../data/algorithms/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {

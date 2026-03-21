@@ -1,8 +1,8 @@
 <template>
   <div class="home-page">
     <div class="hero">
-      <h1>Выбери язык программирования</h1>
-      <p class="hero-subtitle">От основ до продвинутого уровня. Теория + практика.</p>
+      <h1>Выбери курс</h1>
+      <p class="hero-subtitle">Языки программирования, алгоритмы и структуры данных. Теория + практика.</p>
     </div>
     <div class="courses-grid">
       <CourseCard
