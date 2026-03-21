@@ -1,0 +1,35 @@
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .sidebar.open {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+    background: var(--bg-card);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 99;
+  }
+  .burger-btn {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .burger-btn {
+    display: none;
+  }
+  .sidebar-overlay {
+    display: none;
+  }
+}
