@@ -72,9 +72,9 @@ export default {
   description: 'Полный курс Java от основ до продвинутого уровня',
   color: '#f89820',
   modules: [
-    { id: 1, title: 'Введение в Java', icon: '🚀' },
-    { id: 2, title: 'Переменные и типы данных', icon: '📦' },
-    // ... количество уроков вычисляется из загруженного модуля, не дублируется здесь
+    { id: 1, title: 'Введение в Java', icon: '🚀', totalLessons: 5 },
+    { id: 2, title: 'Переменные и типы данных', icon: '📦', totalLessons: 8 },
+    // ... totalLessons needed for progress calculation on homepage without loading every module
   ]
 }
 ```
