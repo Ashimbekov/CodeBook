@@ -5,12 +5,44 @@
       <p class="hero-subtitle">От основ до продвинутого уровня. Теория + практика.</p>
     </div>
     <div class="courses-grid">
-      <p>Курсы загружаются...</p>
+      <CourseCard
+        v-for="course in courseStore.courses"
+        :key="course.id"
+        :course="course"
+        :available="true"
+        :progressPercent="getProgress(course)"
+      />
+      <CourseCard
+        v-for="placeholder in placeholders"
+        :key="placeholder.id"
+        :course="placeholder"
+        :available="false"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
+import { useCourseStore } from '../stores/course.js'
+import { useProgressStore } from '../stores/progress.js'
+import CourseCard from '../components/course/CourseCard.vue'
+
+const courseStore = useCourseStore()
+const progressStore = useProgressStore()
+
+const placeholders = ref([
+  { id: 'python', title: 'Python', icon: '🐍', description: 'Курс в разработке...', color: '#3776ab', modules: [] },
+  { id: 'javascript', title: 'JavaScript', icon: '🟨', description: 'Курс в разработке...', color: '#f7df1e', modules: [] }
+])
+
+function getProgress(course) {
+  return progressStore.courseProgress(course.id, course.modules)
+}
+
+onMounted(() => {
+  courseStore.loadCourseList()
+})
 </script>
 
 <style scoped>
