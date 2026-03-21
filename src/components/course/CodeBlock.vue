@@ -13,7 +13,7 @@ import { computed, ref } from 'vue'
 import hljs from 'highlight.js/lib/core'
 import java from 'highlight.js/lib/languages/java'
 import bash from 'highlight.js/lib/languages/bash'
-import 'highlight.js/styles/dracula.css'
+import 'highlight.js/styles/atom-one-dark.css'
 
 hljs.registerLanguage('java', java)
 hljs.registerLanguage('bash', bash)
