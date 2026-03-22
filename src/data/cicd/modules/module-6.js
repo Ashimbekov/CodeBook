@@ -29,7 +29,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'GitLab CI предоставляет богатый набор предопределённых переменных и позволяет задавать свои переменные на уровне проекта/группы.' },
-        { type: 'code', language: 'yaml', value: '# Использование предопределённых переменных\ntest:\n  script:\n    - echo "Ветка: $CI_COMMIT_BRANCH"\n    - echo "SHA: $CI_COMMIT_SHA"\n    - echo "Имя коммита: $CI_COMMIT_TITLE"\n    - echo "Проект: $CI_PROJECT_NAME"\n    - echo "Runner: $CI_RUNNER_DESCRIPTION"\n    - echo "Pipeline ID: $CI_PIPELINE_ID"\n    - echo "Job ID: $CI_JOB_ID"\n\n# Свои переменные\nvariables:\n  APP_ENV: staging\n  DOCKER_REGISTRY: registry.gitlab.com\n\ndeploy:\n  script:\n    - echo "Деплой на $APP_ENV"\n    - docker push $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA' }
+        { type: 'code', language: 'yaml', value: '# Использование предопределённых переменных\ntest:\n  script:\n    - echo "Ветка: $CI_COMMIT_BRANCH"\n    - echo "SHA: $CI_COMMIT_SHA"\n    - echo "Имя коммита: $CI_COMMIT_TITLE"\n    - echo "Проект: $CI_PROJECT_NAME"\n    - echo "Runner: $CI_RUNNER_DESCRIPTION"\n    - echo "Pipeline ID: $CI_PIPELINE_ID"\n    - echo "Job ID: $CI_JOB_ID"\n\n# Свои переменные\nvariables:\n  APP_ENV: staging\n  DOCKER_REGISTRY: registry.gitlab.com\n\ndeploy:\n  script:\n    - echo "Деплой на $APP_ENV"\n    - docker push $DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA' },
+        { type: 'heading', value: 'Уровни переменных в GitLab CI' },
+        { type: 'list', items: [
+          'Глобальный variables блок — доступны всем jobs в файле',
+          'variables внутри job — только для конкретного job, переопределяют глобальные',
+          'CI/CD Variables в UI проекта — Settings > CI/CD > Variables (могут быть Protected и Masked)',
+          'Group variables — доступны всем проектам группы',
+          'Protected variables — доступны только в protected ветках (main, release/*)',
+          'Masked variables — скрываются в логах как ***'
+        ]},
+        { type: 'tip', value: 'CI_COMMIT_SHORT_SHA (8 символов) удобен для тегов Docker образов — короче полного SHA. CI_PROJECT_PATH возвращает namespace/project-name — идеально как часть пути в registry.' }
       ]
     },
     {
@@ -38,7 +48,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'rules — современный способ задать условия запуска jobs (заменяет устаревший only/except). Более гибкий и мощный.' },
-        { type: 'code', language: 'yaml', value: 'test:\n  stage: test\n  script: pytest\n  rules:\n    - if: $CI_COMMIT_BRANCH == "main"\n    - if: $CI_PIPELINE_SOURCE == "merge_request_event"\n    - if: $CI_COMMIT_TAG  # при создании тега\n\ndeploy-staging:\n  stage: deploy\n  script: bash deploy.sh staging\n  rules:\n    - if: $CI_COMMIT_BRANCH == "develop"\n      when: on_success    # только при успехе\n\ndeploy-prod:\n  stage: deploy\n  script: bash deploy.sh production\n  rules:\n    - if: $CI_COMMIT_BRANCH == "main"\n      when: manual        # ручной запуск\n\nnightly-job:\n  script: python check.py\n  rules:\n    - if: $CI_PIPELINE_SOURCE == "schedule"' }
+        { type: 'code', language: 'yaml', value: 'test:\n  stage: test\n  script: pytest\n  rules:\n    - if: $CI_COMMIT_BRANCH == "main"\n    - if: $CI_PIPELINE_SOURCE == "merge_request_event"\n    - if: $CI_COMMIT_TAG  # при создании тега\n\ndeploy-staging:\n  stage: deploy\n  script: bash deploy.sh staging\n  rules:\n    - if: $CI_COMMIT_BRANCH == "develop"\n      when: on_success    # только при успехе\n\ndeploy-prod:\n  stage: deploy\n  script: bash deploy.sh production\n  rules:\n    - if: $CI_COMMIT_BRANCH == "main"\n      when: manual        # ручной запуск\n\nnightly-job:\n  script: python check.py\n  rules:\n    - if: $CI_PIPELINE_SOURCE == "schedule"' },
+        { type: 'heading', value: 'Значения when в rules' },
+        { type: 'list', items: [
+          'on_success — запустить при успехе предыдущих jobs (по умолчанию)',
+          'on_failure — запустить только при падении предыдущих jobs',
+          'always — запустить всегда независимо от статуса',
+          'manual — создать кнопку ручного запуска в интерфейсе',
+          'delayed — запустить с задержкой (start_in: "30 minutes")',
+          'never — не запускать (скрыть job)'
+        ]},
+        { type: 'note', value: 'rules обрабатываются по порядку — срабатывает первое совпавшее условие. Если ни одно условие не совпало, job не запускается (эквивалентно when: never). Это отличается от only/except где job запускается по умолчанию.' }
       ]
     },
     {
@@ -57,7 +77,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'extends и YAML anchors позволяют избежать дублирования конфигурации.' },
-        { type: 'code', language: 'yaml', value: '# YAML anchors\n.python-base: &python-base\n  image: python:3.12-slim\n  before_script:\n    - pip install -r requirements.txt\n\ntest-unit:\n  <<: *python-base\n  script: pytest tests/unit/\n\ntest-integration:\n  <<: *python-base\n  script: pytest tests/integration/\n\n# GitLab extends (более мощный вариант)\n.deploy-base:\n  stage: deploy\n  before_script:\n    - eval $(ssh-agent -s)\n    - echo "$SSH_PRIVATE_KEY" | ssh-add -\n\ndeploy-staging:\n  extends: .deploy-base\n  script: bash deploy.sh staging\n  environment:\n    name: staging\n\ndeploy-production:\n  extends: .deploy-base\n  script: bash deploy.sh production\n  environment:\n    name: production' }
+        { type: 'code', language: 'yaml', value: '# YAML anchors\n.python-base: &python-base\n  image: python:3.12-slim\n  before_script:\n    - pip install -r requirements.txt\n\ntest-unit:\n  <<: *python-base\n  script: pytest tests/unit/\n\ntest-integration:\n  <<: *python-base\n  script: pytest tests/integration/\n\n# GitLab extends (более мощный вариант)\n.deploy-base:\n  stage: deploy\n  before_script:\n    - eval $(ssh-agent -s)\n    - echo "$SSH_PRIVATE_KEY" | ssh-add -\n\ndeploy-staging:\n  extends: .deploy-base\n  script: bash deploy.sh staging\n  environment:\n    name: staging\n\ndeploy-production:\n  extends: .deploy-base\n  script: bash deploy.sh production\n  environment:\n    name: production' },
+        { type: 'tip', value: 'Jobs начинающиеся с точки (например .deploy-base) являются скрытыми — GitLab не запускает их как реальные jobs, они служат только как шаблоны для extends. Это соглашение именования помогает отличить шаблоны от реальных jobs.' },
+        { type: 'list', items: [
+          'extends может наследовать от нескольких шаблонов: extends: [.python-base, .docker-base]',
+          'Дочерний job может переопределить любое поле из родителя',
+          'YAML anchors (&name) работают только внутри одного файла',
+          'extends работает и с include — можно наследовать шаблоны из других файлов'
+        ]},
+        { type: 'note', value: 'Разница extends vs YAML anchors: extends умнее — он делает глубокое слияние (deep merge) для вложенных структур. Anchors делают простую замену (merge). Предпочитай extends когда работаешь с GitLab CI.' }
       ]
     },
     {

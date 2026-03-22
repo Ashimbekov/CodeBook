@@ -29,7 +29,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'position: fixed позиционирует элемент относительно окна браузера. Он остаётся на месте при прокрутке страницы.' },
-        { type: 'code', language: 'css', value: '/* Навбар, который остаётся сверху при скролле */\n.navbar {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;   /* или width: 100% */\n  height: 60px;\n  background: white;\n  z-index: 100; /* поверх остального контента */\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n\n/* Чтобы контент не скрывался под фиксированным навбаром */\nbody {\n  padding-top: 60px; /* высота = высоте navbar */\n}\n\n/* Кнопка "вверх" в правом нижнем углу */\n.back-to-top {\n  position: fixed;\n  bottom: 20px;\n  right: 20px;\n  z-index: 99;\n}' }
+        { type: 'code', language: 'css', value: '/* Навбар, который остаётся сверху при скролле */\n.navbar {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;   /* или width: 100% */\n  height: 60px;\n  background: white;\n  z-index: 100; /* поверх остального контента */\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n\n/* Чтобы контент не скрывался под фиксированным навбаром */\nbody {\n  padding-top: 60px; /* высота = высоте navbar */\n}\n\n/* Кнопка "вверх" в правом нижнем углу */\n.back-to-top {\n  position: fixed;\n  bottom: 20px;\n  right: 20px;\n  z-index: 99;\n}' },
+        { type: 'heading', value: 'Типичные применения fixed' },
+        { type: 'list', items: [
+          'Фиксированная навигация (navbar) — остаётся видимой при прокрутке',
+          'Кнопка прокрутки наверх — появляется в углу при скролле вниз',
+          'Чат-виджет или кнопка помощи — всегда в нижнем углу',
+          'Cookie-баннер — в нижней части экрана',
+          'Модальные окна (overlay) — перекрывают весь экран'
+        ]},
+        { type: 'tip', value: 'fixed элемент выпадает из потока документа и перестаёт влиять на высоту родителя. Всегда добавляй padding-top к body равный высоте фиксированного навбара, иначе контент будет скрыт под ним.' }
       ]
     },
     {

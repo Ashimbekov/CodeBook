@@ -43,7 +43,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Node.js поставляется с богатой стандартной библиотекой. Основные модули: fs (файлы), http/https (сеть), path (пути), os (система), crypto (шифрование), events (события).' },
-        { type: 'code', language: 'javascript', value: '// Импорт встроенных модулей (CommonJS)\nconst fs     = require("fs");\nconst path   = require("path");\nconst os     = require("os");\nconst http   = require("http");\nconst crypto = require("crypto");\n\n// Импорт встроенных модулей (ESM) — рекомендуемый способ\nimport fs     from "node:fs";\nimport path   from "node:path";\nimport os     from "node:os";\nimport http   from "node:http";\n\n// Префикс "node:" — явно указывает что это встроенный модуль\n// Предотвращает конфликты с npm пакетами с похожими именами\n\n// Примеры использования\nimport { hostname, platform, cpus, totalmem, freemem } from "node:os";\n\nconsole.log("Хост:", hostname());\nconsole.log("ОС:", platform());\nconsole.log("Ядра CPU:", cpus().length);\nconsole.log("Память:", Math.round(totalmem() / 1024 / 1024 / 1024), "ГБ");' }
+        { type: 'code', language: 'javascript', value: '// Импорт встроенных модулей (CommonJS)\nconst fs     = require("fs");\nconst path   = require("path");\nconst os     = require("os");\nconst http   = require("http");\nconst crypto = require("crypto");\n\n// Импорт встроенных модулей (ESM) — рекомендуемый способ\nimport fs     from "node:fs";\nimport path   from "node:path";\nimport os     from "node:os";\nimport http   from "node:http";\n\n// Префикс "node:" — явно указывает что это встроенный модуль\n// Предотвращает конфликты с npm пакетами с похожими именами\n\n// Примеры использования\nimport { hostname, platform, cpus, totalmem, freemem } from "node:os";\n\nconsole.log("Хост:", hostname());\nconsole.log("ОС:", platform());\nconsole.log("Ядра CPU:", cpus().length);\nconsole.log("Память:", Math.round(totalmem() / 1024 / 1024 / 1024), "ГБ");' },
+        { type: 'list', items: [
+          'Используй префикс "node:" (import from "node:fs") — явно указывает на встроенный модуль',
+          'fs/promises — асинхронный API с промисами; fs — callback-стиль; fs.sync — синхронный',
+          'path.join() — собирает путь из частей, автоматически обрабатывая разделители (/ или \\)',
+          'crypto.randomUUID() — генерация UUID v4; crypto.createHash — хэширование',
+          'EventEmitter из "node:events" — базовый класс для событийной архитектуры'
+        ]},
+        { type: 'tip', value: 'Всегда используй "node:fs/promises" вместо обычного "node:fs" для нового кода: import { readFile, writeFile } from "node:fs/promises". Промисы + async/await читаются значительно лучше колбэков.' }
       ]
     },
     {
@@ -62,7 +70,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Создадим простой HTTP сервер на чистом Node.js без фреймворков. Модуль http предоставляет всё необходимое.' },
-        { type: 'code', language: 'javascript', value: 'import http from "node:http";\n\nconst PORT = process.env.PORT || 3000;\n\nconst server = http.createServer((req, res) => {\n  // req — IncomingMessage (запрос)\n  // res — ServerResponse (ответ)\n\n  console.log(`${req.method} ${req.url}`);\n\n  // Заголовок ответа\n  res.setHeader("Content-Type", "application/json");\n  res.setHeader("X-Powered-By", "Node.js");\n\n  // Маршрутизация\n  if (req.url === "/" && req.method === "GET") {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ message: "Привет от Node.js!" }));\n\n  } else if (req.url === "/health" && req.method === "GET") {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ status: "ok", uptime: process.uptime() }));\n\n  } else {\n    res.statusCode = 404;\n    res.end(JSON.stringify({ error: "Не найдено" }));\n  }\n});\n\nserver.listen(PORT, () => {\n  console.log(`Сервер запущен на http://localhost:${PORT}`);\n});\n\nserver.on("error", (err) => {\n  console.error("Ошибка сервера:", err);\n});' }
+        { type: 'code', language: 'javascript', value: 'import http from "node:http";\n\nconst PORT = process.env.PORT || 3000;\n\nconst server = http.createServer((req, res) => {\n  // req — IncomingMessage (запрос)\n  // res — ServerResponse (ответ)\n\n  console.log(`${req.method} ${req.url}`);\n\n  // Заголовок ответа\n  res.setHeader("Content-Type", "application/json");\n  res.setHeader("X-Powered-By", "Node.js");\n\n  // Маршрутизация\n  if (req.url === "/" && req.method === "GET") {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ message: "Привет от Node.js!" }));\n\n  } else if (req.url === "/health" && req.method === "GET") {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ status: "ok", uptime: process.uptime() }));\n\n  } else {\n    res.statusCode = 404;\n    res.end(JSON.stringify({ error: "Не найдено" }));\n  }\n});\n\nserver.listen(PORT, () => {\n  console.log(`Сервер запущен на http://localhost:${PORT}`);\n});\n\nserver.on("error", (err) => {\n  console.error("Ошибка сервера:", err);\n});' },
+        { type: 'list', items: [
+          'http.createServer принимает callback (req, res) вызываемый на каждый запрос',
+          'res.end() завершает ответ и отправляет тело — обязательно вызвать иначе соединение зависнет',
+          'res.statusCode устанавливается до res.end(); по умолчанию 200',
+          'res.setHeader() вызывается до res.end(); Content-Type важен для правильной интерпретации',
+          'Для реальных приложений используй Express или Fastify — они добавляют маршрутизацию, middleware'
+        ]},
+        { type: 'tip', value: 'Чистый http модуль — база для понимания Node.js. На практике используй фреймворки (Express, Fastify, Hono). Но знать как работает http.createServer важно: это то, что фреймворки используют внутри.' }
       ]
     },
     {

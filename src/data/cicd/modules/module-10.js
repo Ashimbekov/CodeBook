@@ -19,7 +19,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'GitHub Container Registry — встроенный registry для Docker образов в GitHub. Бесплатен для public репозиториев.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  build-push:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: read\n      packages: write\n\n    steps:\n      - uses: actions/checkout@v4\n      - uses: docker/setup-buildx-action@v3\n\n      - name: Логин в GHCR\n        uses: docker/login-action@v3\n        with:\n          registry: ghcr.io\n          username: ${{ github.actor }}\n          password: ${{ secrets.GITHUB_TOKEN }}  # автоматический токен!\n\n      - uses: docker/build-push-action@v6\n        with:\n          push: true\n          tags: |\n            ghcr.io/${{ github.repository }}:latest\n            ghcr.io/${{ github.repository }}:${{ github.sha }}\n          labels: |\n            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  build-push:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: read\n      packages: write\n\n    steps:\n      - uses: actions/checkout@v4\n      - uses: docker/setup-buildx-action@v3\n\n      - name: Логин в GHCR\n        uses: docker/login-action@v3\n        with:\n          registry: ghcr.io\n          username: ${{ github.actor }}\n          password: ${{ secrets.GITHUB_TOKEN }}  # автоматический токен!\n\n      - uses: docker/build-push-action@v6\n        with:\n          push: true\n          tags: |\n            ghcr.io/${{ github.repository }}:latest\n            ghcr.io/${{ github.repository }}:${{ github.sha }}\n          labels: |\n            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}' },
+        { type: 'tip', value: 'GHCR использует GITHUB_TOKEN для аутентификации — не нужно создавать отдельные credentials. Необходимо только явно указать permissions: packages: write в workflow.' },
+        { type: 'list', items: [
+          'GHCR путь: ghcr.io/OWNER/REPO (всегда в нижнем регистре)',
+          'github.repository возвращает owner/repo — подходит напрямую как часть пути в ghcr.io',
+          'OCI labels (org.opencontainers.image.*) добавляют метаданные: источник, версия, описание',
+          'Образы в GHCR по умолчанию private для private репозиториев',
+          'Видимость образа можно настроить отдельно от репозитория'
+        ]},
+        { type: 'note', value: 'GitLab предоставляет аналогичный встроенный registry. Адрес: registry.gitlab.com. Переменные CI_REGISTRY, CI_REGISTRY_USER и CI_REGISTRY_PASSWORD доступны автоматически в каждом job.' }
       ]
     },
     {
@@ -28,7 +37,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Сборка Docker образа без кеша занимает много времени. GitHub Actions и GitLab поддерживают кеш слоёв.' },
-        { type: 'code', language: 'yaml', value: '# GitHub Actions кеш через GitHub Cache\n- uses: docker/build-push-action@v6\n  with:\n    cache-from: type=gha          # читать из GitHub Actions cache\n    cache-to: type=gha,mode=max   # писать в кеш\n\n# GitLab CI Registry кеш\nbuild:\n  image: docker:24\n  services: [docker:24-dind]\n  variables:\n    CACHE_IMAGE: $CI_REGISTRY_IMAGE/cache:latest\n  script:\n    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY\n    - docker pull $CACHE_IMAGE || true  # загрузить кеш\n    - docker build --cache-from $CACHE_IMAGE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .\n    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA\n    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $CACHE_IMAGE\n    - docker push $CACHE_IMAGE  # обновить кеш' }
+        { type: 'code', language: 'yaml', value: '# GitHub Actions кеш через GitHub Cache\n- uses: docker/build-push-action@v6\n  with:\n    cache-from: type=gha          # читать из GitHub Actions cache\n    cache-to: type=gha,mode=max   # писать в кеш\n\n# GitLab CI Registry кеш\nbuild:\n  image: docker:24\n  services: [docker:24-dind]\n  variables:\n    CACHE_IMAGE: $CI_REGISTRY_IMAGE/cache:latest\n  script:\n    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY\n    - docker pull $CACHE_IMAGE || true  # загрузить кеш\n    - docker build --cache-from $CACHE_IMAGE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .\n    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA\n    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $CACHE_IMAGE\n    - docker push $CACHE_IMAGE  # обновить кеш' },
+        { type: 'tip', value: 'cache-to: type=gha,mode=max кеширует все промежуточные слои Dockerfile. mode=min кеширует только финальный образ. mode=max обеспечивает лучшее попадание в кеш, но занимает больше места.' },
+        { type: 'list', items: [
+          'type=gha — кеш в GitHub Actions Cache (бесплатно, до 10 ГБ на репозиторий)',
+          'type=registry — кеш хранится в Docker Registry (удобно для GitLab)',
+          'type=local — кеш на диске runner (только для self-hosted runners)',
+          'Кеш инвалидируется при изменении инструкций Dockerfile',
+          'Правильный порядок COPY в Dockerfile критичен для эффективного кеширования'
+        ]},
+        { type: 'note', value: 'Кеширование слоёв может сократить время сборки с 5 минут до 30 секунд при попадании в кеш. Но первый запуск после изменения Dockerfile или зависимостей всегда будет без кеша.' }
       ]
     },
     {

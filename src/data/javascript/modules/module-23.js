@@ -41,7 +41,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Реализация Symbol.iterator в классе делает его экземпляры итерируемыми. Удобный паттерн — возвращать this из [Symbol.iterator] и иметь next() как метод класса.' },
-        { type: 'code', language: 'javascript', value: 'class LinkedList {\n  #head = null;\n  #size = 0;\n\n  push(value) {\n    this.#head = { value, next: this.#head };\n    this.#size++;\n    return this;\n  }\n\n  get size() { return this.#size; }\n\n  // Делаем класс итерируемым\n  [Symbol.iterator]() {\n    let current = this.#head;\n    return {\n      next() {\n        if (current) {\n          const value = current.value;\n          current = current.next;\n          return { value, done: false };\n        }\n        return { value: undefined, done: true };\n      }\n    };\n  }\n}\n\nconst list = new LinkedList();\nlist.push(1).push(2).push(3);\n\nfor (const val of list) {\n  console.log(val); // 3, 2, 1 (стек — обратный порядок)\n}\n\nconst arr = [...list];\nconsole.log(arr); // [3, 2, 1]\n\nconst [a, b] = list;\nconsole.log(a, b); // 3 2' }
+        { type: 'code', language: 'javascript', value: 'class LinkedList {\n  #head = null;\n  #size = 0;\n\n  push(value) {\n    this.#head = { value, next: this.#head };\n    this.#size++;\n    return this;\n  }\n\n  get size() { return this.#size; }\n\n  // Делаем класс итерируемым\n  [Symbol.iterator]() {\n    let current = this.#head;\n    return {\n      next() {\n        if (current) {\n          const value = current.value;\n          current = current.next;\n          return { value, done: false };\n        }\n        return { value: undefined, done: true };\n      }\n    };\n  }\n}\n\nconst list = new LinkedList();\nlist.push(1).push(2).push(3);\n\nfor (const val of list) {\n  console.log(val); // 3, 2, 1 (стек — обратный порядок)\n}\n\nconst arr = [...list];\nconsole.log(arr); // [3, 2, 1]\n\nconst [a, b] = list;\nconsole.log(a, b); // 3 2' },
+        { type: 'list', items: [
+          'Symbol.iterator должен возвращать объект с методом next(), который возвращает {value, done}',
+          'done: false — ещё есть элементы; done: true — итерация завершена',
+          'Итерируемый объект работает с for...of, spread (...), деструктуризацией, Array.from',
+          'Можно вернуть this если у класса есть метод next() — паттерн "класс-итератор"',
+          'Генератор-функция (*) — более лаконичный способ создать итератор'
+        ]},
+        { type: 'tip', value: 'Паттерн: для итерируемого класса реализуй [Symbol.iterator]() возвращающий объект со своим состоянием (переменная current). Это гарантирует что каждый вызов for...of начинает с начала.' }
       ]
     },
     {

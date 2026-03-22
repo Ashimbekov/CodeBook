@@ -21,7 +21,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'repeat() — удобная функция для создания одинаковых колонок. Также полезны minmax() и auto.' },
-        { type: 'code', language: 'css', value: '.container {\n  display: grid;\n  \n  /* Повторение */\n  grid-template-columns: repeat(3, 1fr);    /* 3 равных колонки */\n  grid-template-columns: repeat(4, 200px);  /* 4 по 200px */\n  grid-template-columns: repeat(12, 1fr);   /* 12-колоночная сетка */\n  \n  /* minmax(min, max) */\n  grid-template-columns: repeat(3, minmax(200px, 1fr));\n  /* каждая колонка: минимум 200px, максимум 1fr */\n  \n  /* auto — размер по содержимому */\n  grid-template-columns: auto 1fr auto;\n  /* крайние — по содержимому, средняя — остаток */\n  \n  /* Смешанные значения */\n  grid-template-columns: 250px 1fr 1fr;\n  grid-template-rows: auto 1fr auto; /* header, content, footer */\n}' }
+        { type: 'code', language: 'css', value: '.container {\n  display: grid;\n  \n  /* Повторение */\n  grid-template-columns: repeat(3, 1fr);    /* 3 равных колонки */\n  grid-template-columns: repeat(4, 200px);  /* 4 по 200px */\n  grid-template-columns: repeat(12, 1fr);   /* 12-колоночная сетка */\n  \n  /* minmax(min, max) */\n  grid-template-columns: repeat(3, minmax(200px, 1fr));\n  /* каждая колонка: минимум 200px, максимум 1fr */\n  \n  /* auto — размер по содержимому */\n  grid-template-columns: auto 1fr auto;\n  /* крайние — по содержимому, средняя — остаток */\n  \n  /* Смешанные значения */\n  grid-template-columns: 250px 1fr 1fr;\n  grid-template-rows: auto 1fr auto; /* header, content, footer */\n}' },
+        { type: 'tip', value: 'minmax(200px, 1fr) — колонка не уже 200px и растягивается до 1fr доступного пространства. Это основа адаптивных сеток без media queries.' },
+        { type: 'list', items: [
+          'repeat(N, size) — создаёт N колонок или строк с одинаковым размером',
+          'fr (fraction) — доля свободного пространства после вычета фиксированных размеров',
+          'minmax(min, max) — колонка в диапазоне от min до max',
+          'auto — размер определяется содержимым',
+          'fit-content(300px) — как auto но не более 300px'
+        ]},
+        { type: 'note', value: 'Единица fr делит оставшееся пространство пропорционально. При grid-template-columns: 1fr 2fr 1fr средняя колонка в два раза шире крайних. Сначала вычитаются фиксированные размеры, потом делится остаток.' }
       ]
     },
     {
@@ -60,7 +69,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Grid предоставляет несколько свойств для выравнивания: для всей сетки и для отдельных элементов.' },
-        { type: 'code', language: 'css', value: '/* Выравнивание ЭЛЕМЕНТОВ внутри ячейки */\n.container {\n  display: grid;\n  \n  /* По горизонтали (inline axis) */\n  justify-items: start | end | center | stretch;\n  \n  /* По вертикали (block axis) */\n  align-items: start | end | center | stretch;\n  \n  /* Сокращение */\n  place-items: center; /* = align-items + justify-items */\n}\n\n/* Выравнивание СЕТКИ в контейнере */\n.container {\n  justify-content: start | end | center | space-between;\n  align-content: start | end | center | space-between;\n}\n\n/* Индивидуальное выравнивание элемента */\n.item {\n  justify-self: end;\n  align-self: center;\n  place-self: center end; /* вертикаль горизонталь */\n}' }
+        { type: 'code', language: 'css', value: '/* Выравнивание ЭЛЕМЕНТОВ внутри ячейки */\n.container {\n  display: grid;\n  \n  /* По горизонтали (inline axis) */\n  justify-items: start | end | center | stretch;\n  \n  /* По вертикали (block axis) */\n  align-items: start | end | center | stretch;\n  \n  /* Сокращение */\n  place-items: center; /* = align-items + justify-items */\n}\n\n/* Выравнивание СЕТКИ в контейнере */\n.container {\n  justify-content: start | end | center | space-between;\n  align-content: start | end | center | space-between;\n}\n\n/* Индивидуальное выравнивание элемента */\n.item {\n  justify-self: end;\n  align-self: center;\n  place-self: center end; /* вертикаль горизонталь */\n}' },
+        { type: 'heading', value: 'Разница между items и content' },
+        { type: 'list', items: [
+          'justify-items / align-items — выравнивание элементов ВНУТРИ их ячеек',
+          'justify-content / align-content — выравнивание всей сетки ВНУТРИ контейнера',
+          'justify-self / align-self — переопределяет выравнивание конкретного элемента',
+          'place-items — сокращение для align-items + justify-items',
+          'stretch (по умолчанию) — элементы растягиваются на всю ячейку'
+        ]},
+        { type: 'tip', value: 'place-items: center на grid-контейнере центрирует все элементы в их ячейках по вертикали и горизонтали. place-content: center центрирует всю сетку в контейнере — полезно когда колонки не заполняют всю ширину.' }
       ]
     },
     {

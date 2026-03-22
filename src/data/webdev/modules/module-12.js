@@ -25,7 +25,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: '@media — правило CSS, которое применяет стили только при определённых условиях (ширина экрана, ориентация, цветовая схема).' },
-        { type: 'code', language: 'css', value: '/* Применять стили только при ширине <= 768px */\n@media (max-width: 768px) {\n  .sidebar { display: none; }\n  .content { width: 100%; }\n}\n\n/* Ширина >= 1200px */\n@media (min-width: 1200px) {\n  .container { max-width: 1200px; }\n}\n\n/* Диапазон */\n@media (min-width: 768px) and (max-width: 1024px) {\n  .grid { grid-template-columns: repeat(2, 1fr); }\n}\n\n/* Ориентация */\n@media (orientation: landscape) { ... }\n@media (orientation: portrait) { ... }\n\n/* Тёмная тема */\n@media (prefers-color-scheme: dark) {\n  body { background: #111; color: #eee; }\n}\n\n/* Печать */\n@media print {\n  .no-print { display: none; }\n}' }
+        { type: 'code', language: 'css', value: '/* Применять стили только при ширине <= 768px */\n@media (max-width: 768px) {\n  .sidebar { display: none; }\n  .content { width: 100%; }\n}\n\n/* Ширина >= 1200px */\n@media (min-width: 1200px) {\n  .container { max-width: 1200px; }\n}\n\n/* Диапазон */\n@media (min-width: 768px) and (max-width: 1024px) {\n  .grid { grid-template-columns: repeat(2, 1fr); }\n}\n\n/* Ориентация */\n@media (orientation: landscape) { ... }\n@media (orientation: portrait) { ... }\n\n/* Тёмная тема */\n@media (prefers-color-scheme: dark) {\n  body { background: #111; color: #eee; }\n}\n\n/* Печать */\n@media print {\n  .no-print { display: none; }\n}' },
+        { type: 'heading', value: 'Операторы media queries' },
+        { type: 'list', items: [
+          'and — условие И: @media (min-width: 768px) and (orientation: landscape)',
+          'not — инверсия: @media not (prefers-color-scheme: dark)',
+          ',  — условие ИЛИ: @media (max-width: 480px), (orientation: portrait)',
+          'only — предотвращает применение в старых браузерах (устарел, но встречается)'
+        ]},
+        { type: 'tip', value: 'Современный синтаксис range queries (Level 4): @media (width >= 768px) и @media (768px <= width <= 1024px). Более читаемо и уже поддерживается в большинстве браузеров.' }
       ]
     },
     {
@@ -58,7 +66,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Правильные единицы измерения делают дизайн адаптивным без media queries.' },
-        { type: 'code', language: 'css', value: '/* Fluid typography с clamp() */\n.heading {\n  /* clamp(минимум, идеальный, максимум) */\n  font-size: clamp(1.5rem, 4vw, 3rem);\n  /* На 300px: 1.5rem, на 750px: ~3rem, на 1500px: 3rem */\n}\n\n/* Fluid spacing */\n.section {\n  padding: clamp(24px, 5vw, 80px);\n}\n\n/* vw и vh */\n.hero {\n  height: 100vh;    /* 100% высоты окна */\n  width: 100vw;     /* 100% ширины окна */\n}\n\n/* Современные единицы (для мобильных) */\n.full-screen {\n  height: 100dvh; /* dynamic viewport height — учитывает мобильный UI */\n  height: 100svh; /* small viewport height — минимальная высота */\n  height: 100lvh; /* large viewport height — максимальная высота */\n}\n\n/* Контейнерные единицы */\n.card-title {\n  font-size: 5cqi; /* 5% от ширины контейнера (inline) */\n}' }
+        { type: 'code', language: 'css', value: '/* Fluid typography с clamp() */\n.heading {\n  /* clamp(минимум, идеальный, максимум) */\n  font-size: clamp(1.5rem, 4vw, 3rem);\n  /* На 300px: 1.5rem, на 750px: ~3rem, на 1500px: 3rem */\n}\n\n/* Fluid spacing */\n.section {\n  padding: clamp(24px, 5vw, 80px);\n}\n\n/* vw и vh */\n.hero {\n  height: 100vh;    /* 100% высоты окна */\n  width: 100vw;     /* 100% ширины окна */\n}\n\n/* Современные единицы (для мобильных) */\n.full-screen {\n  height: 100dvh; /* dynamic viewport height — учитывает мобильный UI */\n  height: 100svh; /* small viewport height — минимальная высота */\n  height: 100lvh; /* large viewport height — максимальная высота */\n}\n\n/* Контейнерные единицы */\n.card-title {\n  font-size: 5cqi; /* 5% от ширины контейнера (inline) */\n}' },
+        { type: 'heading', value: 'Таблица единиц измерения' },
+        { type: 'list', items: [
+          'px — абсолютные пиксели, не адаптируются',
+          'rem — относительно размера шрифта корневого элемента (html), 1rem = 16px',
+          'em — относительно размера шрифта родителя (каскадируется)',
+          'vw / vh — процент от ширины / высоты viewport',
+          '% — процент от размера родительского элемента',
+          'ch — ширина символа "0" текущего шрифта (удобно для ограничения ширины текста)'
+        ]},
+        { type: 'tip', value: 'Используй rem для размеров шрифтов и отступов — это позволяет пользователю изменять базовый размер в настройках браузера. Используй px только для border, border-radius и теней.' }
       ]
     },
     {
@@ -67,7 +85,10 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Изображения и текст требуют особого внимания при адаптивной вёрстке.' },
-        { type: 'code', language: 'css', value: '/* Базовое правило для всех изображений */\nimg, video {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Адаптивный фон */\n.hero {\n  background-image: url("hero-mobile.jpg");\n  background-size: cover;\n  background-position: center;\n}\n\n@media (min-width: 768px) {\n  .hero {\n    background-image: url("hero-desktop.jpg");\n  }\n}\n\n/* Адаптивный текст */\nbody {\n  font-size: 16px;       /* базовый */\n  line-height: 1.5;\n}\n\nh1 { font-size: clamp(1.75rem, 5vw, 3rem); }\nh2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }\np  { max-width: 65ch; }  /* оптимальная длина строки */\n\n/* Скрытие элементов на мобильном */\n.desktop-only { display: none; }\n\n@media (min-width: 1024px) {\n  .desktop-only { display: block; }\n  .mobile-only  { display: none; }\n}' }
+        { type: 'code', language: 'css', value: '/* Базовое правило для всех изображений */\nimg, video {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Адаптивный фон */\n.hero {\n  background-image: url("hero-mobile.jpg");\n  background-size: cover;\n  background-position: center;\n}\n\n@media (min-width: 768px) {\n  .hero {\n    background-image: url("hero-desktop.jpg");\n  }\n}\n\n/* Адаптивный текст */\nbody {\n  font-size: 16px;       /* базовый */\n  line-height: 1.5;\n}\n\nh1 { font-size: clamp(1.75rem, 5vw, 3rem); }\nh2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }\np  { max-width: 65ch; }  /* оптимальная длина строки */\n\n/* Скрытие элементов на мобильном */\n.desktop-only { display: none; }\n\n@media (min-width: 1024px) {\n  .desktop-only { display: block; }\n  .mobile-only  { display: none; }\n}' },
+        { type: 'tip', value: 'Тег picture даёт полный контроль над адаптивными изображениями: разные форматы (WebP/JPEG) и разные размеры для разных экранов. Браузер сам выберет наилучший вариант.' },
+        { type: 'code', language: 'html', value: '<!-- Адаптивные изображения с picture -->\n<picture>\n  <source media="(min-width: 768px)" srcset="hero-desktop.webp" type="image/webp">\n  <source media="(min-width: 768px)" srcset="hero-desktop.jpg">\n  <source srcset="hero-mobile.webp" type="image/webp">\n  <img src="hero-mobile.jpg" alt="Hero" loading="lazy">\n</picture>' },
+        { type: 'note', value: 'loading="lazy" откладывает загрузку изображений вне viewport — ускоряет первоначальную загрузку страницы. Используй для всех изображений ниже первого экрана. Для изображений в первом экране используй loading="eager" или не указывай атрибут.' }
       ]
     },
     {

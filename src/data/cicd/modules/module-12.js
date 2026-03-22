@@ -49,7 +49,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Правильный порядок инструкций в Dockerfile максимизирует кеш слоёв и ускоряет сборку в CI.' },
-        { type: 'code', language: 'bash', value: '# ПЛОХО: код копируется раньше requirements\nFROM python:3.12-slim\nCOPY . /app              # < изменился любой файл -> переустановка пакетов\nRUN pip install -r /app/requirements.txt\n\n# ХОРОШО: requirements отдельно до кода\nFROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .  # < меняется редко -> кеш попадает\nRUN pip install -r requirements.txt\nCOPY . .                 # < меняется часто, но пакеты уже в кеше\n\n# .dockerignore — не копировать лишнее\n# .dockerignore содержит:\n# __pycache__\n# *.pyc\n# .git\n# .env\n# venv/\n# tests/' }
+        { type: 'code', language: 'bash', value: '# ПЛОХО: код копируется раньше requirements\nFROM python:3.12-slim\nCOPY . /app              # < изменился любой файл -> переустановка пакетов\nRUN pip install -r /app/requirements.txt\n\n# ХОРОШО: requirements отдельно до кода\nFROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .  # < меняется редко -> кеш попадает\nRUN pip install -r requirements.txt\nCOPY . .                 # < меняется часто, но пакеты уже в кеше\n\n# .dockerignore — не копировать лишнее\n# .dockerignore содержит:\n# __pycache__\n# *.pyc\n# .git\n# .env\n# venv/\n# tests/' },
+        { type: 'heading', value: 'Принципы оптимизации Dockerfile' },
+        { type: 'list', items: [
+          'Редко меняющиеся инструкции — вверху (FROM, установка системных пакетов)',
+          'Зависимости — до копирования кода (COPY requirements.txt + RUN pip install)',
+          'Код приложения — в конце (COPY . .)',
+          'Объединяй RUN команды через && чтобы уменьшить количество слоёв',
+          'Используй --no-cache-dir при pip install для меньшего размера образа',
+          'Базовый образ *-slim значительно меньше обычного (python:3.12-slim vs python:3.12)'
+        ]},
+        { type: 'tip', value: '.dockerignore работает как .gitignore — исключает файлы из контекста сборки. Большой контекст (.git директория) замедляет начало сборки. Правильный .dockerignore может сократить время передачи контекста с минут до секунд.' }
       ]
     },
     {

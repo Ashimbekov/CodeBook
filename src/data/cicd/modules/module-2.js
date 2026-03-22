@@ -29,7 +29,20 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Каждый step — либо shell команда (run) либо готовое действие (uses). Actions — переиспользуемые блоки из GitHub Marketplace.' },
-        { type: 'code', language: 'yaml', value: 'steps:\n  # Shell команда\n  - name: Установка зависимостей\n    run: pip install -r requirements.txt\n\n  # Многострочная команда\n  - name: Сборка и тест\n    run: |\n      python manage.py migrate\n      python manage.py test\n\n  # Использование action из Marketplace\n  - uses: actions/checkout@v4          # клонирует код\n  - uses: actions/setup-python@v5      # устанавливает Python\n    with:\n      python-version: "3.12"\n\n  # Action из другого репозитория\n  - uses: docker/build-push-action@v6  # сборка Docker образа\n    with:\n      push: true\n      tags: myapp:latest' }
+        { type: 'code', language: 'yaml', value: 'steps:\n  # Shell команда\n  - name: Установка зависимостей\n    run: pip install -r requirements.txt\n\n  # Многострочная команда\n  - name: Сборка и тест\n    run: |\n      python manage.py migrate\n      python manage.py test\n\n  # Использование action из Marketplace\n  - uses: actions/checkout@v4          # клонирует код\n  - uses: actions/setup-python@v5      # устанавливает Python\n    with:\n      python-version: "3.12"\n\n  # Action из другого репозитория\n  - uses: docker/build-push-action@v6  # сборка Docker образа\n    with:\n      push: true\n      tags: myapp:latest' },
+        { type: 'tip', value: 'Каждый step выполняется последовательно в рамках одного job. Если step завершается с ненулевым кодом выхода, job считается упавшим и последующие steps не выполняются.' },
+        { type: 'heading', value: 'Параметры step' },
+        { type: 'list', items: [
+          'name — отображаемое имя step в интерфейсе GitHub Actions',
+          'run — shell команда (bash по умолчанию на Linux)',
+          'uses — имя action из Marketplace в формате owner/action@version',
+          'with — параметры для action',
+          'env — переменные окружения только для этого step',
+          'if — условие выполнения step',
+          'continue-on-error — продолжить job даже если step упал',
+          'timeout-minutes — максимальное время выполнения step'
+        ]},
+        { type: 'note', value: 'Популярные actions в Marketplace: actions/checkout (клонирование кода), actions/setup-python, actions/setup-node, actions/cache (кеширование), actions/upload-artifact. Всегда фиксируй версию action через тег: @v4, а не @main.' }
       ]
     },
     {
@@ -38,7 +51,18 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'В workflow доступны переменные окружения и контекст GitHub (имя ветки, SHA коммита, репозиторий и т.д.).' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  build:\n    runs-on: ubuntu-latest\n    env:\n      APP_ENV: production  # переменная для всего job\n\n    steps:\n      - name: Показать контекст\n        env:\n          BRANCH: ${{ github.ref_name }}   # имя ветки\n          SHA: ${{ github.sha }}           # SHA коммита\n          REPO: ${{ github.repository }}   # owner/repo\n        run: |\n          echo "Ветка: $BRANCH"\n          echo "Коммит: $SHA"\n          echo "Репозиторий: $REPO"\n          echo "Окружение: $APP_ENV"\n\n      - name: Тег для Docker образа\n        run: |\n          TAG=${{ github.ref_name }}-${{ github.run_number }}\n          echo "Тег образа: $TAG"' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  build:\n    runs-on: ubuntu-latest\n    env:\n      APP_ENV: production  # переменная для всего job\n\n    steps:\n      - name: Показать контекст\n        env:\n          BRANCH: ${{ github.ref_name }}   # имя ветки\n          SHA: ${{ github.sha }}           # SHA коммита\n          REPO: ${{ github.repository }}   # owner/repo\n        run: |\n          echo "Ветка: $BRANCH"\n          echo "Коммит: $SHA"\n          echo "Репозиторий: $REPO"\n          echo "Окружение: $APP_ENV"\n\n      - name: Тег для Docker образа\n        run: |\n          TAG=${{ github.ref_name }}-${{ github.run_number }}\n          echo "Тег образа: $TAG"' },
+        { type: 'heading', value: 'Часто используемые переменные контекста' },
+        { type: 'list', items: [
+          'github.ref_name — имя ветки или тега (main, feature/auth)',
+          'github.sha — полный SHA коммита (40 символов)',
+          'github.repository — owner/repo (myorg/myapp)',
+          'github.actor — имя пользователя запустившего workflow',
+          'github.run_number — порядковый номер запуска (1, 2, 3...)',
+          'github.event_name — тип события (push, pull_request, schedule)',
+          'runner.os — операционная система runner (Linux, Windows, macOS)'
+        ]},
+        { type: 'note', value: 'Переменные контекста (${{ github.* }}) раскрываются перед выполнением команды — они не являются переменными окружения shell. Для использования в скриптах передавай их через env: блок.' }
       ]
     },
     {
@@ -57,7 +81,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Условие if позволяет запускать steps и jobs только при определённых условиях: ветка, статус предыдущего step, тип события.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой на prod\n        if: github.ref == "refs/heads/main"\n        run: ./deploy.sh production\n\n      - name: Деплой на staging\n        if: github.ref == "refs/heads/develop"\n        run: ./deploy.sh staging\n\n      # Выполнить даже если предыдущие steps упали\n      - name: Уведомление об ошибке\n        if: failure()\n        run: echo "Что-то пошло не так!"\n\n      # Выполнить всегда\n      - name: Очистка\n        if: always()\n        run: docker system prune -f\n\n      # Только при успехе (по умолчанию)\n      - name: Уведомление об успехе\n        if: success()\n        run: echo "Успешно!"' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой на prod\n        if: github.ref == "refs/heads/main"\n        run: ./deploy.sh production\n\n      - name: Деплой на staging\n        if: github.ref == "refs/heads/develop"\n        run: ./deploy.sh staging\n\n      # Выполнить даже если предыдущие steps упали\n      - name: Уведомление об ошибке\n        if: failure()\n        run: echo "Что-то пошло не так!"\n\n      # Выполнить всегда\n      - name: Очистка\n        if: always()\n        run: docker system prune -f\n\n      # Только при успехе (по умолчанию)\n      - name: Уведомление об успехе\n        if: success()\n        run: echo "Успешно!"' },
+        { type: 'heading', value: 'Функции статуса' },
+        { type: 'list', items: [
+          'success() — step выполняется только если все предыдущие steps прошли (поведение по умолчанию)',
+          'failure() — step выполняется если хотя бы один предыдущий step упал',
+          'always() — step выполняется всегда, независимо от статусов других steps',
+          'cancelled() — step выполняется если workflow был отменён'
+        ]},
+        { type: 'tip', value: 'Комбинируй функции статуса с другими условиями: if: failure() && github.ref == "refs/heads/main" — уведомление об ошибке только для main ветки. Это сокращает шум оповещений.' }
       ]
     },
     {

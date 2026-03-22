@@ -19,7 +19,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'code', language: 'typescript', value: '// Опциональный параметр\nfunction greet(name: string, greeting?: string): string {\n    // greeting имеет тип string | undefined\n    return `${greeting ?? "Привет"}, ${name}!`;\n}\nconsole.log(greet("Алибек"));           // "Привет, Алибек!"\nconsole.log(greet("Алибек", "Сәлем")); // "Сәлем, Алибек!"\n\n// Параметр со значением по умолчанию\nfunction repeat(text: string, times: number = 3): string {\n    return text.repeat(times);\n}\nconsole.log(repeat("ha")); // "hahaha"\n\n// Rest параметры\nfunction joinStrings(separator: string, ...parts: string[]): string {\n    return parts.join(separator);\n}\nconsole.log(joinStrings(", ", "один", "два", "три")); // "один, два, три"' },
-        { type: 'note', value: 'Опциональные и rest параметры должны быть после обязательных. Дефолтный параметр делает его опциональным автоматически.' }
+        { type: 'note', value: 'Опциональные и rest параметры должны быть после обязательных. Дефолтный параметр делает его опциональным автоматически.' },
+        { type: 'list', items: [
+          'greeting?: string — тип greeting внутри функции будет string | undefined, обязательно проверяйте через ?? или if',
+          'Дефолтный параметр times: number = 3 — автоматически опциональный, повторять ?: number не нужно',
+          'Rest-параметр ...parts: string[] должен быть последним и может быть только один',
+          'Параметры с дефолтом могут быть НЕ последними: f(a=1, b) — вызов f(undefined, 2) передаст default для a',
+          'Деструктуризация в параметрах: function show({ name, age = 0 }: { name: string; age?: number }) — тоже поддерживается'
+        ]},
+        { type: 'tip', value: 'Избегайте длинных списков параметров (более 3). Лучше передать объект: function createUser(opts: CreateUserOpts) — легче читать и расширять.' }
       ]
     },
     {
@@ -58,7 +66,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Функции высшего порядка — функции принимающие или возвращающие функции. TypeScript полностью типизирует их.' },
-        { type: 'code', language: 'typescript', value: '// Каррирование (currying)\nfunction curriedAdd(a: number): (b: number) => number {\n    return (b: number) => a + b;\n}\nconst add5 = curriedAdd(5);\nconsole.log(add5(3)); // 8\nconsole.log(add5(10)); // 15\n\n// Memoization\nfunction memoize<T extends (...args: unknown[]) => unknown>(fn: T): T {\n    const cache = new Map<string, unknown>();\n    return ((...args: unknown[]) => {\n        const key = JSON.stringify(args);\n        if (cache.has(key)) return cache.get(key);\n        const result = fn(...args);\n        cache.set(key, result);\n        return result;\n    }) as T;\n}\n\nconst expensiveCalc = memoize((n: number) => {\n    console.log("Вычисляем...");\n    return n * n;\n});\nconsole.log(expensiveCalc(5)); // "Вычисляем..." 25\nconsole.log(expensiveCalc(5)); // 25 (из кэша)' }
+        { type: 'code', language: 'typescript', value: '// Каррирование (currying)\nfunction curriedAdd(a: number): (b: number) => number {\n    return (b: number) => a + b;\n}\nconst add5 = curriedAdd(5);\nconsole.log(add5(3)); // 8\nconsole.log(add5(10)); // 15\n\n// Memoization\nfunction memoize<T extends (...args: unknown[]) => unknown>(fn: T): T {\n    const cache = new Map<string, unknown>();\n    return ((...args: unknown[]) => {\n        const key = JSON.stringify(args);\n        if (cache.has(key)) return cache.get(key);\n        const result = fn(...args);\n        cache.set(key, result);\n        return result;\n    }) as T;\n}\n\nconst expensiveCalc = memoize((n: number) => {\n    console.log("Вычисляем...");\n    return n * n;\n});\nconsole.log(expensiveCalc(5)); // "Вычисляем..." 25\nconsole.log(expensiveCalc(5)); // 25 (из кэша)' },
+        { type: 'list', items: [
+          'Каррирование: функция возвращает функцию — позволяет создавать специализированные версии (add5, add10) из общей add',
+          'Memoization: кэширует результат по ключу из аргументов — ускоряет повторные вызовы с теми же параметрами',
+          'T extends (...args: unknown[]) => unknown — ограничение generic: T должен быть функцией',
+          'Compose: pipe(f, g)(x) = g(f(x)) — ключевой паттерн функционального программирования',
+          'Partial application: частичное применение аргументов создаёт новую функцию с меньшим числом параметров'
+        ]},
+        { type: 'tip', value: 'Функции высшего порядка — основа многих паттернов: middleware в Express, декораторы, HOC в React. Понимание их типизации в TypeScript критично для работы с этими фреймворками.' }
       ]
     },
     {

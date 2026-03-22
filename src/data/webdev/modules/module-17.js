@@ -19,7 +19,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'querySelector и querySelectorAll — современные методы поиска элементов. Используют CSS-селекторы.' },
-        { type: 'code', language: 'javascript', value: '// querySelector — первый подходящий элемент (или null)\nconst title = document.querySelector("h1");\nconst btn = document.querySelector(".submit-btn");\nconst nav = document.querySelector("#main-nav");\nconst input = document.querySelector("form input[type=email]");\n\n// querySelectorAll — все подходящие (NodeList)\nconst allLinks = document.querySelectorAll("a");\nconst cards = document.querySelectorAll(".card");\n\n// NodeList можно перебирать\ncards.forEach(card => {\n  console.log(card.textContent);\n});\n\n// Или конвертировать в массив\nconst cardsArray = Array.from(cards);\nconst filtered = cardsArray.filter(c => c.classList.contains("active"));\n\n// Поиск внутри элемента\nconst form = document.querySelector("form");\nconst inputs = form.querySelectorAll("input"); // только внутри формы\n\n// Навигация по дереву\nconst parent = element.parentElement;\nconst children = element.children;\nconst next = element.nextElementSibling;\nconst prev = element.previousElementSibling;' }
+        { type: 'code', language: 'javascript', value: '// querySelector — первый подходящий элемент (или null)\nconst title = document.querySelector("h1");\nconst btn = document.querySelector(".submit-btn");\nconst nav = document.querySelector("#main-nav");\nconst input = document.querySelector("form input[type=email]");\n\n// querySelectorAll — все подходящие (NodeList)\nconst allLinks = document.querySelectorAll("a");\nconst cards = document.querySelectorAll(".card");\n\n// NodeList можно перебирать\ncards.forEach(card => {\n  console.log(card.textContent);\n});\n\n// Или конвертировать в массив\nconst cardsArray = Array.from(cards);\nconst filtered = cardsArray.filter(c => c.classList.contains("active"));\n\n// Поиск внутри элемента\nconst form = document.querySelector("form");\nconst inputs = form.querySelectorAll("input"); // только внутри формы\n\n// Навигация по дереву\nconst parent = element.parentElement;\nconst children = element.children;\nconst next = element.nextElementSibling;\nconst prev = element.previousElementSibling;' },
+        { type: 'list', items: [
+          'querySelector возвращает первый найденный элемент или null (проверяй перед использованием)',
+          'querySelectorAll возвращает статический NodeList — не обновляется при изменении DOM',
+          'getElementsByClassName и getElementsByTagName возвращают живую HTMLCollection',
+          'Поиск можно ограничить контекстом: parent.querySelector(".child") — только внутри parent',
+          'CSS-селекторы в querySelector такие же, как в CSS: атрибуты, псевдоклассы, комбинаторы',
+          'Array.from(nodeList) конвертирует NodeList в массив для использования filter, map'
+        ]},
+        { type: 'tip', value: 'Всегда проверяй результат querySelector на null перед использованием: const el = document.querySelector(".btn"); if (el) { el.addEventListener(...); }. Это защищает от ошибок "Cannot read properties of null".' }
       ]
     },
     {
@@ -38,7 +47,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'classList — API для работы с классами элемента. Намного удобнее, чем работа со строкой className.' },
-        { type: 'code', language: 'javascript', value: 'const el = document.querySelector(".card");\n\n// Основные методы\nel.classList.add("active");         // добавить класс\nel.classList.remove("hidden");      // удалить класс\nel.classList.toggle("open");        // добавить/удалить\nel.classList.toggle("dark", true);  // принудительно добавить\nel.classList.contains("active");    // проверить наличие → true/false\nel.classList.replace("old", "new"); // заменить класс\n\n// Несколько классов\nel.classList.add("red", "bold", "large");\nel.classList.remove("red", "bold");\n\n// Получить все классы\nconsole.log(el.classList.toString()); // "card active"\nconsole.log([...el.classList]);       // ["card", "active"]\n\n// Пример: кнопка лайка\nconst likeBtn = document.querySelector(".like-btn");\nlikeBtn.addEventListener("click", () => {\n  likeBtn.classList.toggle("liked");\n});' }
+        { type: 'code', language: 'javascript', value: 'const el = document.querySelector(".card");\n\n// Основные методы\nel.classList.add("active");         // добавить класс\nel.classList.remove("hidden");      // удалить класс\nel.classList.toggle("open");        // добавить/удалить\nel.classList.toggle("dark", true);  // принудительно добавить\nel.classList.contains("active");    // проверить наличие → true/false\nel.classList.replace("old", "new"); // заменить класс\n\n// Несколько классов\nel.classList.add("red", "bold", "large");\nel.classList.remove("red", "bold");\n\n// Получить все классы\nconsole.log(el.classList.toString()); // "card active"\nconsole.log([...el.classList]);       // ["card", "active"]\n\n// Пример: кнопка лайка\nconst likeBtn = document.querySelector(".like-btn");\nlikeBtn.addEventListener("click", () => {\n  likeBtn.classList.toggle("liked");\n});' },
+        { type: 'heading', value: 'Паттерн: управление состоянием через классы' },
+        { type: 'list', items: [
+          'Все стили держи в CSS, в JS только добавляй/убирай классы — разделение ответственности',
+          'toggle(class, bool) — удобно для условного добавления: toggle("active", isActive)',
+          'contains("class") — проверка наличия перед действием',
+          'replace("old", "new") — атомарная замена класса без add + remove',
+          'className = "new-class" — заменяет все классы сразу (осторожно!)'
+        ]},
+        { type: 'tip', value: 'Не управляй состоянием через el.style.display = "none". Вместо этого: в CSS пишешь .hidden { display: none; }, в JS — el.classList.add("hidden"). Это поддерживается через CSS, не засоряет inline-стили.' }
       ]
     },
     {
@@ -47,7 +65,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Элементы можно создавать динамически и вставлять в DOM.' },
-        { type: 'code', language: 'javascript', value: '// Создать элемент\nconst div = document.createElement("div");\ndiv.className = "card";\ndiv.textContent = "Новая карточка";\n\n// Вставка\nconst container = document.querySelector(".container");\ncontainer.appendChild(div);          // в конец\ncontainer.prepend(div);              // в начало\ncontainer.insertBefore(div, ref);    // перед ref\n\n// Современные методы\ncontainer.append(div, "текст");      // несколько элементов и текст\ncontainer.before(div);              // перед контейнером\ncontainer.after(div);               // после контейнера\ncontainer.replaceWith(div);         // заменить контейнер\n\n// insertAdjacentHTML — вставка HTML\nel.insertAdjacentHTML("beforeend", "<p>Абзац</p>");\n// "beforebegin" — перед el\n// "afterbegin" — первый дочерний\n// "beforeend" — последний дочерний\n// "afterend" — после el\n\n// Удаление\nconst old = document.querySelector(".old-item");\nold.remove();\n\n// Клонирование\nconst clone = div.cloneNode(true); // true = с детьми' }
+        { type: 'code', language: 'javascript', value: '// Создать элемент\nconst div = document.createElement("div");\ndiv.className = "card";\ndiv.textContent = "Новая карточка";\n\n// Вставка\nconst container = document.querySelector(".container");\ncontainer.appendChild(div);          // в конец\ncontainer.prepend(div);              // в начало\ncontainer.insertBefore(div, ref);    // перед ref\n\n// Современные методы\ncontainer.append(div, "текст");      // несколько элементов и текст\ncontainer.before(div);              // перед контейнером\ncontainer.after(div);               // после контейнера\ncontainer.replaceWith(div);         // заменить контейнер\n\n// insertAdjacentHTML — вставка HTML\nel.insertAdjacentHTML("beforeend", "<p>Абзац</p>");\n// "beforebegin" — перед el\n// "afterbegin" — первый дочерний\n// "beforeend" — последний дочерний\n// "afterend" — после el\n\n// Удаление\nconst old = document.querySelector(".old-item");\nold.remove();\n\n// Клонирование\nconst clone = div.cloneNode(true); // true = с детьми' },
+        { type: 'list', items: [
+          'createElement создаёт элемент, но не вставляет его в DOM — нужно явно добавить',
+          'append/prepend — современные методы, принимают несколько аргументов и строки',
+          'appendChild — старый API, принимает только один Node',
+          'insertAdjacentHTML — быстро вставить HTML-строку в нужную позицию относительно элемента',
+          'cloneNode(true) — глубокое клонирование вместе с дочерними элементами и атрибутами',
+          'DocumentFragment — для вставки множества элементов за один раз (оптимизация)'
+        ]},
+        { type: 'tip', value: 'При вставке многих элементов в цикле используй DocumentFragment: создай fragment, добавь все элементы в него, потом один раз вставь fragment в DOM. Это значительно быстрее, чем многократные appendChild.' }
       ]
     },
     {
@@ -56,7 +83,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'JS может менять CSS-стили напрямую или через CSS-классы (предпочтительно).' },
-        { type: 'code', language: 'javascript', value: 'const el = document.querySelector(".box");\n\n// Инлайн стили (нежелательно для сложного)\nel.style.color = "red";\nel.style.fontSize = "18px";      // camelCase!\nel.style.backgroundColor = "blue";\nel.style.display = "none";       // скрыть\n\n// Считать вычисленный стиль\nconst style = window.getComputedStyle(el);\nconsole.log(style.color);       // rgb(255, 0, 0)\nconsole.log(style.fontSize);    // "18px"\n\n// CSS-переменные через JS\nel.style.setProperty("--color", "blue");\nconst color = el.style.getPropertyValue("--color");\n\n// ЛУЧШЕ: управляй классами, а стили в CSS\n// В CSS: .hidden { display: none; }\n// В JS:\nel.classList.add("hidden");    // скрыть\nel.classList.remove("hidden"); // показать\nel.classList.toggle("hidden"); // переключить' }
+        { type: 'code', language: 'javascript', value: 'const el = document.querySelector(".box");\n\n// Инлайн стили (нежелательно для сложного)\nel.style.color = "red";\nel.style.fontSize = "18px";      // camelCase!\nel.style.backgroundColor = "blue";\nel.style.display = "none";       // скрыть\n\n// Считать вычисленный стиль\nconst style = window.getComputedStyle(el);\nconsole.log(style.color);       // rgb(255, 0, 0)\nconsole.log(style.fontSize);    // "18px"\n\n// CSS-переменные через JS\nel.style.setProperty("--color", "blue");\nconst color = el.style.getPropertyValue("--color");\n\n// ЛУЧШЕ: управляй классами, а стили в CSS\n// В CSS: .hidden { display: none; }\n// В JS:\nel.classList.add("hidden");    // скрыть\nel.classList.remove("hidden"); // показать\nel.classList.toggle("hidden"); // переключить' },
+        { type: 'list', items: [
+          'el.style устанавливает инлайн-стили: CSS-свойства в camelCase (backgroundColor, fontSize)',
+          'getComputedStyle читает итоговые стили после применения всех CSS-правил',
+          'el.style не читает стили из таблиц стилей — только инлайн-значения',
+          'CSS-переменные меняются через setProperty/getPropertyValue',
+          'Инлайн-стили имеют наивысший приоритет специфичности (кроме !important)'
+        ]},
+        { type: 'tip', value: 'Изменять CSS-переменные через JS — мощный паттерн: document.documentElement.style.setProperty("--primary-color", "#ff0000") меняет цвет сразу на всей странице. Это эффективнее, чем менять стили у каждого элемента по отдельности.' }
       ]
     },
     {

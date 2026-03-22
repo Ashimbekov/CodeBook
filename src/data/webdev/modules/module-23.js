@@ -47,7 +47,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Console — интерактивная JS-консоль. Здесь видны ошибки, можно запускать код и использовать специальные методы логирования.' },
-        { type: 'code', language: 'javascript', value: '// Методы console\nconsole.log("Обычный лог");\nconsole.info("Информация");\nconsole.warn("Предупреждение — жёлтый");\nconsole.error("Ошибка — красный");\n\n// Форматирование\nconsole.log("Привет, %s! Тебе %d лет.", "Алина", 25);\nconsole.log("%cЦветной текст", "color: red; font-size: 20px");\n\n// Объекты и массивы\nconsole.log({ name: "Берик", age: 30 }); // интерактивный объект\nconsole.table([{a: 1}, {a: 2}]);          // таблица!\n\n// Группировка\nconsole.group("Пользователи");\nconsole.log("Алина");\nconsole.log("Берик");\nconsole.groupEnd();\n\n// Замер времени\nconsole.time("Загрузка");\nawait loadData();\nconsole.timeEnd("Загрузка"); // Загрузка: 234ms\n\n// Счётчик\nconsole.count("Клик"); // Клик: 1\nconsole.count("Клик"); // Клик: 2\n\n// Стек вызовов\nconsole.trace("Откуда вызвана функция");' }
+        { type: 'code', language: 'javascript', value: '// Методы console\nconsole.log("Обычный лог");\nconsole.info("Информация");\nconsole.warn("Предупреждение — жёлтый");\nconsole.error("Ошибка — красный");\n\n// Форматирование\nconsole.log("Привет, %s! Тебе %d лет.", "Алина", 25);\nconsole.log("%cЦветной текст", "color: red; font-size: 20px");\n\n// Объекты и массивы\nconsole.log({ name: "Берик", age: 30 }); // интерактивный объект\nconsole.table([{a: 1}, {a: 2}]);          // таблица!\n\n// Группировка\nconsole.group("Пользователи");\nconsole.log("Алина");\nconsole.log("Берик");\nconsole.groupEnd();\n\n// Замер времени\nconsole.time("Загрузка");\nawait loadData();\nconsole.timeEnd("Загрузка"); // Загрузка: 234ms\n\n// Счётчик\nconsole.count("Клик"); // Клик: 1\nconsole.count("Клик"); // Клик: 2\n\n// Стек вызовов\nconsole.trace("Откуда вызвана функция");' },
+        { type: 'heading', value: 'Специальные переменные в Console' },
+        { type: 'list', items: [
+          '$0 — последний выбранный элемент в панели Elements',
+          '$_ — результат последнего вычисленного выражения',
+          '$(selector) — аналог document.querySelector в Console',
+          '$$(selector) — аналог document.querySelectorAll в Console',
+          'copy(obj) — скопировать объект в буфер обмена',
+          'clear() — очистить консоль, или Ctrl+L'
+        ]},
+        { type: 'tip', value: 'console.table() — одна из самых недооценённых функций. Вместо console.log(users) пиши console.table(users) и увидишь красивую таблицу с колонками. Идеально для массивов объектов.' }
       ]
     },
     {

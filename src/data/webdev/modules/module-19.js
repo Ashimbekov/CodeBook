@@ -19,7 +19,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Promise — объект-обещание, которое либо выполнится (resolve), либо отклонится (reject). Имеет три состояния: pending, fulfilled, rejected.' },
-        { type: 'code', language: 'javascript', value: '// Создание Promise\nconst promise = new Promise((resolve, reject) => {\n  const success = true;\n  \n  if (success) {\n    resolve("Данные получены!"); // успех\n  } else {\n    reject(new Error("Что-то пошло не так")); // ошибка\n  }\n});\n\n// Использование Promise\npromise\n  .then(data => {\n    console.log("Успех:", data); // "Данные получены!"\n  })\n  .catch(error => {\n    console.error("Ошибка:", error.message);\n  })\n  .finally(() => {\n    console.log("Выполнится всегда");\n  });\n\n// Пример: setTimeout как Promise\nfunction delay(ms) {\n  return new Promise(resolve => setTimeout(resolve, ms));\n}\n\ndelay(1000).then(() => console.log("Прошла секунда"));' }
+        { type: 'code', language: 'javascript', value: '// Создание Promise\nconst promise = new Promise((resolve, reject) => {\n  const success = true;\n  \n  if (success) {\n    resolve("Данные получены!"); // успех\n  } else {\n    reject(new Error("Что-то пошло не так")); // ошибка\n  }\n});\n\n// Использование Promise\npromise\n  .then(data => {\n    console.log("Успех:", data); // "Данные получены!"\n  })\n  .catch(error => {\n    console.error("Ошибка:", error.message);\n  })\n  .finally(() => {\n    console.log("Выполнится всегда");\n  });\n\n// Пример: setTimeout как Promise\nfunction delay(ms) {\n  return new Promise(resolve => setTimeout(resolve, ms));\n}\n\ndelay(1000).then(() => console.log("Прошла секунда"));' },
+        { type: 'heading', value: 'Три состояния Promise' },
+        { type: 'list', items: [
+          'pending — начальное состояние, промис ещё не выполнен',
+          'fulfilled — промис успешно завершён, значение доступно через then()',
+          'rejected — промис отклонён, ошибка доступна через catch()',
+          'Состояние можно изменить только один раз: pending → fulfilled или pending → rejected',
+          'then() возвращает новый Promise — это основа цепочек',
+          'finally() выполняется при любом исходе и не получает значения'
+        ]},
+        { type: 'tip', value: 'Promise.resolve(value) и Promise.reject(error) — быстрые способы создать уже выполненный промис. Полезно в тестах или когда нужно вернуть Promise из функции с известным результатом.' }
       ]
     },
     {
@@ -28,7 +38,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'then() тоже возвращает Promise, поэтому можно строить цепочки вместо вложенных коллбеков.' },
-        { type: 'code', language: 'javascript', value: '// Цепочка промисов\nfetch("/api/user/1")\n  .then(response => response.json())       // Promise<data>\n  .then(user => fetch(`/api/orders/${user.id}`))\n  .then(response => response.json())\n  .then(orders => {\n    console.log("Заказы:", orders);\n  })\n  .catch(error => {\n    console.error("Ошибка:", error);\n    // Ловит ошибки из ЛЮБОГО then выше\n  });\n\n// Promise.all — ждём ВСЕ промисы\nconst [users, products] = await Promise.all([\n  fetch("/api/users").then(r => r.json()),\n  fetch("/api/products").then(r => r.json())\n]);\n\n// Promise.race — первый победивший\nconst first = await Promise.race([\n  fetch("/api/fast"),\n  fetch("/api/slow")\n]);\n\n// Promise.allSettled — ждём все, даже с ошибками\nconst results = await Promise.allSettled([\n  Promise.resolve("OK"),\n  Promise.reject("Ошибка"),\n  Promise.resolve("Тоже OK")\n]);\n// [{ status: "fulfilled", value: "OK" },\n//  { status: "rejected", reason: "Ошибка" }, ...]' }
+        { type: 'code', language: 'javascript', value: '// Цепочка промисов\nfetch("/api/user/1")\n  .then(response => response.json())       // Promise<data>\n  .then(user => fetch(`/api/orders/${user.id}`))\n  .then(response => response.json())\n  .then(orders => {\n    console.log("Заказы:", orders);\n  })\n  .catch(error => {\n    console.error("Ошибка:", error);\n    // Ловит ошибки из ЛЮБОГО then выше\n  });\n\n// Promise.all — ждём ВСЕ промисы\nconst [users, products] = await Promise.all([\n  fetch("/api/users").then(r => r.json()),\n  fetch("/api/products").then(r => r.json())\n]);\n\n// Promise.race — первый победивший\nconst first = await Promise.race([\n  fetch("/api/fast"),\n  fetch("/api/slow")\n]);\n\n// Promise.allSettled — ждём все, даже с ошибками\nconst results = await Promise.allSettled([\n  Promise.resolve("OK"),\n  Promise.reject("Ошибка"),\n  Promise.resolve("Тоже OK")\n]);\n// [{ status: "fulfilled", value: "OK" },\n//  { status: "rejected", reason: "Ошибка" }, ...]' },
+        { type: 'heading', value: 'Сравнение Promise.all методов' },
+        { type: 'list', items: [
+          'Promise.all — ждёт все, падает при первой ошибке. Для параллельных независимых запросов',
+          'Promise.allSettled — ждёт все, возвращает результаты с status: fulfilled/rejected',
+          'Promise.race — возвращает результат первого завершившегося (успех или ошибка)',
+          'Promise.any — возвращает первый успешный, игнорирует ошибки (ES2021)',
+          'В цепочке catch ловит ошибки из любого предшествующего then'
+        ]},
+        { type: 'tip', value: 'Promise.allSettled лучше Promise.all когда нужны результаты всех запросов, даже если некоторые упали. Например, загрузка данных из нескольких независимых источников — не нужно останавливаться из-за одного сбоя.' }
       ]
     },
     {
@@ -47,7 +66,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'async/await работает вместе с try/catch для обработки ошибок в асинхронном коде.' },
-        { type: 'code', language: 'javascript', value: 'async function loadData(url) {\n  try {\n    const response = await fetch(url);\n    \n    if (!response.ok) {\n      throw new Error(`HTTP error: ${response.status}`);\n    }\n    \n    const data = await response.json();\n    return data;\n    \n  } catch (error) {\n    if (error instanceof TypeError) {\n      console.error("Сетевая ошибка:", error.message);\n    } else {\n      console.error("Ошибка:", error.message);\n    }\n    return null;\n    \n  } finally {\n    hideLoadingSpinner(); // выполнится всегда\n  }\n}\n\n// Обработка на уровне вызова\nasync function main() {\n  try {\n    const user = await loadData("/api/user");\n    const posts = await loadData(`/api/posts/${user.id}`);\n    renderPage(user, posts);\n  } catch (error) {\n    showErrorMessage(error.message);\n  } finally {\n    hideLoader();\n  }\n}' }
+        { type: 'code', language: 'javascript', value: 'async function loadData(url) {\n  try {\n    const response = await fetch(url);\n    \n    if (!response.ok) {\n      throw new Error(`HTTP error: ${response.status}`);\n    }\n    \n    const data = await response.json();\n    return data;\n    \n  } catch (error) {\n    if (error instanceof TypeError) {\n      console.error("Сетевая ошибка:", error.message);\n    } else {\n      console.error("Ошибка:", error.message);\n    }\n    return null;\n    \n  } finally {\n    hideLoadingSpinner(); // выполнится всегда\n  }\n}\n\n// Обработка на уровне вызова\nasync function main() {\n  try {\n    const user = await loadData("/api/user");\n    const posts = await loadData(`/api/posts/${user.id}`);\n    renderPage(user, posts);\n  } catch (error) {\n    showErrorMessage(error.message);\n  } finally {\n    hideLoader();\n  }\n}' },
+        { type: 'list', items: [
+          'try/catch в async-функции ловит и синхронные ошибки, и отклонённые Promise',
+          'finally выполняется всегда — идеальное место для скрытия лоадера или освобождения ресурсов',
+          'Можно проверять тип ошибки через instanceof: TypeError, SyntaxError, кастомные классы',
+          'Выброс throw new Error("...") в try-блоке передаёт управление в catch',
+          'Необработанные rejected Promise вызывают UnhandledPromiseRejectionWarning в Node.js'
+        ]},
+        { type: 'tip', value: 'Не глотай ошибки: пустой catch (error) {} — антипаттерн. Минимум — логируй: catch (error) { console.error(error); }. Иначе баги становятся невидимыми и очень трудно отлаживаются.' }
       ]
     },
     {
@@ -56,7 +83,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Несколько важных паттернов для работы с асинхронным кодом в реальных проектах.' },
-        { type: 'code', language: 'javascript', value: '// 1. Паттерн: функция загрузки с состоянием\nasync function fetchWithState(url) {\n  const state = { loading: true, data: null, error: null };\n  try {\n    state.data = await fetch(url).then(r => r.json());\n  } catch (e) {\n    state.error = e.message;\n  } finally {\n    state.loading = false;\n  }\n  return state;\n}\n\n// 2. Паттерн: повторная попытка\nasync function fetchWithRetry(url, retries = 3) {\n  for (let i = 0; i < retries; i++) {\n    try {\n      return await fetch(url).then(r => r.json());\n    } catch (e) {\n      if (i === retries - 1) throw e;\n      await new Promise(r => setTimeout(r, 1000 * (i + 1)));\n    }\n  }\n}\n\n// 3. Паттерн: таймаут\nfunction withTimeout(promise, ms) {\n  const timeout = new Promise((_, reject) =>\n    setTimeout(() => reject(new Error("Timeout")), ms)\n  );\n  return Promise.race([promise, timeout]);\n}\n\nconst data = await withTimeout(fetch("/api/slow"), 5000);\n\n// 4. AbortController: отмена запроса\nconst controller = new AbortController();\nfetch("/api/data", { signal: controller.signal })\n  .then(r => r.json())\n  .catch(e => console.log("Отменён:", e.name));\n\ncontroller.abort(); // отменить запрос' }
+        { type: 'code', language: 'javascript', value: '// 1. Паттерн: функция загрузки с состоянием\nasync function fetchWithState(url) {\n  const state = { loading: true, data: null, error: null };\n  try {\n    state.data = await fetch(url).then(r => r.json());\n  } catch (e) {\n    state.error = e.message;\n  } finally {\n    state.loading = false;\n  }\n  return state;\n}\n\n// 2. Паттерн: повторная попытка\nasync function fetchWithRetry(url, retries = 3) {\n  for (let i = 0; i < retries; i++) {\n    try {\n      return await fetch(url).then(r => r.json());\n    } catch (e) {\n      if (i === retries - 1) throw e;\n      await new Promise(r => setTimeout(r, 1000 * (i + 1)));\n    }\n  }\n}\n\n// 3. Паттерн: таймаут\nfunction withTimeout(promise, ms) {\n  const timeout = new Promise((_, reject) =>\n    setTimeout(() => reject(new Error("Timeout")), ms)\n  );\n  return Promise.race([promise, timeout]);\n}\n\nconst data = await withTimeout(fetch("/api/slow"), 5000);\n\n// 4. AbortController: отмена запроса\nconst controller = new AbortController();\nfetch("/api/data", { signal: controller.signal })\n  .then(r => r.json())\n  .catch(e => console.log("Отменён:", e.name));\n\ncontroller.abort(); // отменить запрос' },
+        { type: 'list', items: [
+          'fetchWithState — паттерн для управления состоянием загрузки в UI (loading/data/error)',
+          'fetchWithRetry — экспоненциальная задержка между попытками: 1с, 2с, 3с',
+          'withTimeout через Promise.race — предотвращает зависание при медленном сервере',
+          'AbortController позволяет отменить запрос при навигации или новом вводе',
+          'controller.abort() выбрасывает AbortError — проверяй e.name !== "AbortError"'
+        ]},
+        { type: 'note', value: 'Эти паттерны — основа любого HTTP-слоя в реальных приложениях. Библиотеки типа axios, React Query, SWR реализуют их "из коробки". Понимая основы, ты поймёшь и библиотеки.' }
       ]
     },
     {

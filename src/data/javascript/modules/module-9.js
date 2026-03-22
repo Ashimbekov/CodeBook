@@ -16,7 +16,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Создание массивов\nconst arr1 = [1, 2, 3];           // литерал\nconst arr2 = new Array(3);        // [empty x3]\nconst arr3 = Array.from({length: 5}, (_, i) => i); // [0,1,2,3,4]\nconst arr4 = Array.of(1, 2, 3);   // [1,2,3]\nconst arr5 = [...arr1, ...arr3];  // spread\n\n// Доступ к элементам\nconst fruits = ["apple", "banana", "cherry"];\nconsole.log(fruits[0]);          // "apple"\nconsole.log(fruits.at(-1));      // "cherry" (с конца)\nconsole.log(fruits.at(-2));      // "banana"\n\n// Базовые мутирующие методы\nconst stack = [];\nstack.push(1, 2, 3); // добавить в конец\nconsole.log(stack);   // [1, 2, 3]\nconsole.log(stack.pop()); // 3 — удалить с конца\nconsole.log(stack.shift()); // 1 — удалить с начала\nstack.unshift(0);    // добавить в начало\nconsole.log(stack);   // [0, 2]\n\n// splice — универсальное изменение\nconst arr = [1, 2, 3, 4, 5];\narr.splice(2, 1);        // удалить 1 элемент с индекса 2\nconsole.log(arr);         // [1, 2, 4, 5]\narr.splice(2, 0, 3);     // вставить 3 на позицию 2\nconsole.log(arr);         // [1, 2, 3, 4, 5]\narr.splice(1, 2, 10, 20); // заменить 2 элемента с позиции 1\nconsole.log(arr);         // [1, 10, 20, 4, 5]'
-        }
+        },
+        { type: 'list', items: [
+          'arr.at(-1) — последний элемент (ES2022), удобнее чем arr[arr.length - 1]',
+          'push/pop работают с концом массива (стек), shift/unshift — с началом (очередь)',
+          'splice мутирует массив — будь осторожен; для немутирующей альтернативы используй toSpliced (ES2023)',
+          'Array.from({length: n}, fn) — быстрый способ создать массив с вычисленными значениями',
+          'new Array(3) создаёт [empty x3] — не [undefined, undefined, undefined]: пустые слоты не итерируются'
+        ]},
+        { type: 'tip', value: 'Мутирующие методы (push, pop, splice, sort, reverse) изменяют исходный массив. Немутирующие (map, filter, slice, concat) возвращают новый. В React и функциональном программировании предпочитай немутирующие.' }
       ]
     },
     {
@@ -52,7 +60,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: 'const users = [\n  { id: 1, name: "Alice", role: "admin" },\n  { id: 2, name: "Bob", role: "user" },\n  { id: 3, name: "Charlie", role: "user" }\n];\n\n// find — первый элемент удовлетворяющий условию\nconst admin = users.find(u => u.role === "admin");\nconsole.log(admin); // {id:1, name:"Alice", role:"admin"}\n\n// findIndex — индекс первого элемента\nconst idx = users.findIndex(u => u.name === "Bob");\nconsole.log(idx); // 1\n\n// findLast и findLastIndex (ES2023)\nconst lastUser = users.findLast(u => u.role === "user");\nconsole.log(lastUser); // Charlie\n\n// includes — наличие значения\nconsole.log([1,2,3].includes(2)); // true\nconsole.log([1,2,3].includes(4)); // false\n\n// some — хотя бы один элемент удовлетворяет\nconsole.log(users.some(u => u.role === "admin")); // true\nconsole.log(users.some(u => u.age > 100));         // false\n\n// every — все элементы удовлетворяют\nconsole.log([2,4,6].every(n => n % 2 === 0)); // true\nconsole.log([2,3,6].every(n => n % 2 === 0)); // false\n\n// indexOf (для примитивов)\nconsole.log([1,2,3,2].indexOf(2));  // 1 (первое)\nconsole.log([1,2,3,2].lastIndexOf(2)); // 3 (последнее)\nconsole.log([1,2,3].indexOf(4));   // -1 (не найдено)'
-        }
+        },
+        { type: 'list', items: [
+          'find возвращает первый совпадающий элемент или undefined — проверяй что элемент найден',
+          'findIndex возвращает -1 если не найдено — используй !== -1 для проверки',
+          'some останавливается при первом совпадении (false не продолжает) — эффективен',
+          'every останавливается при первом несоответствии — также эффективен',
+          'includes использует SameValueZero — работает с NaN: [NaN].includes(NaN) === true'
+        ]},
+        { type: 'tip', value: 'Шпаргалка: find — найти объект; findIndex — найти позицию; includes — проверить наличие; some — хотя бы один; every — все. Для объектов indexOf не работает по значению — используй findIndex с условием.' }
       ]
     },
     {
@@ -88,7 +104,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Деструктуризация массива\nconst [a, b, c] = [1, 2, 3];\nconsole.log(a, b, c); // 1 2 3\n\n// Пропуск элементов\nconst [first, , third] = [1, 2, 3];\nconsole.log(first, third); // 1 3\n\n// Rest\nconst [head, ...tail] = [1, 2, 3, 4, 5];\nconsole.log(head); // 1\nconsole.log(tail); // [2, 3, 4, 5]\n\n// Значения по умолчанию\nconst [x = 10, y = 20] = [5];\nconsole.log(x, y); // 5 20\n\n// Обмен переменных\nlet p = 1, q = 2;\n[p, q] = [q, p];\nconsole.log(p, q); // 2 1\n\n// Spread для объединения\nconst arr1 = [1, 2, 3];\nconst arr2 = [4, 5, 6];\nconst combined = [...arr1, ...arr2];\nconsole.log(combined); // [1,2,3,4,5,6]\n\n// Spread для копии\nconst copy = [...arr1]; // не мутирует оригинал\n\n// Array.from с итерируемых\nconst set = new Set([1, 2, 2, 3, 3]);\nconst unique = Array.from(set); // [1, 2, 3]\nconst chars = Array.from("hello"); // ["h","e","l","l","o"]\nconst range = Array.from({length: 5}, (_, i) => i + 1); // [1,2,3,4,5]'
-        }
+        },
+        { type: 'list', items: [
+          'Деструктуризация присваивает значения по позиции — пропуск элементов через двойную запятую [a, , b]',
+          'Rest-элемент (...rest) всегда последний в деструктуризации и собирает оставшиеся элементы',
+          'Обмен переменных через деструктуризацию [a, b] = [b, a] — без временной переменной',
+          'Spread создаёт поверхностную копию — вложенные объекты остаются ссылками',
+          'Array.from работает с любым итерируемым объектом: строками, Set, Map, NodeList'
+        ]},
+        { type: 'tip', value: 'Деструктуризация массива vs объекта: массив — по позиции ([a, b, c]), объект — по имени ({name, age}). Для переименования в объектной деструктуризации используй двоеточие: const { name: userName } = user.' }
       ]
     },
     {
@@ -104,7 +128,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Object.groupBy (ES2024) или ручная группировка\nconst items = [\n  {type:"a", value:1}, {type:"b", value:2},\n  {type:"a", value:3}, {type:"b", value:4}\n];\n\n// Ручная группировка через reduce\nconst grouped = items.reduce((groups, item) => {\n  const key = item.type;\n  groups[key] = groups[key] ?? [];\n  groups[key].push(item);\n  return groups;\n}, {});\nconsole.log(grouped);\n// {a: [{type:"a",value:1},{type:"a",value:3}], b: [...]}\n\n// Уникальные значения\nconst withDups = [1, 2, 2, 3, 3, 3, 4];\nconst unique = [...new Set(withDups)];\nconsole.log(unique); // [1, 2, 3, 4]\n\n// Пересечение массивов\nconst arr1 = [1, 2, 3, 4];\nconst arr2 = [2, 4, 6];\nconst intersection = arr1.filter(x => arr2.includes(x));\nconsole.log(intersection); // [2, 4]\n\n// Разность массивов\nconst diff = arr1.filter(x => !arr2.includes(x));\nconsole.log(diff); // [1, 3]\n\n// Максимум/минимум\nconst nums = [3, 1, 4, 1, 5, 9, 2, 6];\nconsole.log(Math.max(...nums)); // 9\nconsole.log(Math.min(...nums)); // 1\n\n// Транспозиция матрицы\nconst matrix = [[1,2,3],[4,5,6],[7,8,9]];\nconst transposed = matrix[0].map((_, i) => matrix.map(row => row[i]));\nconsole.log(transposed); // [[1,4,7],[2,5,8],[3,6,9]]'
-        }
+        },
+        { type: 'list', items: [
+          'Уникальные значения: [...new Set(arr)] — самый лаконичный способ для примитивов',
+          'Пересечение: filter + includes — O(n*m); для больших массивов используй Set для O(n+m)',
+          'Math.max(...arr) работает только если spread не вызывает переполнение стека — для больших массивов используй reduce',
+          'Object.groupBy (ES2024) — нативная группировка, но поддержка ещё не везде; используй reduce',
+          'Транспозиция матрицы: matrix[0].map((_, i) => matrix.map(row => row[i])) — классический трюк'
+        ]},
+        { type: 'tip', value: 'Для операций над множествами (пересечение, разность, объединение) используй Set: const setA = new Set(arr1); arr2.filter(x => setA.has(x)) — O(n) вместо O(n*m) с includes. Для больших данных это важно.' }
       ]
     },
     {

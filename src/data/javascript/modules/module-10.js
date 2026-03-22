@@ -16,7 +16,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Базовый объект\nconst person = {\n  name: "Alice",\n  age: 30,\n  greet() {\n    return `Привет, я ${this.name}`;\n  }\n};\n\n// Shorthand свойства (ES6)\nconst name = "Bob";\nconst age = 25;\n// Длинный вариант:\nconst user1 = { name: name, age: age };\n// Краткий (shorthand):\nconst user2 = { name, age }; // если имя переменной = имя ключа\nconsole.log(user1, user2); // одинаково\n\n// Shorthand методы\nconst calculator = {\n  // Длинный вариант:\n  add: function(a, b) { return a + b; },\n  // Краткий вариант:\n  subtract(a, b) { return a - b; },\n  multiply(a, b) { return a * b; }\n};\n\n// Computed property names\nconst key = "dynamicKey";\nconst obj = {\n  [key]: "значение",          // "dynamicKey": "значение"\n  [`prefix_${key}`]: "ещё",   // "prefix_dynamicKey": "ещё"\n  [1 + 2]: "три"               // 3: "три"\n};\nconsole.log(obj.dynamicKey); // "значение"\nconsole.log(obj[3]);         // "три"\n\n// Вычисляемые ключи из массива\nconst fields = ["name", "age", "email"];\nconst template = fields.reduce((acc, field) => {\n  acc[field] = null;\n  return acc;\n}, {});\nconsole.log(template); // {name:null, age:null, email:null}'
-        }
+        },
+        { type: 'list', items: [
+          'Shorthand свойства {name, age} — если имя переменной совпадает с именем ключа',
+          'Shorthand методы greet() {} — краткая запись вместо greet: function() {}',
+          'Computed property names [key]: value — динамические ключи из выражений',
+          'Шаблонные строки в ключах: {[`${prefix}_${field}`]: value}',
+          'Object.fromEntries(arr) — обратное к Object.entries(): из массива пар в объект'
+        ]},
+        { type: 'tip', value: 'Computed property names особенно полезны для создания объектов с динамическими ключами: const obj = { [fieldName]: value }. Используется в Redux для именования actions, в React для обновления полей формы.' }
       ]
     },
     {
@@ -52,7 +60,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Базовая деструктуризация\nconst { name, age, role } = { name: "Alice", age: 30, role: "admin" };\nconsole.log(name, age, role); // "Alice" 30 "admin"\n\n// Переименование\nconst { name: userName, age: userAge } = { name: "Bob", age: 25 };\nconsole.log(userName, userAge); // "Bob" 25\n\n// Значения по умолчанию\nconst { x = 0, y = 0, z = 0 } = { x: 10, y: 20 };\nconsole.log(x, y, z); // 10 20 0\n\n// Переименование + умолчание\nconst { name: n = "Аноним", role: r = "user" } = {};\nconsole.log(n, r); // "Аноним" "user"\n\n// Rest в деструктуризации\nconst { name: n2, ...rest } = { name: "Alice", age: 30, role: "admin" };\nconsole.log(n2);   // "Alice"\nconsole.log(rest); // {age:30, role:"admin"}\n\n// Вложенная деструктуризация\nconst config = {\n  server: { host: "localhost", port: 3000 },\n  db: { name: "mydb", pool: 5 }\n};\nconst { server: { host, port }, db: { name: dbName } } = config;\nconsole.log(host, port, dbName); // "localhost" 3000 "mydb"\n\n// Деструктуризация параметров\nfunction printUser({ name, age, role = "user" }) {\n  console.log(`${name} (${age}) — ${role}`);\n}\nprintUser({ name: "Alice", age: 30 }); // "Alice (30) — user"'
-        }
+        },
+        { type: 'list', items: [
+          'Переименование: const { name: userName } = obj — извлекает name в переменную userName',
+          'Значения по умолчанию применяются только если свойство undefined (не null, не 0)',
+          'Rest-оператор {...rest} собирает все оставшиеся свойства в новый объект',
+          'Вложенная деструктуризация: { server: { host, port } } — удобно для config-объектов',
+          'Деструктуризация параметров функции: function f({ name, age = 18 }) — чище чем f(obj)'
+        ]},
+        { type: 'tip', value: 'Золотое правило деструктуризации: используй для функций с объектом-параметром. Вместо function createUser(name, age, role, permissions) — function createUser({ name, age, role, permissions = [] }). Аргументы именованы и есть значения по умолчанию.' }
       ]
     },
     {
@@ -88,7 +104,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Object.freeze — делает объект неизменяемым\nconst config = Object.freeze({\n  host: "localhost",\n  port: 3000\n});\nconfig.port = 8080; // тихо игнорируется!\nconfig.newProp = "test"; // тоже игнорируется\nconsole.log(config.port); // 3000\n\n// freeze не глубокое!\nconst nested = Object.freeze({\n  server: { host: "localhost" }\n});\nnested.server.host = "production"; // РАБОТАЕТ — вложенный не заморожен!\nconsole.log(nested.server.host); // "production"\n\n// Object.seal — разрешает изменение существующих, запрещает добавление/удаление\nconst obj = Object.seal({ x: 1, y: 2 });\nobj.x = 99;  // OK — изменение существующего\nobj.z = 3;   // тихо игнорируется — нельзя добавить\ndelete obj.x; // тихо игнорируется — нельзя удалить\nconsole.log(obj); // {x:99, y:2}\n\n// Object.create с дескрипторами\nconst user = Object.create(null, {\n  name: { value: "Alice", writable: false, enumerable: true, configurable: false },\n  _age: { value: 30, writable: true, enumerable: false }\n});\nconsole.log(user.name);         // "Alice"\nconsole.log(Object.keys(user)); // ["name"] (_age не перечислимо)\n\n// Object.getOwnPropertyDescriptor\nconsole.log(Object.getOwnPropertyDescriptor(user, "name"));\n// {value:"Alice", writable:false, enumerable:true, configurable:false}'
-        }
+        },
+        { type: 'list', items: [
+          'Object.freeze: нельзя изменить, добавить или удалить свойства — только поверхностно',
+          'Object.seal: нельзя добавить/удалить свойства, но можно изменить существующие',
+          'Object.isFrozen и Object.isSealed проверяют состояние объекта',
+          'Дескрипторы свойств: writable, enumerable, configurable — тонкое управление поведением',
+          'enumerable: false скрывает свойство из for...in и Object.keys, но оно остаётся доступным'
+        ]},
+        { type: 'tip', value: 'Object.freeze популярен для конфигурационных объектов и констант. Помни: freeze поверхностный — вложенные объекты не заморожены. Для глубокой заморозки нужна рекурсия: function deepFreeze(obj) { Object.keys(obj).forEach(k => typeof obj[k] === "object" && deepFreeze(obj[k])); return Object.freeze(obj); }' }
       ]
     },
     {

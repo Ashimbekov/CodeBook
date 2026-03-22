@@ -39,7 +39,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'При большом количестве тестов время выполнения растёт. pytest-xdist запускает тесты параллельно на нескольких CPU.' },
-        { type: 'code', language: 'yaml', value: '# pip install pytest-xdist\n\n# Параллельный запуск на 4 процессах\npytest -n 4\n\n# Автоматически по количеству CPU\npytest -n auto\n\n# В CI: параллелизм через matrix\njobs:\n  test:\n    strategy:\n      matrix:\n        shard: [1, 2, 3, 4]  # разбить тесты на 4 части\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          # Запустить только 1/4 тестов\n          pytest --shard-id=${{ matrix.shard }} --num-shards=4\n\n# GitLab CI parallel\ntest:\n  parallel: 4\n  script:\n    - pytest --shard-id=$CI_NODE_INDEX --num-shards=$CI_NODE_TOTAL' }
+        { type: 'code', language: 'yaml', value: '# pip install pytest-xdist\n\n# Параллельный запуск на 4 процессах\npytest -n 4\n\n# Автоматически по количеству CPU\npytest -n auto\n\n# В CI: параллелизм через matrix\njobs:\n  test:\n    strategy:\n      matrix:\n        shard: [1, 2, 3, 4]  # разбить тесты на 4 части\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          # Запустить только 1/4 тестов\n          pytest --shard-id=${{ matrix.shard }} --num-shards=4\n\n# GitLab CI parallel\ntest:\n  parallel: 4\n  script:\n    - pytest --shard-id=$CI_NODE_INDEX --num-shards=$CI_NODE_TOTAL' },
+        { type: 'tip', value: 'Для shard тестирования нужен пакет pytest-shard: pip install pytest-shard. Он автоматически распределяет тесты по shards без необходимости ручной разбивки по директориям.' },
+        { type: 'list', items: [
+          'pytest-xdist (-n 4) — параллельный запуск в рамках одного runner (несколько процессов)',
+          'Matrix sharding — несколько отдельных jobs (VM) запускают разные подмножества тестов',
+          'GitLab parallel: N — аналог matrix sharding, CI_NODE_INDEX и CI_NODE_TOTAL доступны автоматически',
+          'Изолированные тесты работают лучше при параллельном запуске — избегай разделяемого состояния'
+        ]},
+        { type: 'note', value: 'pytest-xdist и matrix sharding решают разные проблемы. xdist — использует несколько CPU одной машины. Matrix sharding — использует несколько отдельных машин (runner). Matrix sharding масштабируется лучше для очень больших тест-сьютов.' }
       ]
     },
     {
@@ -58,7 +66,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'После деплоя важно проверить что приложение работает. Smoke tests — минимальный набор проверок живости.' },
-        { type: 'code', language: 'yaml', value: 'deploy:\n  runs-on: ubuntu-latest\n  steps:\n    - name: Деплой\n      run: bash deploy.sh\n\n    - name: Ждём запуска\n      run: sleep 30\n\n    - name: Smoke tests\n      run: |\n        # Проверяем что API отвечает\n        curl -f https://api.example.com/health/ || exit 1\n        # Проверяем статусы\n        STATUS=$(curl -s https://api.example.com/health/ | python -c "import sys,json; print(json.load(sys.stdin)[\"status\"])")\n        [ "$STATUS" = "ok" ] || exit 1\n\n    - name: Уведомление при успехе\n      if: success()\n      run: echo "Деплой успешен!"' }
+        { type: 'code', language: 'yaml', value: 'deploy:\n  runs-on: ubuntu-latest\n  steps:\n    - name: Деплой\n      run: bash deploy.sh\n\n    - name: Ждём запуска\n      run: sleep 30\n\n    - name: Smoke tests\n      run: |\n        # Проверяем что API отвечает\n        curl -f https://api.example.com/health/ || exit 1\n        # Проверяем статусы\n        STATUS=$(curl -s https://api.example.com/health/ | python -c "import sys,json; print(json.load(sys.stdin)[\"status\"])")\n        [ "$STATUS" = "ok" ] || exit 1\n\n    - name: Уведомление при успехе\n      if: success()\n      run: echo "Деплой успешен!"' },
+        { type: 'tip', value: 'Используй retry вместо фиксированного sleep для ожидания запуска приложения. Цикл с проверкой каждые 5 секунд и максимум 60 секунд надёжнее чем sleep 30 — приложение может запуститься быстрее или медленнее.' },
+        { type: 'list', items: [
+          'Healthcheck endpoint (/health/ или /ready/) должен проверять реальное состояние приложения',
+          'Хороший healthcheck проверяет: соединение с БД, доступность внешних сервисов',
+          'curl -f завершает команду с ненулевым кодом при HTTP ошибке (4xx, 5xx)',
+          'Smoke tests запускают минимальный набор критических сценариев (логин, главная страница)',
+          'При падении smoke tests — автоматически откатываться к предыдущей версии'
+        ]},
+        { type: 'note', value: 'Healthcheck и smoke tests — разные вещи. Healthcheck — простая проверка что сервер отвечает. Smoke tests — базовые бизнес-сценарии (создание пользователя, отправка заказа). Оба нужны после деплоя.' }
       ]
     },
     {

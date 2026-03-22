@@ -36,7 +36,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Function Expression\nconst multiply = function(a, b) {\n  return a * b;\n};\nconsole.log(multiply(4, 5)); // 20\n\n// Именованное Function Expression (NFE)\nconst factorial = function fact(n) {\n  if (n <= 1) return 1;\n  return n * fact(n - 1); // fact доступна ВНУТРИ\n};\nconsole.log(factorial(5)); // 120\n// console.log(fact(5)); // ReferenceError — fact недоступна снаружи\n\n// Function Expression в объектах\nconst math = {\n  add: function(a, b) { return a + b; },\n  sub: function(a, b) { return a - b; }\n};\nconsole.log(math.add(5, 3)); // 8\n\n// Функции как аргументы (callback)\nconst nums = [3, 1, 4, 1, 5, 9, 2, 6];\nconst sorted = nums.sort(function(a, b) {\n  return a - b;\n});\nconsole.log(sorted); // [1, 1, 2, 3, 4, 5, 6, 9]\n\n// Функции как возвращаемые значения\nfunction multiplier(factor) {\n  return function(n) {\n    return n * factor;\n  };\n}\nconst double = multiplier(2);\nconst triple = multiplier(3);\nconsole.log(double(5));  // 10\nconsole.log(triple(5)); // 15'
-        }
+        },
+        { type: 'list', items: [
+          'Function Expression не поднимается (hoisting): нельзя вызвать до объявления',
+          'Function Declaration поднимается полностью — можно вызвать выше объявления',
+          'Именованный FE (NFE): имя доступно только внутри функции — полезно для рекурсии',
+          'Функции в JS — объекты первого класса: передаются как аргументы, возвращаются',
+          'Замыкание (closure): функция захватывает переменные внешней области видимости'
+        ]},
+        { type: 'tip', value: 'Когда использовать Function Expression: когда функция нужна как значение (callback, результат функции, условное присвоение). Function Declaration — когда функция используется до её определения в коде.' }
       ]
     },
     {
@@ -112,7 +120,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Факториал\nfunction factorial(n) {\n  if (n <= 1) return 1; // базовый случай\n  return n * factorial(n - 1); // рекурсивный случай\n}\nconsole.log(factorial(5)); // 120\n\n// Числа Фибоначчи (неэффективно — экспоненциальное время!)\nfunction fib(n) {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n}\n\n// С мемоизацией (эффективно)\nfunction fibMemo(n, memo = {}) {\n  if (n in memo) return memo[n];\n  if (n <= 1) return n;\n  memo[n] = fibMemo(n - 1, memo) + fibMemo(n - 2, memo);\n  return memo[n];\n}\nconsole.log(fibMemo(40)); // быстро!\n\n// Рекурсивный обход дерева\nfunction sumTree(node) {\n  if (!node) return 0;\n  return node.value + sumTree(node.left) + sumTree(node.right);\n}\n\nconst tree = {\n  value: 1,\n  left: { value: 2, left: { value: 4, left: null, right: null }, right: null },\n  right: { value: 3, left: null, right: null }\n};\nconsole.log(sumTree(tree)); // 10'
-        }
+        },
+        { type: 'list', items: [
+          'Каждая рекурсия должна иметь базовый случай (условие выхода) — иначе бесконечный цикл',
+          'Рекурсия без оптимизации Фибоначчи — экспоненциальная сложность O(2^n)',
+          'Мемоизация кэширует результаты вычислений — превращает O(2^n) в O(n)',
+          'Стек вызовов ограничен (около 10 000 уровней) — глубокая рекурсия даёт Stack Overflow',
+          'Хвостовая рекурсия (tail recursion) оптимизируется компилятором, но JS её не оптимизирует'
+        ]},
+        { type: 'tip', value: 'Правило рекурсии: 1) определи базовый случай (когда возвращаем значение без рекурсии), 2) убедись что рекурсивный вызов приближает задачу к базовому случаю. Для деревьев и вложенных структур рекурсия обычно элегантнее итерации.' }
       ]
     },
     {

@@ -25,7 +25,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Цветовой контраст, видимость фокуса и поддержка клавиатуры — три важнейших аспекта доступности.' },
-        { type: 'code', language: 'css', value: '/* Контраст: минимум 4.5:1 для обычного текста */\n/* Используй инструменты: WebAIM Contrast Checker */\n\n.good-contrast {\n  color: #333333;           /* тёмный текст */\n  background: #ffffff;      /* белый фон */\n  /* Контраст: 12.63:1 — отлично */\n}\n\n/* Видимый фокус — ОБЯЗАТЕЛЬНО! */\n:focus-visible {\n  outline: 3px solid #005fcc;\n  outline-offset: 2px;\n  border-radius: 2px;\n}\n\n/* Никогда не делай это без замены! */\n/* :focus { outline: none; } — ломает доступность */\n\n/* Достаточный размер кликабельного элемента (44x44px min) */\n.touch-target {\n  min-width: 44px;\n  min-height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n/* Hover ≠ Focus: оба состояния важны */\n.link:hover, .link:focus-visible {\n  text-decoration: underline;\n}' }
+        { type: 'code', language: 'css', value: '/* Контраст: минимум 4.5:1 для обычного текста */\n/* Используй инструменты: WebAIM Contrast Checker */\n\n.good-contrast {\n  color: #333333;           /* тёмный текст */\n  background: #ffffff;      /* белый фон */\n  /* Контраст: 12.63:1 — отлично */\n}\n\n/* Видимый фокус — ОБЯЗАТЕЛЬНО! */\n:focus-visible {\n  outline: 3px solid #005fcc;\n  outline-offset: 2px;\n  border-radius: 2px;\n}\n\n/* Никогда не делай это без замены! */\n/* :focus { outline: none; } — ломает доступность */\n\n/* Достаточный размер кликабельного элемента (44x44px min) */\n.touch-target {\n  min-width: 44px;\n  min-height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n/* Hover ≠ Focus: оба состояния важны */\n.link:hover, .link:focus-visible {\n  text-decoration: underline;\n}' },
+        { type: 'list', items: [
+          'Минимальный контраст текста: 4.5:1 (обычный), 3:1 (крупный шрифт 18px+)',
+          ':focus-visible показывает обводку только при навигации с клавиатуры (не при клике мышью)',
+          'outline: none без замены — грубое нарушение доступности, избегать',
+          'Минимальный размер интерактивной зоны — 44x44px (рекомендация Apple/Google)',
+          'Скринридеры зачитывают элементы в порядке DOM — следи за логическим порядком',
+          'tabindex="0" добавляет нативно нефокусируемый элемент в очередь Tab'
+        ]},
+        { type: 'tip', value: 'Проверяй сайт с закрытыми глазами: используй только Tab, Enter, стрелки. Если можешь так полностью взаимодействовать с интерфейсом — клавиатурная доступность в порядке. Расширение axe DevTools автоматически найдёт многие проблемы.' }
       ]
     },
     {
@@ -34,7 +43,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'SEO (Search Engine Optimization) — оптимизация сайта для высоких позиций в поисковых системах.' },
-        { type: 'code', language: 'html', value: '<!-- Базовые мета-теги -->\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  \n  <!-- Описание для поисковиков -->\n  <title>Купить ноутбук в Алматы | Магазин TechShop</title>\n  <meta name="description" content="Большой выбор ноутбуков в Алматы. Доставка 1-2 дня. Гарантия 2 года.">\n  \n  <!-- Open Graph для социальных сетей -->\n  <meta property="og:title" content="TechShop — ноутбуки">\n  <meta property="og:description" content="Лучшие цены на ноутбуки">\n  <meta property="og:image" content="https://example.com/og-image.jpg">\n  <meta property="og:url" content="https://example.com">\n  <meta property="og:type" content="website">\n  \n  <!-- Canonical URL -->\n  <link rel="canonical" href="https://example.com/laptops">\n</head>\n\n<!-- Структурированные данные JSON-LD -->\n<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Product",\n  "name": "Ноутбук Apple MacBook Pro",\n  "price": "450000"\n}\n</script>' }
+        { type: 'code', language: 'html', value: '<!-- Базовые мета-теги -->\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  \n  <!-- Описание для поисковиков -->\n  <title>Купить ноутбук в Алматы | Магазин TechShop</title>\n  <meta name="description" content="Большой выбор ноутбуков в Алматы. Доставка 1-2 дня. Гарантия 2 года.">\n  \n  <!-- Open Graph для социальных сетей -->\n  <meta property="og:title" content="TechShop — ноутбуки">\n  <meta property="og:description" content="Лучшие цены на ноутбуки">\n  <meta property="og:image" content="https://example.com/og-image.jpg">\n  <meta property="og:url" content="https://example.com">\n  <meta property="og:type" content="website">\n  \n  <!-- Canonical URL -->\n  <link rel="canonical" href="https://example.com/laptops">\n</head>\n\n<!-- Структурированные данные JSON-LD -->\n<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Product",\n  "name": "Ноутбук Apple MacBook Pro",\n  "price": "450000"\n}\n</script>' },
+        { type: 'list', items: [
+          'title — главный SEO-фактор, должен быть уникальным для каждой страницы, 50-60 символов',
+          'meta description — влияет на CTR в поиске, не на ранжирование. 150-160 символов',
+          'Open Graph (og:) — как страница отображается при шеринге в соцсетях',
+          'canonical — указывает "главный" URL при дублировании контента',
+          'JSON-LD — структурированные данные для расширенных сниппетов в Google',
+          'Одна страница — один H1 с ключевыми словами, логическая иерархия H2/H3'
+        ]},
+        { type: 'tip', value: 'Проверяй Open Graph через Facebook Sharing Debugger или Twitter Card Validator. Изображение og:image должно быть 1200x630px. Без правильных OG-тегов ссылки в мессенджерах выглядят как голый URL.' }
       ]
     },
     {
@@ -73,7 +91,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Даже на фронтенде нужно думать о безопасности.' },
-        { type: 'code', language: 'javascript', value: '// XSS (Cross-Site Scripting) — вставка вредоносного JS\n// Плохо — innerHTML с пользовательским вводом\nelement.innerHTML = userInput; // ОПАСНО!\n\n// Хорошо\nelement.textContent = userInput; // безопасно\n\n// Для HTML — используй DOMPurify\nimport DOMPurify from "dompurify";\nelement.innerHTML = DOMPurify.sanitize(userInput);\n\n// CSRF защита: токены в формах\n<input type="hidden" name="csrf_token" value="...токен...">\n\n// Content Security Policy в заголовках\n// Content-Security-Policy: default-src "self"; script-src "self"\n\n// Не хранить секреты на фронтенде!\n// API ключи в .env (не в репо!)\n// Секреты только на сервере\n\n// HTTPS везде\n// Ссылки rel="noopener noreferrer" для внешних\n<a href="https://external.com" rel="noopener noreferrer" target="_blank">...' }
+        { type: 'code', language: 'javascript', value: '// XSS (Cross-Site Scripting) — вставка вредоносного JS\n// Плохо — innerHTML с пользовательским вводом\nelement.innerHTML = userInput; // ОПАСНО!\n\n// Хорошо\nelement.textContent = userInput; // безопасно\n\n// Для HTML — используй DOMPurify\nimport DOMPurify from "dompurify";\nelement.innerHTML = DOMPurify.sanitize(userInput);\n\n// CSRF защита: токены в формах\n<input type="hidden" name="csrf_token" value="...токен...">\n\n// Content Security Policy в заголовках\n// Content-Security-Policy: default-src "self"; script-src "self"\n\n// Не хранить секреты на фронтенде!\n// API ключи в .env (не в репо!)\n// Секреты только на сервере\n\n// HTTPS везде\n// Ссылки rel="noopener noreferrer" для внешних\n<a href="https://external.com" rel="noopener noreferrer" target="_blank">...' },
+        { type: 'heading', value: 'Топ угроз безопасности фронтенда' },
+        { type: 'list', items: [
+          'XSS — вставка вредоносного JS через innerHTML. Защита: textContent или DOMPurify',
+          'Не хранить JWT-токены в localStorage — уязвимо к XSS. Использовать httpOnly cookies',
+          'Не коммитить .env файлы с API-ключами и паролями в репозиторий',
+          'rel="noopener noreferrer" для target="_blank" — защита от window.opener exploit',
+          'HTTPS везде — без него данные передаются в открытом виде',
+          'Не доверять данным от пользователя — валидировать на сервере, не только на клиенте'
+        ]},
+        { type: 'tip', value: 'Безопасность — это не разовая задача, а непрерывный процесс. Используй инструменты: OWASP ZAP для тестирования, Snyk для проверки зависимостей, dependabot для автоматических обновлений.' }
       ]
     },
     {

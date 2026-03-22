@@ -18,7 +18,16 @@ export default {
       title: 'Дженерик функции',
       type: 'theory',
       content: [
-        { type: 'code', language: 'typescript', value: '// Несколько типовых параметров\nfunction zip<T, U>(arr1: T[], arr2: U[]): [T, U][] {\n    const length = Math.min(arr1.length, arr2.length);\n    return Array.from({ length }, (_, i) => [arr1[i], arr2[i]]);\n}\n\nconst zipped = zip([1, 2, 3], ["a", "b", "c"]);\n// zipped: [number, string][] = [[1,"a"],[2,"b"],[3,"c"]]\n\n// Дженерик с несколькими параметрами\nfunction mapObject<K extends string, T, U>(\n    obj: Record<K, T>,\n    fn: (value: T, key: K) => U\n): Record<K, U> {\n    const result = {} as Record<K, U>;\n    for (const key in obj) {\n        result[key] = fn(obj[key], key);\n    }\n    return result;\n}\n\nconst doubled = mapObject({ a: 1, b: 2, c: 3 }, v => v * 2);\n// { a: 2, b: 4, c: 6 }' }
+        { type: 'text', value: 'Дженерик функции принимают один или несколько типовых параметров. TypeScript выводит их из аргументов или их можно указать явно.' },
+        { type: 'code', language: 'typescript', value: '// Несколько типовых параметров\nfunction zip<T, U>(arr1: T[], arr2: U[]): [T, U][] {\n    const length = Math.min(arr1.length, arr2.length);\n    return Array.from({ length }, (_, i) => [arr1[i], arr2[i]]);\n}\n\nconst zipped = zip([1, 2, 3], ["a", "b", "c"]);\n// zipped: [number, string][] = [[1,"a"],[2,"b"],[3,"c"]]\n\n// Дженерик с несколькими параметрами\nfunction mapObject<K extends string, T, U>(\n    obj: Record<K, T>,\n    fn: (value: T, key: K) => U\n): Record<K, U> {\n    const result = {} as Record<K, U>;\n    for (const key in obj) {\n        result[key] = fn(obj[key], key);\n    }\n    return result;\n}\n\nconst doubled = mapObject({ a: 1, b: 2, c: 3 }, v => v * 2);\n// { a: 2, b: 4, c: 6 }' },
+        { type: 'list', items: [
+          'Вывод типов: TypeScript определяет T из аргументов — zip([1,2], ["a"]) выводит T=number, U=string',
+          'Явное указание: zip<number, string>([1,2], ["a","b"]) — когда вывод невозможен или нужно уточнить',
+          'K extends string — ограничение для ключей объекта. Record<K, T> работает только с string-совместимыми K',
+          'Возврат нескольких типов: [T, U][] — кортеж из T и U, TypeScript сохраняет оба типа',
+          'Функция-утилита identity<T>(x: T): T — простейший generic, возвращает тот же тип что получил'
+        ]},
+        { type: 'tip', value: 'Называй параметры осмысленно: <TItem, TResult> лучше чем <T, U> для сложных функций. Однобуквенные имена хороши для простых случаев как first<T> или zip<T, U>.' }
       ]
     },
     {
@@ -36,7 +45,16 @@ export default {
       title: 'Дженерик интерфейсы и классы',
       type: 'theory',
       content: [
-        { type: 'code', language: 'typescript', value: '// Дженерик интерфейс\ninterface Repository<T> {\n    findById(id: number): T | undefined;\n    findAll(): T[];\n    save(item: T): void;\n    delete(id: number): void;\n}\n\n// Реализация для конкретного типа\nclass InMemoryUserRepo implements Repository<User> {\n    private users = new Map<number, User>();\n    findById(id: number): User | undefined { return this.users.get(id); }\n    findAll(): User[] { return Array.from(this.users.values()); }\n    save(user: User): void { this.users.set(user.id, user); }\n    delete(id: number): void { this.users.delete(id); }\n}\n\n// Дженерик класс\nclass Pair<First, Second> {\n    constructor(public first: First, public second: Second) {}\n    swap(): Pair<Second, First> {\n        return new Pair(this.second, this.first);\n    }\n}\n\nconst pair = new Pair("hello", 42);\nconst swapped = pair.swap(); // Pair<number, string>' }
+        { type: 'text', value: 'Дженерик интерфейсы и классы позволяют описывать универсальные контракты и структуры данных, переиспользуемые для разных типов.' },
+        { type: 'code', language: 'typescript', value: '// Дженерик интерфейс\ninterface Repository<T> {\n    findById(id: number): T | undefined;\n    findAll(): T[];\n    save(item: T): void;\n    delete(id: number): void;\n}\n\n// Реализация для конкретного типа\nclass InMemoryUserRepo implements Repository<User> {\n    private users = new Map<number, User>();\n    findById(id: number): User | undefined { return this.users.get(id); }\n    findAll(): User[] { return Array.from(this.users.values()); }\n    save(user: User): void { this.users.set(user.id, user); }\n    delete(id: number): void { this.users.delete(id); }\n}\n\n// Дженерик класс\nclass Pair<First, Second> {\n    constructor(public first: First, public second: Second) {}\n    swap(): Pair<Second, First> {\n        return new Pair(this.second, this.first);\n    }\n}\n\nconst pair = new Pair("hello", 42);\nconst swapped = pair.swap(); // Pair<number, string>' },
+        { type: 'list', items: [
+          'interface Repository<T> — универсальный контракт. implements Repository<User> фиксирует T = User',
+          'Дженерик класс с абстрактным базовым: abstract class BaseRepo<T> — однажды типизируем, много реализаций',
+          'Map<K, V> и Set<T> — стандартные дженерик классы из JavaScript, TypeScript добавляет к ним типы',
+          'swap(): Pair<Second, First> — метод возвращает новый тип на основе параметров. TypeScript отслеживает это',
+          'Ограничения: interface Repo<T extends { id: number }> — гарантирует наличие id у всех элементов'
+        ]},
+        { type: 'tip', value: 'Паттерн Repository<T> — один из самых полезных в TypeScript. Один базовый класс InMemoryRepo<T> заменяет множество специфичных репозиториев для тестов.' }
       ]
     },
     {
@@ -64,7 +82,16 @@ export default {
       title: 'infer и продвинутые паттерны',
       type: 'theory',
       content: [
-        { type: 'code', language: 'typescript', value: '// Тип первого параметра функции\ntype FirstParam<T> = T extends (first: infer F, ...rest: unknown[]) => unknown ? F : never;\ntype P = FirstParam<(name: string, age: number) => void>; // string\n\n// Глубокий Readonly (рекурсивный)\ntype DeepReadonly<T> = {\n    readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];\n};\n\ninterface Config {\n    server: { host: string; port: number; };\n    db: { url: string; };\n}\n\nconst config: DeepReadonly<Config> = {\n    server: { host: "localhost", port: 3000 },\n    db: { url: "postgres://..." }\n};\n// config.server.host = "other"; — Ошибка: readonly!' }
+        { type: 'text', value: 'infer позволяет "извлечь" часть типа внутри условного типа. Это мощный инструмент для написания продвинутых утилитарных типов.' },
+        { type: 'code', language: 'typescript', value: '// Тип первого параметра функции\ntype FirstParam<T> = T extends (first: infer F, ...rest: unknown[]) => unknown ? F : never;\ntype P = FirstParam<(name: string, age: number) => void>; // string\n\n// Глубокий Readonly (рекурсивный)\ntype DeepReadonly<T> = {\n    readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];\n};\n\ninterface Config {\n    server: { host: string; port: number; };\n    db: { url: string; };\n}\n\nconst config: DeepReadonly<Config> = {\n    server: { host: "localhost", port: 3000 },\n    db: { url: "postgres://..." }\n};\n// config.server.host = "other"; — Ошибка: readonly!' },
+        { type: 'list', items: [
+          'infer F в T extends (first: infer F, ...) — TypeScript "захватывает" тип первого параметра в F',
+          'Встроенный ReturnType<T>: T extends (...args: unknown[]) => infer R ? R : never — так он реализован',
+          'Встроенный Awaited<T>: T extends Promise<infer R> ? Awaited<R> : T — рекурсивное разворачивание',
+          'DeepReadonly: T[K] extends object — проверяем что значение — объект, рекурсивно применяем readonly',
+          'never в ветке "нет" условного типа: FirstParam<string> = never — тип не применим, отфильтруется из union'
+        ]},
+        { type: 'tip', value: 'infer используется в стандартной библиотеке TypeScript: ReturnType, Parameters, InstanceType, Awaited — все реализованы через infer. Читай их исходники для лучшего понимания.' }
       ]
     },
     {

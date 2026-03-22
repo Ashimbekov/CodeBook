@@ -26,7 +26,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Named export позволяет экспортировать несколько значений из одного файла.' },
-        { type: 'code', language: 'javascript', value: '// utils.js — экспорт\nexport const PI = 3.14159;\n\nexport function add(a, b) {\n  return a + b;\n}\n\nexport function multiply(a, b) {\n  return a * b;\n}\n\nexport class Calculator {\n  add(a, b) { return a + b; }\n}\n\n// Или в конце файла\nconst VERSION = "1.0.0";\nconst helper = () => {};\nexport { VERSION, helper };\n\n// Переименование при экспорте\nexport { VERSION as version, helper as helpFn };\n\n// ---\n\n// app.js — импорт\nimport { add, multiply, PI } from "./utils.js";\n\nconsole.log(add(2, 3));      // 5\nconsole.log(PI);              // 3.14159\n\n// Переименование при импорте\nimport { add as sum, multiply as mul } from "./utils.js";\n\n// Импорт всего в объект\nimport * as utils from "./utils.js";\nconsole.log(utils.add(2, 3));\nconsole.log(utils.PI);' }
+        { type: 'code', language: 'javascript', value: '// utils.js — экспорт\nexport const PI = 3.14159;\n\nexport function add(a, b) {\n  return a + b;\n}\n\nexport function multiply(a, b) {\n  return a * b;\n}\n\nexport class Calculator {\n  add(a, b) { return a + b; }\n}\n\n// Или в конце файла\nconst VERSION = "1.0.0";\nconst helper = () => {};\nexport { VERSION, helper };\n\n// Переименование при экспорте\nexport { VERSION as version, helper as helpFn };\n\n// ---\n\n// app.js — импорт\nimport { add, multiply, PI } from "./utils.js";\n\nconsole.log(add(2, 3));      // 5\nconsole.log(PI);              // 3.14159\n\n// Переименование при импорте\nimport { add as sum, multiply as mul } from "./utils.js";\n\n// Импорт всего в объект\nimport * as utils from "./utils.js";\nconsole.log(utils.add(2, 3));\nconsole.log(utils.PI);' },
+        { type: 'list', items: [
+          'Named exports: можно экспортировать несколько значений из одного файла',
+          'import * as ns — импорт всего в пространство имён, удобно для утилитарных модулей',
+          'Переименование при импорте (as) — решает конфликты имён между разными модулями',
+          'Экспортировать можно: переменные, функции, классы, объекты',
+          'Пути модулей: ./relative для локальных, без ./ для npm-пакетов'
+        ]},
+        { type: 'tip', value: 'Используй import * as utils from "./utils.js" осторожно — это импортирует весь модуль и может мешать tree shaking (удалению неиспользуемого кода). Предпочитай именованные импорты: import { add, format } from "./utils.js".' }
       ]
     },
     {
@@ -45,7 +53,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Dynamic import() загружает модуль при необходимости, а не при старте приложения. Возвращает Promise.' },
-        { type: 'code', language: 'javascript', value: '// Статический import — загружается сразу\nimport { heavyChart } from "./charts.js"; // всегда загружается\n\n// Динамический import — загружается когда нужно\nasync function showChart() {\n  // Загрузится только при вызове функции\n  const { renderChart } = await import("./charts.js");\n  renderChart(data);\n}\n\n// Условный импорт\nif (userWantsChart) {\n  const chartModule = await import("./charts.js");\n  chartModule.render();\n}\n\n// Ленивая загрузка по маршруту\nrouter.on("/admin", async () => {\n  const { AdminPanel } = await import("./admin/panel.js");\n  new AdminPanel().render();\n});\n\n// Default export при динамическом импорте\nconst module = await import("./myModule.js");\nconst defaultExport = module.default;\n\n// Или деструктуризация\nconst { default: MyClass, helper } = await import("./module.js");' }
+        { type: 'code', language: 'javascript', value: '// Статический import — загружается сразу\nimport { heavyChart } from "./charts.js"; // всегда загружается\n\n// Динамический import — загружается когда нужно\nasync function showChart() {\n  // Загрузится только при вызове функции\n  const { renderChart } = await import("./charts.js");\n  renderChart(data);\n}\n\n// Условный импорт\nif (userWantsChart) {\n  const chartModule = await import("./charts.js");\n  chartModule.render();\n}\n\n// Ленивая загрузка по маршруту\nrouter.on("/admin", async () => {\n  const { AdminPanel } = await import("./admin/panel.js");\n  new AdminPanel().render();\n});\n\n// Default export при динамическом импорте\nconst module = await import("./myModule.js");\nconst defaultExport = module.default;\n\n// Или деструктуризация\nconst { default: MyClass, helper } = await import("./module.js");' },
+        { type: 'list', items: [
+          'Dynamic import() — функция, возвращает Promise, можно использовать в любом месте кода',
+          'Статический import выполняется при загрузке модуля, динамический — лениво',
+          'Ленивая загрузка сокращает начальный размер бандла — страница загружается быстрее',
+          'Default export при динамическом импорте доступен через module.default',
+          'В React lazy(() => import("./Component")) — это динамический импорт под капотом'
+        ]},
+        { type: 'tip', value: 'Динамический импорт особенно полезен для разделения кода по маршрутам в SPA. Вместо загрузки всего приложения сразу, каждая страница загружается при первом посещении. Это значительно ускоряет первичную загрузку.' }
       ]
     },
     {
@@ -54,7 +70,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Хорошая структура модулей делает проект понятным и поддерживаемым.' },
-        { type: 'code', language: 'javascript', value: '// Типичная структура проекта\n// src/\n//   api/\n//     users.js      — API-функции для юзеров\n//     posts.js      — API-функции для постов\n//     index.js      — реэкспорт\n//   utils/\n//     format.js     — форматирование\n//     validation.js — валидация\n//     index.js      — реэкспорт\n//   components/\n//     Button/\n//       Button.js\n//       Button.css\n//   app.js          — точка входа\n\n// api/index.js — "barrel" файл (реэкспорт)\nexport { getUsers, createUser } from "./users.js";\nexport { getPosts } from "./posts.js";\n\n// Теперь можно импортировать из одного места\nimport { getUsers, getPosts } from "./api/index.js";\n// или просто\nimport { getUsers, getPosts } from "./api";' }
+        { type: 'code', language: 'javascript', value: '// Типичная структура проекта\n// src/\n//   api/\n//     users.js      — API-функции для юзеров\n//     posts.js      — API-функции для постов\n//     index.js      — реэкспорт\n//   utils/\n//     format.js     — форматирование\n//     validation.js — валидация\n//     index.js      — реэкспорт\n//   components/\n//     Button/\n//       Button.js\n//       Button.css\n//   app.js          — точка входа\n\n// api/index.js — "barrel" файл (реэкспорт)\nexport { getUsers, createUser } from "./users.js";\nexport { getPosts } from "./posts.js";\n\n// Теперь можно импортировать из одного места\nimport { getUsers, getPosts } from "./api/index.js";\n// или просто\nimport { getUsers, getPosts } from "./api";' },
+        { type: 'list', items: [
+          'Barrel файл (index.js) — центральная точка для реэкспорта из директории',
+          'Одна ответственность на модуль: api-функции отдельно, утилиты отдельно, компоненты отдельно',
+          'Вложенность структуры отражает логическую структуру приложения',
+          'Circular imports (циклические зависимости) — частая ошибка, избегай их',
+          'Именование: camelCase для файлов утилит, PascalCase для компонентов'
+        ]},
+        { type: 'tip', value: 'Barrel файлы удобны для импорта, но могут замедлить tree shaking. Современные бандлеры (Vite, webpack 5) справляются с этим. Начни с barrel, оптимизируй при необходимости.' }
       ]
     },
     {

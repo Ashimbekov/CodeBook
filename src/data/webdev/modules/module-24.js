@@ -37,7 +37,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Ветки позволяют разрабатывать новые функции параллельно, не ломая основной код.' },
-        { type: 'code', language: 'javascript', value: '// Посмотреть ветки\n// git branch                   — локальные ветки\n// git branch -a                — все, включая удалённые\n\n// Создать и переключиться\n// git checkout -b feature/login\n// или новый способ:\n// git switch -c feature/login\n\n// Переключиться на существующую\n// git checkout main\n// git switch main\n\n// Слить ветку в текущую\n// git checkout main\n// git merge feature/login\n\n// Удалить ветку\n// git branch -d feature/login  — после слияния\n// git branch -D feature/login  — принудительно\n\n// Типичный рабочий процесс:\n// 1. git checkout -b feature/new-button\n// 2. Делаешь изменения\n// 3. git add . && git commit -m "add new button"\n// 4. git checkout main\n// 5. git merge feature/new-button' }
+        { type: 'code', language: 'javascript', value: '// Посмотреть ветки\n// git branch                   — локальные ветки\n// git branch -a                — все, включая удалённые\n\n// Создать и переключиться\n// git checkout -b feature/login\n// или новый способ:\n// git switch -c feature/login\n\n// Переключиться на существующую\n// git checkout main\n// git switch main\n\n// Слить ветку в текущую\n// git checkout main\n// git merge feature/login\n\n// Удалить ветку\n// git branch -d feature/login  — после слияния\n// git branch -D feature/login  — принудительно\n\n// Типичный рабочий процесс:\n// 1. git checkout -b feature/new-button\n// 2. Делаешь изменения\n// 3. git add . && git commit -m "add new button"\n// 4. git checkout main\n// 5. git merge feature/new-button' },
+        { type: 'heading', value: 'Типы слияния веток' },
+        { type: 'list', items: [
+          'Fast-forward merge — ветка main не изменялась, история линейная',
+          'Merge commit — создаётся коммит слияния, история нелинейная',
+          'Rebase — переносит коммиты поверх другой ветки, линейная история',
+          'Конфликт слияния — возникает, когда два человека меняли одно место в коде',
+          'git merge --no-ff — принудительно создать merge commit даже при fast-forward'
+        ]},
+        { type: 'tip', value: 'В команде принято создавать Pull Request (PR) на GitHub вместо прямого merge. PR — это предложение влить ветку, которое проходит code review. Это стандартный процесс в профессиональной разработке.' }
       ]
     },
     {
@@ -46,7 +55,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'GitHub — облачный хостинг для Git-репозиториев. Позволяет делиться кодом и работать в команде.' },
-        { type: 'code', language: 'javascript', value: '// Клонировать репозиторий с GitHub\n// git clone https://github.com/user/repo.git\n// git clone git@github.com:user/repo.git  (SSH)\n\n// Добавить удалённый репозиторий\n// git remote add origin https://github.com/user/repo.git\n// git remote -v  — посмотреть\n\n// Отправить на GitHub\n// git push origin main         — отправить ветку main\n// git push -u origin main      — первый раз (установить tracking)\n// git push                     — если tracking настроен\n\n// Получить изменения\n// git pull                     — fetch + merge\n// git fetch                    — только загрузить\n\n// Типичный workflow:\n// git add .\n// git commit -m "message"\n// git push\n\n// Разрешение конфликтов:\n// Если git pull говорит о конфликте:\n// 1. Открой файл, найди <<< === >>>\n// 2. Выбери нужный вариант\n// 3. git add <файл>\n// 4. git commit' }
+        { type: 'code', language: 'javascript', value: '// Клонировать репозиторий с GitHub\n// git clone https://github.com/user/repo.git\n// git clone git@github.com:user/repo.git  (SSH)\n\n// Добавить удалённый репозиторий\n// git remote add origin https://github.com/user/repo.git\n// git remote -v  — посмотреть\n\n// Отправить на GitHub\n// git push origin main         — отправить ветку main\n// git push -u origin main      — первый раз (установить tracking)\n// git push                     — если tracking настроен\n\n// Получить изменения\n// git pull                     — fetch + merge\n// git fetch                    — только загрузить\n\n// Типичный workflow:\n// git add .\n// git commit -m "message"\n// git push\n\n// Разрешение конфликтов:\n// Если git pull говорит о конфликте:\n// 1. Открой файл, найди <<< === >>>\n// 2. Выбери нужный вариант\n// 3. git add <файл>\n// 4. git commit' },
+        { type: 'list', items: [
+          'git clone создаёт полную копию репо с историей на локальной машине',
+          'origin — стандартное имя удалённого репо (можно переименовать)',
+          'git pull = git fetch + git merge: загружает и сразу вливает изменения',
+          'git fetch безопаснее — загружает без слияния, можно проверить изменения',
+          'Конфликт: <<<<<<< HEAD — твои изменения, >>>>>>> branch — входящие'
+        ]},
+        { type: 'tip', value: 'Перед git push всегда делай git pull — это уменьшит количество конфликтов. В командной работе: начинай день с git pull чтобы получить изменения коллег. Маленькие частые pull лучше, чем редкие с большим количеством конфликтов.' }
       ]
     },
     {

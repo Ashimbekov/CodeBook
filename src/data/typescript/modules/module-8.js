@@ -49,7 +49,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Mapped types преобразуют тип, проходя по его ключам. Это мощный инструмент для создания производных типов.' },
-        { type: 'code', language: 'typescript', value: '// Делаем все поля опциональными\ntype Partial<T> = {\n    [K in keyof T]?: T[K];\n};\n\n// Делаем все поля readonly\ntype Readonly<T> = {\n    readonly [K in keyof T]: T[K];\n};\n\n// Пример: форма редактирования (все поля опциональны)\ninterface User { id: number; name: string; email: string; }\ntype UserUpdate = Partial<User>; // { id?: number; name?: string; email?: string; }\n\n// Собственный mapped type\ntype Nullable<T> = {\n    [K in keyof T]: T[K] | null;\n};\n\ntype NullableUser = Nullable<User>;\n// { id: number | null; name: string | null; email: string | null; }' }
+        { type: 'code', language: 'typescript', value: '// Делаем все поля опциональными\ntype Partial<T> = {\n    [K in keyof T]?: T[K];\n};\n\n// Делаем все поля readonly\ntype Readonly<T> = {\n    readonly [K in keyof T]: T[K];\n};\n\n// Пример: форма редактирования (все поля опциональны)\ninterface User { id: number; name: string; email: string; }\ntype UserUpdate = Partial<User>; // { id?: number; name?: string; email?: string; }\n\n// Собственный mapped type\ntype Nullable<T> = {\n    [K in keyof T]: T[K] | null;\n};\n\ntype NullableUser = Nullable<User>;\n// { id: number | null; name: string | null; email: string | null; }' },
+        { type: 'list', items: [
+          '[K in keyof T] — проходим по всем ключам типа T, K получает тип каждого ключа',
+          '?: делает поле опциональным, -?: убирает опциональность (Required<T> использует это)',
+          'readonly делает поле только для чтения, -readonly убирает readonly',
+          'as K — ремаппинг ключей: можно переименовать ключи через as, например [K in keyof T as `get${Capitalize<K>}`]',
+          'Фильтрация через never: [K in keyof T as T[K] extends Function ? never : K] — оставить только не-функции'
+        ]},
+        { type: 'tip', value: 'Встроенные Partial, Required, Readonly, Pick, Omit — всё это mapped types. Изучи их реализацию в lib.es5.d.ts — это лучший способ понять синтаксис mapped types.' }
       ]
     },
     {

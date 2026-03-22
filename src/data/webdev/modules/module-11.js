@@ -9,7 +9,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'transition делает изменение CSS-свойств плавным вместо мгновенного скачка. Идеально для hover-эффектов и интерактивных элементов.' },
-        { type: 'code', language: 'css', value: '.button {\n  background: blue;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 6px;\n  transition: background 0.3s ease;\n  /* transition: свойство длительность функция задержка */\n}\n\n.button:hover {\n  background: darkblue;\n}\n\n/* Несколько свойств */\n.card {\n  transform: translateY(0);\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n}\n\n.card:hover {\n  transform: translateY(-4px);\n  box-shadow: 0 8px 24px rgba(0,0,0,0.2);\n}\n\n/* Все свойства (не злоупотребляй) */\n.element {\n  transition: all 0.3s ease;\n}' }
+        { type: 'code', language: 'css', value: '.button {\n  background: blue;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 6px;\n  transition: background 0.3s ease;\n  /* transition: свойство длительность функция задержка */\n}\n\n.button:hover {\n  background: darkblue;\n}\n\n/* Несколько свойств */\n.card {\n  transform: translateY(0);\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n}\n\n.card:hover {\n  transform: translateY(-4px);\n  box-shadow: 0 8px 24px rgba(0,0,0,0.2);\n}\n\n/* Все свойства (не злоупотребляй) */\n.element {\n  transition: all 0.3s ease;\n}' },
+        { type: 'heading', value: 'Синтаксис transition' },
+        { type: 'list', items: [
+          'transition: property duration timing-function delay',
+          'property — CSS свойство для анимации (background, transform, opacity...)',
+          'duration — длительность в секундах (0.3s) или миллисекундах (300ms)',
+          'timing-function — функция скорости (ease, linear, ease-in, ease-out)',
+          'delay — задержка перед началом (0.1s задержка)'
+        ]},
+        { type: 'tip', value: 'Избегай transition: all — это анимирует все свойства, включая нежелательные. Указывай конкретные свойства: transition: transform 0.2s, opacity 0.2s. Это даёт больше контроля и лучшую производительность.' }
       ]
     },
     {
@@ -38,7 +47,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: '@keyframes определяет шаги анимации. Свойство animation применяет её к элементу.' },
-        { type: 'code', language: 'css', value: '/* Определяем анимацию */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes spin {\n  0%   { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n@keyframes pulse {\n  0%, 100% { transform: scale(1); }\n  50%       { transform: scale(1.05); }\n}\n\n/* Применяем анимацию */\n.element {\n  animation: fadeIn 0.5s ease forwards;\n  /* имя длительность функция режим-заполнения */\n}\n\n.spinner {\n  animation: spin 1s linear infinite;\n  /* бесконечное вращение */\n}\n\n/* Все параметры */\n.box {\n  animation-name: slideUp;\n  animation-duration: 0.6s;\n  animation-timing-function: ease-out;\n  animation-delay: 0.2s;\n  animation-iteration-count: 1; /* или infinite */\n  animation-direction: normal;  /* или reverse, alternate */\n  animation-fill-mode: forwards; /* сохранить состояние */\n}' }
+        { type: 'code', language: 'css', value: '/* Определяем анимацию */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes spin {\n  0%   { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n@keyframes pulse {\n  0%, 100% { transform: scale(1); }\n  50%       { transform: scale(1.05); }\n}\n\n/* Применяем анимацию */\n.element {\n  animation: fadeIn 0.5s ease forwards;\n  /* имя длительность функция режим-заполнения */\n}\n\n.spinner {\n  animation: spin 1s linear infinite;\n  /* бесконечное вращение */\n}\n\n/* Все параметры */\n.box {\n  animation-name: slideUp;\n  animation-duration: 0.6s;\n  animation-timing-function: ease-out;\n  animation-delay: 0.2s;\n  animation-iteration-count: 1; /* или infinite */\n  animation-direction: normal;  /* или reverse, alternate */\n  animation-fill-mode: forwards; /* сохранить состояние */\n}' },
+        { type: 'heading', value: 'Ключевые параметры animation' },
+        { type: 'list', items: [
+          'animation-fill-mode: forwards — после завершения остаётся в конечном состоянии',
+          'animation-fill-mode: backwards — до начала (при delay) применяется начальное состояние',
+          'animation-iteration-count: infinite — бесконечное повторение (спиннер)',
+          'animation-direction: alternate — каждый чётный запуск идёт в обратном направлении',
+          'animation-play-state: paused — поставить анимацию на паузу'
+        ]},
+        { type: 'tip', value: 'Разница между transition и animation: transition реагирует на изменение состояния (hover, класс). Animation запускается автоматически и может повторяться. Для сложных анимаций с несколькими шагами используй @keyframes.' }
       ]
     },
     {

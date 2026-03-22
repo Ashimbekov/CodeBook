@@ -62,7 +62,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Распространённые ошибки с async/await: забытый await, несколько необработанных промисов, неправильная цепочка асинхронных операций.' },
-        { type: 'code', language: 'javascript', value: '// Ошибка 1: забытый await\nasync function bad1() {\n  const user = fetchUser(1); // !! Promise, не данные\n  console.log(user.name); // undefined!\n}\n\n// Ошибка 2: Promise не awaited — потеря ошибок\nasync function bad2() {\n  fetchData().catch(console.error); // запустили и забыли\n  doOtherStuff(); // продолжаем без ожидания\n}\n\n// Ошибка 3: последовательный await там, где нужен параллельный\nasync function bad3() {\n  const a = await fetchA(); // ждём\n  const b = await fetchB(); // ждём ещё (но B не зависит от A!)\n  return [a, b]; // медленно!\n}\n\n// Правильно:\nasync function good3() {\n  const [a, b] = await Promise.all([fetchA(), fetchB()]); // параллельно!\n  return [a, b];\n}\n\n// Ошибка 4: async в конструкторе\nclass Bad {\n  constructor() {\n    this.data = await fetchData(); // SyntaxError!\n  }\n}\n\n// Правильно: static factory method\nclass Good {\n  static async create() {\n    const instance = new Good();\n    instance.data = await fetchData();\n    return instance;\n  }\n}\nconst g = await Good.create();' }
+        { type: 'code', language: 'javascript', value: '// Ошибка 1: забытый await\nasync function bad1() {\n  const user = fetchUser(1); // !! Promise, не данные\n  console.log(user.name); // undefined!\n}\n\n// Ошибка 2: Promise не awaited — потеря ошибок\nasync function bad2() {\n  fetchData().catch(console.error); // запустили и забыли\n  doOtherStuff(); // продолжаем без ожидания\n}\n\n// Ошибка 3: последовательный await там, где нужен параллельный\nasync function bad3() {\n  const a = await fetchA(); // ждём\n  const b = await fetchB(); // ждём ещё (но B не зависит от A!)\n  return [a, b]; // медленно!\n}\n\n// Правильно:\nasync function good3() {\n  const [a, b] = await Promise.all([fetchA(), fetchB()]); // параллельно!\n  return [a, b];\n}\n\n// Ошибка 4: async в конструкторе\nclass Bad {\n  constructor() {\n    this.data = await fetchData(); // SyntaxError!\n  }\n}\n\n// Правильно: static factory method\nclass Good {\n  static async create() {\n    const instance = new Good();\n    instance.data = await fetchData();\n    return instance;\n  }\n}\nconst g = await Good.create();' },
+        { type: 'list', items: [
+          'Забытый await: async функция возвращает Promise — без await получаешь объект Promise',
+          'Последовательный await вместо Promise.all: если задачи независимы — запускай параллельно',
+          'async в конструкторе невозможен: конструктор не может возвращать Promise; используй static factory',
+          'for...of с await — последовательный; Promise.all(arr.map(async fn)) — параллельный',
+          'forEach не понимает async callback: используй for...of или Promise.all с map'
+        ]},
+        { type: 'tip', value: 'Частая ошибка: arr.forEach(async item => await process(item)) — forEach не ждёт промисов! Используй for (const item of arr) { await process(item); } для последовательности, или await Promise.all(arr.map(async item => process(item))) для параллельности.' }
       ]
     },
     {

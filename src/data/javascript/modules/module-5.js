@@ -105,7 +105,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Проверки массивов\nconst arr = [1, 2, 3];\nif (Array.isArray(arr)) console.log("массив");\nif (arr.length > 0) console.log("не пустой");\nif (arr.includes(2)) console.log("содержит 2");\nif (arr.some(x => x > 2)) console.log("есть > 2");\nif (arr.every(x => x > 0)) console.log("все > 0");\n\n// Проверки объектов\nconst obj = { a: 1, b: 2 };\nif (obj !== null && typeof obj === "object") console.log("объект");\nif ("a" in obj) console.log("есть ключ a");\nif (Object.keys(obj).length > 0) console.log("не пустой");\nif (Object.hasOwn(obj, "a")) console.log("собственное свойство a"); // ES2022\n\n// Деструктуризация с условиями\nconst { name, age, role = "user" } = { name: "Alice", age: 30 };\nconsole.log(name, age, role); // "Alice" 30 "user"\n\n// Условная деструктуризация\nfunction processUser({ name, role = "user", permissions = [] } = {}) {\n  if (!name) return null;\n  return { displayName: name.toUpperCase(), role, count: permissions.length };\n}\n\nconsole.log(processUser({ name: "Bob" }));\nconsole.log(processUser()); // {} по умолчанию — не ошибка'
-        }
+        },
+        { type: 'list', items: [
+          'Array.isArray(x) — единственно надёжный способ проверить массив (typeof возвращает "object")',
+          'typeof null === "object" — классический баг JS; всегда проверяй x !== null',
+          'Object.hasOwn(obj, key) — современная альтернатива obj.hasOwnProperty(key) (ES2022)',
+          'Деструктуризация с = {} по умолчанию — безопасный вызов функции без аргументов',
+          'arr.some() останавливается при первом совпадении, arr.every() — при первом несовпадении'
+        ]},
+        { type: 'tip', value: 'Для проверки "массив не пустой" используй arr.length > 0, не Boolean(arr) — пустой массив [] является truthy! Для объектов: Object.keys(obj).length > 0 или использование опционального чейнинга obj?.prop.' }
       ]
     },
     {

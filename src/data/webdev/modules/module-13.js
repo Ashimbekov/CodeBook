@@ -19,7 +19,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'CSS-переменные делают реализацию тёмной темы элегантной — достаточно изменить переменные.' },
-        { type: 'code', language: 'css', value: ':root {\n  --bg: #ffffff;\n  --text: #1a1a1a;\n  --card-bg: #f5f5f5;\n  --border: #e0e0e0;\n  --shadow: rgba(0, 0, 0, 0.1);\n}\n\n/* Тёмная тема по системной настройке */\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #0f0f1a;\n    --text: #e8e8f0;\n    --card-bg: #1a1a2e;\n    --border: #2d2d44;\n    --shadow: rgba(0, 0, 0, 0.4);\n  }\n}\n\n/* Тёмная тема по классу (для ручного переключения) */\n[data-theme="dark"] {\n  --bg: #0f0f1a;\n  --text: #e8e8f0;\n  --card-bg: #1a1a2e;\n}\n\n/* Применение — одинаково для светлой и тёмной */\nbody {\n  background: var(--bg);\n  color: var(--text);\n}\n\n.card {\n  background: var(--card-bg);\n  border: 1px solid var(--border);\n  box-shadow: 0 2px 8px var(--shadow);\n}' }
+        { type: 'code', language: 'css', value: ':root {\n  --bg: #ffffff;\n  --text: #1a1a1a;\n  --card-bg: #f5f5f5;\n  --border: #e0e0e0;\n  --shadow: rgba(0, 0, 0, 0.1);\n}\n\n/* Тёмная тема по системной настройке */\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #0f0f1a;\n    --text: #e8e8f0;\n    --card-bg: #1a1a2e;\n    --border: #2d2d44;\n    --shadow: rgba(0, 0, 0, 0.4);\n  }\n}\n\n/* Тёмная тема по классу (для ручного переключения) */\n[data-theme="dark"] {\n  --bg: #0f0f1a;\n  --text: #e8e8f0;\n  --card-bg: #1a1a2e;\n}\n\n/* Применение — одинаково для светлой и тёмной */\nbody {\n  background: var(--bg);\n  color: var(--text);\n}\n\n.card {\n  background: var(--card-bg);\n  border: 1px solid var(--border);\n  box-shadow: 0 2px 8px var(--shadow);\n}' },
+        { type: 'tip', value: 'Два подхода к тёмной теме: @media (prefers-color-scheme: dark) — автоматически по системным настройкам; [data-theme="dark"] — ручное переключение через JavaScript. Реализуй оба для максимального удобства пользователей.' },
+        { type: 'list', items: [
+          'Определи все цвета через переменные — никаких хардкодированных hex-значений',
+          'Не только цвета — тени тоже должны меняться (светлые тени не работают в тёмной теме)',
+          'Добавь плавный переход: body { transition: background 0.3s, color 0.3s; }',
+          'Сохраняй выбор пользователя в localStorage и применяй при загрузке страницы'
+        ]},
+        { type: 'note', value: 'Изображения и иконки тоже нуждаются в адаптации. CSS фильтр invert(1) для иконок в тёмной теме — быстрое решение, но лучше иметь отдельные версии для каждой темы.' }
       ]
     },
     {
@@ -28,7 +36,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: ':is() и :where() позволяют группировать несколько селекторов в одном правиле. :is() учитывает специфичность, :where() — нет.' },
-        { type: 'code', language: 'css', value: '/* Без :is() — многословно */\nh1 a, h2 a, h3 a, h4 a {\n  color: inherit;\n  text-decoration: none;\n}\n\n/* С :is() — элегантно */\n:is(h1, h2, h3, h4) a {\n  color: inherit;\n  text-decoration: none;\n}\n\n/* :where() — то же самое, но специфичность = 0 */\n:where(h1, h2, h3, h4) a {\n  color: inherit; /* легко перебить без !important */\n}\n\n/* Практический пример */\n:is(button, a, input):focus-visible {\n  outline: 2px solid var(--color-primary);\n  outline-offset: 2px;\n}\n\n/* Сложные вложенные селекторы */\n:is(.card, .panel, .modal) :is(h2, h3) {\n  margin-top: 0;\n}' }
+        { type: 'code', language: 'css', value: '/* Без :is() — многословно */\nh1 a, h2 a, h3 a, h4 a {\n  color: inherit;\n  text-decoration: none;\n}\n\n/* С :is() — элегантно */\n:is(h1, h2, h3, h4) a {\n  color: inherit;\n  text-decoration: none;\n}\n\n/* :where() — то же самое, но специфичность = 0 */\n:where(h1, h2, h3, h4) a {\n  color: inherit; /* легко перебить без !important */\n}\n\n/* Практический пример */\n:is(button, a, input):focus-visible {\n  outline: 2px solid var(--color-primary);\n  outline-offset: 2px;\n}\n\n/* Сложные вложенные селекторы */\n:is(.card, .panel, .modal) :is(h2, h3) {\n  margin-top: 0;\n}' },
+        { type: 'heading', value: 'Разница между :is() и :where()' },
+        { type: 'list', items: [
+          ':is(h1, .class, #id) — специфичность = максимум из списка (h1+class = 0,1,1)',
+          ':where(h1, .class, #id) — специфичность всегда 0 (легко перебить)',
+          ':is() — для стилей с нормальным весом',
+          ':where() — для базовых стилей в CSS reset или библиотеках'
+        ]},
+        { type: 'tip', value: 'Используй :where() в CSS reset и базовых стилях компонентов — нулевая специфичность позволяет пользователям легко переопределять стили без !important. :is() подходит для обычного кода.' }
       ]
     },
     {

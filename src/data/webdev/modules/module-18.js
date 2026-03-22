@@ -9,7 +9,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'События — способ реагировать на действия пользователя и браузера. addEventListener — современный и правильный способ подписаться на событие.' },
-        { type: 'code', language: 'javascript', value: 'const btn = document.querySelector(".btn");\n\n// Подписка на событие\nbtn.addEventListener("click", function() {\n  console.log("Кнопка нажата!");\n});\n\n// Стрелочная функция\nbtn.addEventListener("click", () => {\n  console.log("Кнопка нажата!");\n});\n\n// Именованная функция (можно удалить потом)\nfunction handleClick() {\n  console.log("Клик!");\n}\nbtn.addEventListener("click", handleClick);\n\n// Удаление обработчика\nbtn.removeEventListener("click", handleClick);\n\n// Одноразовый обработчик\nbtn.addEventListener("click", () => {\n  console.log("Только один раз!");\n}, { once: true });\n\n// Старый способ (не использовать!)\n// btn.onclick = function() { ... };' }
+        { type: 'code', language: 'javascript', value: 'const btn = document.querySelector(".btn");\n\n// Подписка на событие\nbtn.addEventListener("click", function() {\n  console.log("Кнопка нажата!");\n});\n\n// Стрелочная функция\nbtn.addEventListener("click", () => {\n  console.log("Кнопка нажата!");\n});\n\n// Именованная функция (можно удалить потом)\nfunction handleClick() {\n  console.log("Клик!");\n}\nbtn.addEventListener("click", handleClick);\n\n// Удаление обработчика\nbtn.removeEventListener("click", handleClick);\n\n// Одноразовый обработчик\nbtn.addEventListener("click", () => {\n  console.log("Только один раз!");\n}, { once: true });\n\n// Старый способ (не использовать!)\n// btn.onclick = function() { ... };' },
+        { type: 'list', items: [
+          'addEventListener принимает тип события, функцию-обработчик и опциональный объект настроек',
+          'once: true — обработчик сработает один раз и автоматически удалится',
+          'passive: true — подсказка браузеру что preventDefault не будет вызван (оптимизация прокрутки)',
+          'removeEventListener требует ту же функцию — анонимные функции удалить нельзя',
+          'На один элемент можно подписать несколько обработчиков на одно событие',
+          'btn.onclick — старый способ, позволяет только один обработчик на событие'
+        ]},
+        { type: 'tip', value: 'Всегда используй addEventListener вместо onclick/onsubmit/... Атрибутный способ позволяет только один обработчик и смешивает HTML с JS. addEventListener поддерживает несколько обработчиков и опции (once, passive, capture).' }
       ]
     },
     {
@@ -18,7 +27,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Браузер генерирует десятки разных событий. Вот самые важные.' },
-        { type: 'code', language: 'javascript', value: '// Мышь\nel.addEventListener("click", fn);       // клик\nel.addEventListener("dblclick", fn);    // двойной клик\nel.addEventListener("mousedown", fn);   // нажатие кнопки\nel.addEventListener("mouseup", fn);     // отпускание\nel.addEventListener("mousemove", fn);   // движение мыши\nel.addEventListener("mouseover", fn);   // навели мышь\nel.addEventListener("mouseout", fn);    // убрали мышь\nel.addEventListener("contextmenu", fn); // правая кнопка\n\n// Клавиатура\nel.addEventListener("keydown", fn);   // нажата клавиша\nel.addEventListener("keyup", fn);     // отпущена\nel.addEventListener("keypress", fn);  // устаревший\n\n// Форма\nform.addEventListener("submit", fn);   // отправка формы\ninput.addEventListener("change", fn);  // изменение значения\ninput.addEventListener("input", fn);   // каждый символ\ninput.addEventListener("focus", fn);   // получил фокус\ninput.addEventListener("blur", fn);    // потерял фокус\n\n// Документ\nwindow.addEventListener("load", fn);          // страница загружена\ndocument.addEventListener("DOMContentLoaded", fn); // DOM готов\nwindow.addEventListener("resize", fn);        // изменение размера\nwindow.addEventListener("scroll", fn);        // прокрутка\nwindow.addEventListener("beforeunload", fn);  // закрытие' }
+        { type: 'code', language: 'javascript', value: '// Мышь\nel.addEventListener("click", fn);       // клик\nel.addEventListener("dblclick", fn);    // двойной клик\nel.addEventListener("mousedown", fn);   // нажатие кнопки\nel.addEventListener("mouseup", fn);     // отпускание\nel.addEventListener("mousemove", fn);   // движение мыши\nel.addEventListener("mouseover", fn);   // навели мышь\nel.addEventListener("mouseout", fn);    // убрали мышь\nel.addEventListener("contextmenu", fn); // правая кнопка\n\n// Клавиатура\nel.addEventListener("keydown", fn);   // нажата клавиша\nel.addEventListener("keyup", fn);     // отпущена\nel.addEventListener("keypress", fn);  // устаревший\n\n// Форма\nform.addEventListener("submit", fn);   // отправка формы\ninput.addEventListener("change", fn);  // изменение значения\ninput.addEventListener("input", fn);   // каждый символ\ninput.addEventListener("focus", fn);   // получил фокус\ninput.addEventListener("blur", fn);    // потерял фокус\n\n// Документ\nwindow.addEventListener("load", fn);          // страница загружена\ndocument.addEventListener("DOMContentLoaded", fn); // DOM готов\nwindow.addEventListener("resize", fn);        // изменение размера\nwindow.addEventListener("scroll", fn);        // прокрутка\nwindow.addEventListener("beforeunload", fn);  // закрытие' },
+        { type: 'heading', value: 'Разница между похожими событиями' },
+        { type: 'list', items: [
+          'input — срабатывает при каждом изменении значения (каждый символ)',
+          'change — срабатывает после потери фокуса, когда значение изменилось',
+          'mouseover/mouseout — срабатывают при входе в дочерние элементы тоже',
+          'mouseenter/mouseleave — срабатывают только при входе/выходе из самого элемента',
+          'DOMContentLoaded — DOM построен, load — вся страница включая картинки загружена',
+          'keydown срабатывает при удержании клавиши, keypress — устарел, использовать keydown'
+        ]},
+        { type: 'tip', value: 'Для живого поиска используй событие input, а не keydown. input срабатывает при любом изменении (вставка, автозаполнение), keydown — только при нажатии клавиш.' }
       ]
     },
     {
@@ -27,7 +46,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Обработчик события получает объект события с информацией о том, что произошло.' },
-        { type: 'code', language: 'javascript', value: 'document.addEventListener("click", (event) => {\n  // Информация о событии\n  console.log(event.type);       // "click"\n  console.log(event.target);     // элемент, по которому кликнули\n  console.log(event.currentTarget); // элемент с обработчиком\n  \n  // Координаты мыши\n  console.log(event.clientX, event.clientY); // от края окна\n  console.log(event.pageX, event.pageY);     // от края страницы\n});\n\n// Клавиатурные события\ndocument.addEventListener("keydown", (e) => {\n  console.log(e.key);      // "Enter", "Escape", "a", " "\n  console.log(e.code);     // "Enter", "KeyA", "Space"\n  console.log(e.ctrlKey);  // true если зажат Ctrl\n  console.log(e.altKey);   // Alt\n  console.log(e.shiftKey); // Shift\n  \n  if (e.key === "Escape") closeModal();\n  if (e.ctrlKey && e.key === "s") saveDocument();\n});\n\n// Отмена действия по умолчанию\nform.addEventListener("submit", (e) => {\n  e.preventDefault(); // НЕ перезагружать страницу\n  validateAndSend();\n});\n\nlink.addEventListener("click", (e) => {\n  e.preventDefault(); // НЕ переходить по ссылке\n});' }
+        { type: 'code', language: 'javascript', value: 'document.addEventListener("click", (event) => {\n  // Информация о событии\n  console.log(event.type);       // "click"\n  console.log(event.target);     // элемент, по которому кликнули\n  console.log(event.currentTarget); // элемент с обработчиком\n  \n  // Координаты мыши\n  console.log(event.clientX, event.clientY); // от края окна\n  console.log(event.pageX, event.pageY);     // от края страницы\n});\n\n// Клавиатурные события\ndocument.addEventListener("keydown", (e) => {\n  console.log(e.key);      // "Enter", "Escape", "a", " "\n  console.log(e.code);     // "Enter", "KeyA", "Space"\n  console.log(e.ctrlKey);  // true если зажат Ctrl\n  console.log(e.altKey);   // Alt\n  console.log(e.shiftKey); // Shift\n  \n  if (e.key === "Escape") closeModal();\n  if (e.ctrlKey && e.key === "s") saveDocument();\n});\n\n// Отмена действия по умолчанию\nform.addEventListener("submit", (e) => {\n  e.preventDefault(); // НЕ перезагружать страницу\n  validateAndSend();\n});\n\nlink.addEventListener("click", (e) => {\n  e.preventDefault(); // НЕ переходить по ссылке\n});' },
+        { type: 'list', items: [
+          'event.target — элемент, на котором произошло событие (где кликнули)',
+          'event.currentTarget — элемент, к которому привязан обработчик (может быть родителем)',
+          'e.key возвращает читаемое название клавиши: "Enter", "Escape", "ArrowUp", "a"',
+          'e.code возвращает физическое название клавиши: "KeyA", "Space" — не зависит от раскладки',
+          'e.preventDefault() отменяет стандартное действие браузера (переход, отправка формы)',
+          'e.stopPropagation() останавливает всплытие события к родительским элементам'
+        ]},
+        { type: 'tip', value: 'Для горячих клавиш используй e.key, а не e.keyCode — keyCode устарел. Проверяй модификаторы через e.ctrlKey, e.altKey, e.shiftKey, e.metaKey (Cmd на Mac).' }
       ]
     },
     {
@@ -56,7 +84,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Можно создавать и генерировать собственные события. Debounce и throttle ограничивают частоту вызова обработчиков.' },
-        { type: 'code', language: 'javascript', value: '// Пользовательское событие\nconst event = new CustomEvent("userLoggedIn", {\n  detail: { userId: 123, name: "Алина" },\n  bubbles: true\n});\ndocument.dispatchEvent(event);\n\ndocument.addEventListener("userLoggedIn", (e) => {\n  console.log("Вошёл:", e.detail.name);\n});\n\n// Debounce — ждать паузу после последнего вызова\nfunction debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\n// Поиск срабатывает только после 300мс паузы\nconst search = debounce((query) => {\n  fetchResults(query);\n}, 300);\n\ninput.addEventListener("input", (e) => search(e.target.value));\n\n// Throttle — не чаще N раз в секунду\nfunction throttle(fn, interval) {\n  let lastTime = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastTime >= interval) {\n      lastTime = now;\n      fn.apply(this, args);\n    }\n  };\n}\n\nwindow.addEventListener("scroll", throttle(() => {\n  updateScrollProgress();\n}, 100));' }
+        { type: 'code', language: 'javascript', value: '// Пользовательское событие\nconst event = new CustomEvent("userLoggedIn", {\n  detail: { userId: 123, name: "Алина" },\n  bubbles: true\n});\ndocument.dispatchEvent(event);\n\ndocument.addEventListener("userLoggedIn", (e) => {\n  console.log("Вошёл:", e.detail.name);\n});\n\n// Debounce — ждать паузу после последнего вызова\nfunction debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\n// Поиск срабатывает только после 300мс паузы\nconst search = debounce((query) => {\n  fetchResults(query);\n}, 300);\n\ninput.addEventListener("input", (e) => search(e.target.value));\n\n// Throttle — не чаще N раз в секунду\nfunction throttle(fn, interval) {\n  let lastTime = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastTime >= interval) {\n      lastTime = now;\n      fn.apply(this, args);\n    }\n  };\n}\n\nwindow.addEventListener("scroll", throttle(() => {\n  updateScrollProgress();\n}, 100));' },
+        { type: 'heading', value: 'Debounce vs Throttle' },
+        { type: 'list', items: [
+          'Debounce — функция вызывается только после паузы (ждёт тишины). Для поиска по мере ввода',
+          'Throttle — функция вызывается не чаще чем раз в N мс. Для scroll, resize, mousemove',
+          'CustomEvent позволяет создавать систему событий для компонентов без фреймворка',
+          'bubbles: true — пользовательское событие будет всплывать как встроенное',
+          'detail — объект с произвольными данными для передачи в обработчик'
+        ]},
+        { type: 'tip', value: 'Debounce значительно снижает количество запросов к API при поиске: без debounce каждый символ вызывает fetch, с debounce(300) — только когда пользователь остановился на 300мс. Это снижает нагрузку на сервер в 10-20 раз.' }
       ]
     },
     {

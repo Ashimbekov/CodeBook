@@ -40,7 +40,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Три utility type для работы с union типами: Exclude убирает типы, Extract оставляет совпадающие, NonNullable убирает null/undefined.' },
-        { type: 'code', language: 'typescript', value: 'type A = "a" | "b" | "c" | "d";\ntype B = "b" | "d";\n\n// Exclude — убрать типы из A которые есть в B\ntype OnlyA = Exclude<A, B>; // "a" | "c"\n\n// Extract — оставить типы из A которые есть в B\ntype InBoth = Extract<A, B>; // "b" | "d"\n\n// NonNullable — убрать null и undefined\ntype C = string | number | null | undefined;\ntype NotNull = NonNullable<C>; // string | number\n\n// Практическое применение\ntype EventType = "click" | "submit" | "change" | "focus";\ntype InteractiveEvents = Exclude<EventType, "focus">; // убираем неинтерактивные\n// "click" | "submit" | "change"\n\ntype StringEvents = Extract<EventType, `${"click" | "change"}`>; // "click" | "change"' }
+        { type: 'code', language: 'typescript', value: 'type A = "a" | "b" | "c" | "d";\ntype B = "b" | "d";\n\n// Exclude — убрать типы из A которые есть в B\ntype OnlyA = Exclude<A, B>; // "a" | "c"\n\n// Extract — оставить типы из A которые есть в B\ntype InBoth = Extract<A, B>; // "b" | "d"\n\n// NonNullable — убрать null и undefined\ntype C = string | number | null | undefined;\ntype NotNull = NonNullable<C>; // string | number\n\n// Практическое применение\ntype EventType = "click" | "submit" | "change" | "focus";\ntype InteractiveEvents = Exclude<EventType, "focus">; // убираем неинтерактивные\n// "click" | "submit" | "change"\n\ntype StringEvents = Extract<EventType, `${"click" | "change"}`>; // "click" | "change"' },
+        { type: 'list', items: [
+          'Exclude<T, U>: реализован как T extends U ? never : T — распределяется по union T, убирает члены совпадающие с U',
+          'Extract<T, U>: T extends U ? T : never — противоположность Exclude, оставляет только совпадающие',
+          'NonNullable<T>: Exclude<T, null | undefined> — убирает null и undefined из union',
+          'NonNullable полезен с strictNullChecks: функции возвращающие T | null | undefined обрабатываются через NonNullable',
+          'Exclude работает с объектными типами: Exclude<Cat | Dog | Fish, { legs: number }> — уберёт имеющих поле legs'
+        ]},
+        { type: 'tip', value: 'Используй NonNullable после проверок: if (value != null) { const v: NonNullable<typeof value> = value; }. Или через оператор ! (non-null assertion) когда уверен что значение не null.' }
       ]
     },
     {
@@ -59,7 +67,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Awaited (TypeScript 4.5+) разворачивает тип Promise, возвращая тип разрешённого значения.' },
-        { type: 'code', language: 'typescript', value: '// Awaited — тип разрешённого значения Promise\ntype A = Awaited<Promise<string>>;          // string\ntype B = Awaited<Promise<Promise<number>>>;  // number (рекурсивно)\ntype C = Awaited<string>;                   // string (не Promise)\n\n// Практическое применение\nasync function fetchUser(id: number) {\n    const response = await fetch(`/api/users/${id}`);\n    return response.json() as Promise<{ id: number; name: string; }>;\n}\n\ntype FetchedUser = Awaited<ReturnType<typeof fetchUser>>;\n// { id: number; name: string; }\n\n// Комбинирование utility types\ntype ApiResult<T> = {\n    data: T;\n    timestamp: string;\n};\n\nasync function getUsers(): Promise<ApiResult<User[]>> {\n    return { data: [], timestamp: new Date().toISOString() };\n}\n\ntype UsersResult = Awaited<ReturnType<typeof getUsers>>;\n// ApiResult<User[]>' }
+        { type: 'code', language: 'typescript', value: '// Awaited — тип разрешённого значения Promise\ntype A = Awaited<Promise<string>>;          // string\ntype B = Awaited<Promise<Promise<number>>>;  // number (рекурсивно)\ntype C = Awaited<string>;                   // string (не Promise)\n\n// Практическое применение\nasync function fetchUser(id: number) {\n    const response = await fetch(`/api/users/${id}`);\n    return response.json() as Promise<{ id: number; name: string; }>;\n}\n\ntype FetchedUser = Awaited<ReturnType<typeof fetchUser>>;\n// { id: number; name: string; }\n\n// Комбинирование utility types\ntype ApiResult<T> = {\n    data: T;\n    timestamp: string;\n};\n\nasync function getUsers(): Promise<ApiResult<User[]>> {\n    return { data: [], timestamp: new Date().toISOString() };\n}\n\ntype UsersResult = Awaited<ReturnType<typeof getUsers>>;\n// ApiResult<User[]>' },
+        { type: 'list', items: [
+          'Awaited рекурсивен: Awaited<Promise<Promise<number>>> = number — разворачивает вложенные Promise',
+          'Awaited<string> = string — безопасен для не-Promise типов, не выбрасывает ошибку',
+          'Awaited<ReturnType<typeof fn>> — мощный паттерн: получить тип результата async функции без явного интерфейса',
+          'До TypeScript 4.5 использовали самописный тип: type Unpacked<T> = T extends Promise<infer R> ? R : T',
+          'Promise.all: Awaited<Awaited<ReturnType<typeof Promise.all<...>>>> — TypeScript 4.5+ обрабатывает корректно'
+        ]},
+        { type: 'tip', value: 'Awaited<ReturnType<typeof myFunc>> — стандартный способ получить тип без явного описания интерфейса. Особенно удобно для функций из сторонних библиотек.' }
       ]
     },
     {

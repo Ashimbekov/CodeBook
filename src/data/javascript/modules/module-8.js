@@ -80,7 +80,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// Цепочки методов с стрелочными функциями\nconst result = [1, -2, 3, -4, 5]\n  .filter(n => n > 0)        // [1, 3, 5]\n  .map(n => n * n)            // [1, 9, 25]\n  .reduce((sum, n) => sum + n, 0); // 35\nconsole.log(result);\n\n// Каррирование\nconst add = a => b => a + b;\nconst add5 = add(5);\nconsole.log(add5(3)); // 8\nconsole.log(add(10)(20)); // 30\n\n// Точечный стиль (point-free)\nconst isPositive = n => n > 0;\nconst double = n => n * 2;\nconst positiveDoubles = arr => arr.filter(isPositive).map(double);\nconsole.log(positiveDoubles([-1, 2, -3, 4])); // [4, 8]\n\n// Условие как выражение\nconst clamp = (value, min, max) =>\n  Math.min(Math.max(value, min), max);\nconsole.log(clamp(15, 0, 10)); // 10\nconsole.log(clamp(-5, 0, 10)); // 0\nconsole.log(clamp(5, 0, 10));  // 5\n\n// Пайплайн данных\nconst pipeline = (...fns) => (x) => fns.reduce((v, fn) => fn(v), x);\nconst process = pipeline(\n  x => x.trim(),\n  x => x.toLowerCase(),\n  x => x.replace(/\\s+/g, "-")\n);\nconsole.log(process("  Hello World  ")); // "hello-world"'
-        }
+        },
+        { type: 'list', items: [
+          'Implicit return: однострочная стрелочная функция возвращает выражение без return',
+          'Для возврата объекта оберни в скобки: n => ({ id: n }) — иначе {} трактуется как блок',
+          'Каррирование: a => b => a + b — цепочка стрелочных функций, каждая принимает 1 аргумент',
+          'Точечный стиль (point-free) передаёт функции без явных аргументов: .map(double)',
+          'Пайплайн: последовательное применение функций — функциональная альтернатива цепочкам методов'
+        ]},
+        { type: 'tip', value: 'Когда implicit return работает: n => n * 2, arr => arr.filter(Boolean). Когда нужны скобки: n => ({ id: n }) для объекта, n => { const x = n * 2; return x; } для многострочной логики.' }
       ]
     },
     {

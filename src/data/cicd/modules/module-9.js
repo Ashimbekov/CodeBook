@@ -39,7 +39,17 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'bandit находит типичные уязвимости безопасности в Python коде: SQL инъекции, захардкоженные пароли, небезопасные хеши.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  security:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pip install bandit safety\n\n      # bandit — SAST (Static Application Security Testing)\n      - name: bandit\n        run: bandit -r src/ -f json -o bandit-report.json\n        continue-on-error: true  # не блокировать CI\n\n      - uses: actions/upload-artifact@v4\n        with:\n          name: bandit-report\n          path: bandit-report.json\n\n      # safety — проверка уязвимых зависимостей\n      - name: safety\n        run: safety check -r requirements.txt\n\n      # Встроенная проверка GitLab\n      # include: - template: "Security/SAST.gitlab-ci.yml"' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  security:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pip install bandit safety\n\n      # bandit — SAST (Static Application Security Testing)\n      - name: bandit\n        run: bandit -r src/ -f json -o bandit-report.json\n        continue-on-error: true  # не блокировать CI\n\n      - uses: actions/upload-artifact@v4\n        with:\n          name: bandit-report\n          path: bandit-report.json\n\n      # safety — проверка уязвимых зависимостей\n      - name: safety\n        run: safety check -r requirements.txt\n\n      # Встроенная проверка GitLab\n      # include: - template: "Security/SAST.gitlab-ci.yml"' },
+        { type: 'heading', value: 'Что находит bandit' },
+        { type: 'list', items: [
+          'B105, B106 — захардкоженные пароли в коде (password = "secret123")',
+          'B201, B501 — использование небезопасных хешей (MD5, SHA1)',
+          'B608 — возможные SQL инъекции при конкатенации строк',
+          'B301 — использование pickle.loads с непроверенными данными',
+          'B101 — использование assert в production коде (отключается с -O)',
+          'B311 — использование random вместо secrets для криптографии'
+        ]},
+        { type: 'tip', value: 'bandit -ll проверяет только medium и high severity — хорошая точка старта. -r src/ рекурсивно проверяет директорию. Добавь # nosec в строку кода чтобы подавить конкретное предупреждение если оно ложноположительное.' }
       ]
     },
     {

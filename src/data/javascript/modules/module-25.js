@@ -65,7 +65,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Паттерны: очередь промисов, retry с backoff, дедубликация запросов через кэш промисов.' },
-        { type: 'code', language: 'javascript', value: '// Очередь промисов (sequential execution)\nfunction sequential(tasks) {\n  return tasks.reduce(\n    (chain, task) => chain.then(task),\n    Promise.resolve()\n  );\n}\n\nconst tasks = [\n  () => delay(100).then(() => console.log("Задача 1")),\n  () => delay(200).then(() => console.log("Задача 2")),\n  () => delay(50).then(() => console.log("Задача 3"))\n];\n\nsequential(tasks); // строго по порядку: 1, 2, 3\n\n// Кэш промисов — дедубликация запросов\nclass PromiseCache {\n  #cache = new Map();\n\n  get(key, factory) {\n    if (!this.#cache.has(key)) {\n      this.#cache.set(key, factory().catch(err => {\n        this.#cache.delete(key); // убираем из кэша при ошибке\n        return Promise.reject(err);\n      }));\n    }\n    return this.#cache.get(key);\n  }\n\n  invalidate(key) { this.#cache.delete(key); }\n}\n\nconst cache = new PromiseCache();\n// Два параллельных запроса — НЕ создадут два fetch!\ncache.get("user_1", () => fetch("/api/users/1").then(r => r.json()));\ncache.get("user_1", () => fetch("/api/users/1").then(r => r.json()));\n// Второй вызов вернёт тот же промис!' }
+        { type: 'code', language: 'javascript', value: '// Очередь промисов (sequential execution)\nfunction sequential(tasks) {\n  return tasks.reduce(\n    (chain, task) => chain.then(task),\n    Promise.resolve()\n  );\n}\n\nconst tasks = [\n  () => delay(100).then(() => console.log("Задача 1")),\n  () => delay(200).then(() => console.log("Задача 2")),\n  () => delay(50).then(() => console.log("Задача 3"))\n];\n\nsequential(tasks); // строго по порядку: 1, 2, 3\n\n// Кэш промисов — дедубликация запросов\nclass PromiseCache {\n  #cache = new Map();\n\n  get(key, factory) {\n    if (!this.#cache.has(key)) {\n      this.#cache.set(key, factory().catch(err => {\n        this.#cache.delete(key); // убираем из кэша при ошибке\n        return Promise.reject(err);\n      }));\n    }\n    return this.#cache.get(key);\n  }\n\n  invalidate(key) { this.#cache.delete(key); }\n}\n\nconst cache = new PromiseCache();\n// Два параллельных запроса — НЕ создадут два fetch!\ncache.get("user_1", () => fetch("/api/users/1").then(r => r.json()));\ncache.get("user_1", () => fetch("/api/users/1").then(r => r.json()));\n// Второй вызов вернёт тот же промис!' },
+        { type: 'list', items: [
+          'Очередь промисов через reduce: каждая задача запускается после завершения предыдущей',
+          'Кэш промисов: сохраняем сам промис (не результат), повторные вызовы получают тот же промис',
+          'При ошибке удаляем из кэша — следующий вызов создаст новый промис (retry)',
+          'Promise.race для таймаутов: первый завершившийся промис выигрывает',
+          'Ограничение параллелизма (concurrency limiter): пул из N workers разбирает задачи из очереди'
+        ]},
+        { type: 'tip', value: 'Паттерн deduplication (кэш промисов) критически важен для предотвращения дублирующихся запросов при множественном монтировании компонентов в React или параллельных вызовах в Node.js. Кэшируй промис, а не данные.' }
       ]
     },
     {

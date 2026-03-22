@@ -34,7 +34,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Variables — для нечувствительных данных которые могут меняться между окружениями (URL, имена образов). Видны в логах, в отличие от secrets.' },
-        { type: 'code', language: 'yaml', value: '# Settings -> Secrets and variables -> Variables\n# Использование:\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой\n        env:\n          APP_URL: ${{ vars.APP_URL }}           # переменная репозитория\n          IMAGE_NAME: ${{ vars.DOCKER_IMAGE }}   # имя образа\n        run: |\n          echo "Деплой на $APP_URL"\n          docker pull $IMAGE_NAME:latest\n\n      # Встроенные переменные GitHub\n      - run: |\n          echo "Репозиторий: $GITHUB_REPOSITORY"\n          echo "Ветка: $GITHUB_REF_NAME"\n          echo "SHA: $GITHUB_SHA"\n          echo "Актор: $GITHUB_ACTOR"' }
+        { type: 'code', language: 'yaml', value: '# Settings -> Secrets and variables -> Variables\n# Использование:\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой\n        env:\n          APP_URL: ${{ vars.APP_URL }}           # переменная репозитория\n          IMAGE_NAME: ${{ vars.DOCKER_IMAGE }}   # имя образа\n        run: |\n          echo "Деплой на $APP_URL"\n          docker pull $IMAGE_NAME:latest\n\n      # Встроенные переменные GitHub\n      - run: |\n          echo "Репозиторий: $GITHUB_REPOSITORY"\n          echo "Ветка: $GITHUB_REF_NAME"\n          echo "SHA: $GITHUB_SHA"\n          echo "Актор: $GITHUB_ACTOR"' },
+        { type: 'heading', value: 'Когда использовать Variables вместо Secrets' },
+        { type: 'list', items: [
+          'Variables: URL приложения, имена Docker образов, флаги конфигурации, email для уведомлений',
+          'Secrets: пароли, API ключи, SSH ключи, токены, строки подключения к БД',
+          'Variables видны в логах и в UI — никогда не помещай чувствительные данные в Variables',
+          'Variables можно задавать на уровне репозитория, окружения или организации'
+        ]},
+        { type: 'tip', value: 'Variables удобны для конфигурации которую можно менять без правки кода. Например: ${{ vars.APP_URL }} в staging окружении указывает на staging.example.com, в production — на example.com.' }
       ]
     },
     {

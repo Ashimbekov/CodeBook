@@ -30,7 +30,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'code', language: 'typescript', value: 'interface Printable {\n    print(): void;\n}\n\ninterface Serializable {\n    serialize(): string;\n}\n\nabstract class Shape implements Printable {\n    abstract area(): number;    // Должен быть реализован\n    abstract perimeter(): number;\n\n    print(): void {\n        console.log(`Площадь: ${this.area()}, периметр: ${this.perimeter()}`);\n    }\n}\n\nclass Circle extends Shape implements Serializable {\n    constructor(private radius: number) { super(); }\n\n    area(): number { return Math.PI * this.radius ** 2; }\n    perimeter(): number { return 2 * Math.PI * this.radius; }\n    serialize(): string { return JSON.stringify({ type: "circle", radius: this.radius }); }\n}\n\nconst circle = new Circle(5);\ncircle.print(); // Площадь: 78.5..., периметр: 31.4...' },
-        { type: 'note', value: 'abstract класс нельзя инстанцировать напрямую. Он задаёт контракт для подклассов. implements — реализация интерфейса (проверяет что все методы реализованы).' }
+        { type: 'note', value: 'abstract класс нельзя инстанцировать напрямую. Он задаёт контракт для подклассов. implements — реализация интерфейса (проверяет что все методы реализованы).' },
+        { type: 'list', items: [
+          'extends — наследование: подкласс получает все методы и свойства родителя, abstract методы обязательны к реализации',
+          'implements — реализация интерфейса: TypeScript проверяет наличие всех методов, объект класса не расширяется',
+          'Класс может implements несколько интерфейсов через запятую: class C implements A, B',
+          'super() в конструкторе дочернего класса — обязателен, вызывает конструктор родителя перед доступом к this',
+          'Полиморфизм: переменная типа Shape может содержать Circle, Rectangle — TypeScript проверит совместимость'
+        ]},
+        { type: 'tip', value: 'Предпочитайте интерфейсы абстрактным классам для описания контрактов. Абстрактный класс используйте когда нужно общее поведение (шаблонный метод) плюс контракт.' }
       ]
     },
     {
@@ -39,7 +47,14 @@ export default {
       type: 'theory',
       content: [
         { type: 'code', language: 'typescript', value: 'class Temperature {\n    private _celsius: number;\n\n    constructor(celsius: number) {\n        this._celsius = celsius;\n    }\n\n    // Геттер\n    get fahrenheit(): number {\n        return this._celsius * 9/5 + 32;\n    }\n\n    // Сеттер с валидацией\n    set celsius(value: number) {\n        if (value < -273.15) {\n            throw new Error("Ниже абсолютного нуля!");\n        }\n        this._celsius = value;\n    }\n\n    get celsius(): number {\n        return this._celsius;\n    }\n}\n\nconst temp = new Temperature(0);\nconsole.log(temp.fahrenheit); // 32\ntemp.celsius = 100;\nconsole.log(temp.fahrenheit); // 212\n// temp.celsius = -300; — выброс исключения' },
-        { type: 'tip', value: 'Геттеры/сеттеры позволяют добавить логику к "полям" сохраняя внешний интерфейс без явного вызова методов.' }
+        { type: 'tip', value: 'Геттеры/сеттеры позволяют добавить логику к "полям" сохраняя внешний интерфейс без явного вызова методов.' },
+        { type: 'list', items: [
+          'Геттер без сеттера — readonly свойство. TypeScript не позволит присвоить значение: "Cannot set property"',
+          'Сеттер без геттера — write-only, читать нельзя. Редкий паттерн (например, для записи пароля)',
+          'Типы геттера и сеттера должны быть совместимы: get celsius(): number, set celsius(v: number) — тип v должен быть number',
+          'Геттеры ленивые: вычисляются при каждом обращении. Для дорогих вычислений кэшируй в приватном поле',
+          'Интерфейс может объявлять readonly свойство, которое класс реализует через геттер: interface I { readonly name: string }'
+        ]}
       ]
     },
     {
@@ -48,7 +63,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'static методы и свойства принадлежат классу, а не экземпляру. Они вызываются через имя класса.' },
-        { type: 'code', language: 'typescript', value: 'class MathUtils {\n    static readonly PI: number = 3.14159;\n\n    static circleArea(r: number): number {\n        return MathUtils.PI * r * r;\n    }\n\n    static clamp(value: number, min: number, max: number): number {\n        return Math.max(min, Math.min(max, value));\n    }\n}\n\nconsole.log(MathUtils.PI); // 3.14159\nconsole.log(MathUtils.circleArea(5)); // 78.5\nconsole.log(MathUtils.clamp(15, 0, 10)); // 10\n\n// Singleton паттерн\nclass Database {\n    private static instance: Database | null = null;\n    private constructor() { console.log("Подключение к БД..."); }\n    static getInstance(): Database {\n        if (!Database.instance) Database.instance = new Database();\n        return Database.instance;\n    }\n}' }
+        { type: 'code', language: 'typescript', value: 'class MathUtils {\n    static readonly PI: number = 3.14159;\n\n    static circleArea(r: number): number {\n        return MathUtils.PI * r * r;\n    }\n\n    static clamp(value: number, min: number, max: number): number {\n        return Math.max(min, Math.min(max, value));\n    }\n}\n\nconsole.log(MathUtils.PI); // 3.14159\nconsole.log(MathUtils.circleArea(5)); // 78.5\nconsole.log(MathUtils.clamp(15, 0, 10)); // 10\n\n// Singleton паттерн\nclass Database {\n    private static instance: Database | null = null;\n    private constructor() { console.log("Подключение к БД..."); }\n    static getInstance(): Database {\n        if (!Database.instance) Database.instance = new Database();\n        return Database.instance;\n    }\n}' },
+        { type: 'list', items: [
+          'static свойства/методы — на прототипе класса, а не экземпляра. this в статическом методе — сам класс',
+          'static readonly — константы класса. Лучше чем отдельные const: связаны с контекстом класса',
+          'Singleton: private constructor запрещает new, getInstance() контролирует создание единственного экземпляра',
+          'static блок инициализации (ES2022+): static { this.config = loadConfig(); } — для сложной инициализации',
+          'Наследование static: дочерний класс наследует статические методы, this указывает на текущий класс'
+        ]},
+        { type: 'tip', value: 'Фабричный метод — популярный паттерн для static: static create(...): MyClass. Лучше чем конструктор когда создание сложное или может вернуть null.' }
       ]
     },
     {
@@ -57,7 +80,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Классы могут быть обобщёнными (generic) — параметризованными по типу.' },
-        { type: 'code', language: 'typescript', value: 'class Container<T> {\n    private value: T;\n\n    constructor(value: T) {\n        this.value = value;\n    }\n\n    getValue(): T { return this.value; }\n    setValue(newValue: T): void { this.value = newValue; }\n    map<U>(transform: (value: T) => U): Container<U> {\n        return new Container(transform(this.value));\n    }\n}\n\nconst num = new Container(42);\nconsole.log(num.getValue()); // 42\n\nconst str = num.map(n => n.toString());\nconsole.log(str.getValue()); // "42"\n\n// Stack — обобщённая структура данных\nclass Stack<T> {\n    private items: T[] = [];\n    push(item: T): void { this.items.push(item); }\n    pop(): T | undefined { return this.items.pop(); }\n    peek(): T | undefined { return this.items[this.items.length - 1]; }\n    get size(): number { return this.items.length; }\n}' }
+        { type: 'code', language: 'typescript', value: 'class Container<T> {\n    private value: T;\n\n    constructor(value: T) {\n        this.value = value;\n    }\n\n    getValue(): T { return this.value; }\n    setValue(newValue: T): void { this.value = newValue; }\n    map<U>(transform: (value: T) => U): Container<U> {\n        return new Container(transform(this.value));\n    }\n}\n\nconst num = new Container(42);\nconsole.log(num.getValue()); // 42\n\nconst str = num.map(n => n.toString());\nconsole.log(str.getValue()); // "42"\n\n// Stack — обобщённая структура данных\nclass Stack<T> {\n    private items: T[] = [];\n    push(item: T): void { this.items.push(item); }\n    pop(): T | undefined { return this.items.pop(); }\n    peek(): T | undefined { return this.items[this.items.length - 1]; }\n    get size(): number { return this.items.length; }\n}' },
+        { type: 'list', items: [
+          'class Container<T> — тип параметр T фиксируется при создании: new Container(42) выводит T = number',
+          'Можно указать явно: new Container<string>("hello") — полезно когда TypeScript не может вывести тип',
+          'Метод map<U> — свой тип параметр U, независимый от T класса. Позволяет возвращать Container другого типа',
+          'Ограничения: class Repo<T extends Entity> — T должен иметь поля Entity (например id)',
+          'Несколько параметров: class Pair<K, V> { constructor(public key: K, public value: V) {} }'
+        ]},
+        { type: 'tip', value: 'Дженерик классы — основа паттернов Repository, Service, EventEmitter. Один раз типизируешь базовый класс — все наследники автоматически типобезопасны.' }
       ]
     },
     {

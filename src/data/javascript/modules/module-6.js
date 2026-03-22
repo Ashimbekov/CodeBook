@@ -96,7 +96,15 @@ export default {
           type: 'code',
           language: 'javascript',
           value: '// break — выход из цикла\nconst numbers = [3, 7, 2, 8, 4, 1, 9];\nlet first_even;\nfor (const n of numbers) {\n  if (n % 2 === 0) {\n    first_even = n;\n    break;\n  }\n}\nconsole.log(first_even); // 2\n\n// continue — пропуск итерации\nfor (let i = 0; i < 10; i++) {\n  if (i % 2 === 0) continue; // пропускаем чётные\n  console.log(i); // 1, 3, 5, 7, 9\n}\n\n// Метки для вложенных циклов\nouter: for (let i = 0; i < 3; i++) {\n  for (let j = 0; j < 3; j++) {\n    if (i === 1 && j === 1) break outer; // выход из внешнего!\n    console.log(i, j);\n  }\n}\n\n// Поиск в матрице\nfunction findInMatrix(matrix, target) {\n  let found = null;\n  search: for (let row = 0; row < matrix.length; row++) {\n    for (let col = 0; col < matrix[row].length; col++) {\n      if (matrix[row][col] === target) {\n        found = { row, col };\n        break search;\n      }\n    }\n  }\n  return found;\n}\n\nconst matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];\nconsole.log(findInMatrix(matrix, 5)); // {row: 1, col: 1}'
-        }
+        },
+        { type: 'list', items: [
+          'break — немедленный выход из цикла; continue — переход к следующей итерации',
+          'Метка (label:) перед циклом позволяет break/continue обратиться к внешнему циклу',
+          'break label — выход из цикла с данной меткой, даже если находишься во внутреннем',
+          'Метки используются редко — альтернатива: вынести во вспомогательную функцию',
+          'forEach не поддерживает break/continue — используй for...of если нужен ранний выход'
+        ]},
+        { type: 'tip', value: 'Вместо меток для поиска в матрице рассмотри альтернативу: вынести поиск в функцию и использовать return. return работает как break — немедленно прекращает выполнение функции.' }
       ]
     },
     {

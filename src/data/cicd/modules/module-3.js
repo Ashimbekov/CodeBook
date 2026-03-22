@@ -29,7 +29,11 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'workflow_call позволяет вызвать workflow из другого workflow (переиспользование). repository_dispatch — запуск через внешний API.' },
-        { type: 'code', language: 'yaml', value: '# Переиспользуемый workflow: .github/workflows/reusable-deploy.yml\non:\n  workflow_call:\n    inputs:\n      environment:\n        required: true\n        type: string\n    secrets:\n      deploy-key:\n        required: true\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo "Деплой на ${{ inputs.environment }}"\n\n---\n# Вызывающий workflow\njobs:\n  deploy-staging:\n    uses: ./.github/workflows/reusable-deploy.yml\n    with:\n      environment: staging\n    secrets:\n      deploy-key: ${{ secrets.DEPLOY_KEY }}' }
+        { type: 'code', language: 'yaml', value: '# Переиспользуемый workflow: .github/workflows/reusable-deploy.yml\non:\n  workflow_call:\n    inputs:\n      environment:\n        required: true\n        type: string\n    secrets:\n      deploy-key:\n        required: true\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo "Деплой на ${{ inputs.environment }}"\n\n---\n# Вызывающий workflow\njobs:\n  deploy-staging:\n    uses: ./.github/workflows/reusable-deploy.yml\n    with:\n      environment: staging\n    secrets:\n      deploy-key: ${{ secrets.DEPLOY_KEY }}' },
+        { type: 'tip', value: 'workflow_call — лучший способ избежать дублирования CI конфигурации. Один раз описываешь логику деплоя, затем вызываешь из разных workflows с разными параметрами (staging, production).' },
+        { type: 'heading', value: 'repository_dispatch — запуск через API' },
+        { type: 'code', language: 'yaml', value: '# Workflow реагирующий на внешнее событие\non:\n  repository_dispatch:\n    types: [deploy-triggered, new-data-available]\n\njobs:\n  handle-event:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          echo "Тип события: ${{ github.event.action }}"\n          echo "Данные: ${{ github.event.client_payload.version }}"\n\n# Запуск через curl:\n# curl -X POST https://api.github.com/repos/OWNER/REPO/dispatches \\\n#   -H "Authorization: token TOKEN" \\\n#   -d "{\"event_type\":\"deploy-triggered\",\"client_payload\":{\"version\":\"1.2.3\"}}"' },
+        { type: 'note', value: 'repository_dispatch полезен для запуска GitHub Actions из внешних систем: другого CI, скрипта мониторинга, webhook. Позволяет передавать произвольные данные через client_payload.' }
       ]
     },
     {
@@ -48,7 +52,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Jobs изолированы — у них разные VM. Для передачи данных используются outputs.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  build:\n    runs-on: ubuntu-latest\n    outputs:\n      image-tag: ${{ steps.set-tag.outputs.tag }}\n      version: ${{ steps.get-version.outputs.version }}\n\n    steps:\n      - id: set-tag\n        run: echo "tag=${{ github.ref_name }}-${{ github.run_number }}" >> $GITHUB_OUTPUT\n\n      - id: get-version\n        run: |\n          VERSION=$(cat VERSION)\n          echo "version=$VERSION" >> $GITHUB_OUTPUT\n\n  deploy:\n    needs: build\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой образа\n        run: |\n          echo "Деплой образа: ${{ needs.build.outputs.image-tag }}"\n          echo "Версия: ${{ needs.build.outputs.version }}"' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  build:\n    runs-on: ubuntu-latest\n    outputs:\n      image-tag: ${{ steps.set-tag.outputs.tag }}\n      version: ${{ steps.get-version.outputs.version }}\n\n    steps:\n      - id: set-tag\n        run: echo "tag=${{ github.ref_name }}-${{ github.run_number }}" >> $GITHUB_OUTPUT\n\n      - id: get-version\n        run: |\n          VERSION=$(cat VERSION)\n          echo "version=$VERSION" >> $GITHUB_OUTPUT\n\n  deploy:\n    needs: build\n    runs-on: ubuntu-latest\n    steps:\n      - name: Деплой образа\n        run: |\n          echo "Деплой образа: ${{ needs.build.outputs.image-tag }}"\n          echo "Версия: ${{ needs.build.outputs.version }}"' },
+        { type: 'tip', value: 'Запись в $GITHUB_OUTPUT заменила устаревший set-output команду. Формат: echo "key=value" >> $GITHUB_OUTPUT. Многострочные значения используют синтаксис heredoc: echo "body<<EOF" >> $GITHUB_OUTPUT.' },
+        { type: 'list', items: [
+          'Step output: echo "name=value" >> $GITHUB_OUTPUT (нужен id у step)',
+          'Job output: объявляется в outputs блоке job, ссылается на step output',
+          'Использование в другом job: ${{ needs.JOB_NAME.outputs.OUTPUT_NAME }}',
+          'Максимальный размер: 1 МБ для всех outputs вместе взятых'
+        ]},
+        { type: 'note', value: 'Outputs передают только строковые значения. Для передачи сложных данных (JSON, массивы) используй upload-artifact и download-artifact — они позволяют передавать целые файлы и директории.' }
       ]
     },
     {
@@ -57,7 +69,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Артефакты позволяют сохранять файлы (тест-репорты, сборки) и передавать их между jobs или скачивать после завершения пайплайна.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pytest --junitxml=test-results.xml --cov=. --cov-report=xml\n\n      - name: Сохранить результаты тестов\n        uses: actions/upload-artifact@v4\n        if: always()  # сохранять даже если тесты упали\n        with:\n          name: test-results\n          path: |\n            test-results.xml\n            coverage.xml\n          retention-days: 7\n\n  analyze:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - name: Скачать результаты тестов\n        uses: actions/download-artifact@v4\n        with:\n          name: test-results\n      - run: cat test-results.xml' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pytest --junitxml=test-results.xml --cov=. --cov-report=xml\n\n      - name: Сохранить результаты тестов\n        uses: actions/upload-artifact@v4\n        if: always()  # сохранять даже если тесты упали\n        with:\n          name: test-results\n          path: |\n            test-results.xml\n            coverage.xml\n          retention-days: 7\n\n  analyze:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - name: Скачать результаты тестов\n        uses: actions/download-artifact@v4\n        with:\n          name: test-results\n      - run: cat test-results.xml' },
+        { type: 'heading', value: 'Разница между artifacts и cache' },
+        { type: 'list', items: [
+          'Artifacts — результаты работы (бинарники, отчёты), доступны для скачивания через UI',
+          'Cache — зависимости (node_modules, .cache/pip), ускоряют повторные запуски',
+          'Artifacts хранятся по умолчанию 90 дней (настраивается через retention-days)',
+          'Cache автоматически инвалидируется по ключу (hashFiles)',
+          'Artifacts можно скачать вручную через GitHub UI или API'
+        ]},
+        { type: 'tip', value: 'Используй if: always() при сохранении тест-репортов — иначе при падении тестов артефакты не сохранятся и ты не сможешь посмотреть что именно упало.' }
       ]
     },
     {

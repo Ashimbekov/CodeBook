@@ -39,7 +39,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'include позволяет разбить конфигурацию пайплайна на несколько файлов и переиспользовать шаблоны.' },
-        { type: 'code', language: 'yaml', value: '# .gitlab-ci.yml (главный файл)\ninclude:\n  # Локальный файл\n  - local: ".gitlab/ci/test.yml"\n  # Из другого проекта\n  - project: "mygroup/ci-templates"\n    ref: main\n    file: "/templates/django.yml"\n  # По URL\n  - remote: "https://gitlab.com/gitlab-org/gitlab/-/raw/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml"\n  # Встроенные шаблоны GitLab\n  - template: "Docker.gitlab-ci.yml"\n  - template: "Security/SAST.gitlab-ci.yml"\n\nstages:\n  - test\n  - build\n  - security\n  - deploy' }
+        { type: 'code', language: 'yaml', value: '# .gitlab-ci.yml (главный файл)\ninclude:\n  # Локальный файл\n  - local: ".gitlab/ci/test.yml"\n  # Из другого проекта\n  - project: "mygroup/ci-templates"\n    ref: main\n    file: "/templates/django.yml"\n  # По URL\n  - remote: "https://gitlab.com/gitlab-org/gitlab/-/raw/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml"\n  # Встроенные шаблоны GitLab\n  - template: "Docker.gitlab-ci.yml"\n  - template: "Security/SAST.gitlab-ci.yml"\n\nstages:\n  - test\n  - build\n  - security\n  - deploy' },
+        { type: 'tip', value: 'Встроенные шаблоны GitLab (template:) содержат готовые jobs для типовых задач: Security/SAST.gitlab-ci.yml добавляет автоматическое сканирование кода на уязвимости без дополнительной настройки.' },
+        { type: 'list', items: [
+          'local — файл в том же репозитории, путь от корня',
+          'project — файл из другого GitLab проекта (CI-библиотека команды)',
+          'remote — файл по HTTPS URL (внешний шаблон)',
+          'template — встроенный шаблон GitLab (SAST, DAST, Docker, Python...)'
+        ]},
+        { type: 'note', value: 'include объединяет конфигурацию из всех файлов. При конфликтах имён jobs локальный файл имеет приоритет. Используй include для организации CI в монорепозиториях: отдельный файл для каждого сервиса.' }
       ]
     },
     {
@@ -48,7 +56,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'trigger позволяет запустить пайплайн другого проекта или создать дочерний пайплайн динамически.' },
-        { type: 'code', language: 'yaml', value: '# Запуск пайплайна другого проекта (multi-project pipeline)\ntrigger-backend:\n  stage: deploy\n  trigger:\n    project: mygroup/backend-service\n    branch: main\n    strategy: depend  # ждать завершения дочернего пайплайна\n\n# Дочерний пайплайн из файла\ngenerate-pipeline:\n  stage: build\n  script:\n    - python generate_ci.py > child-pipeline.yml\n  artifacts:\n    paths:\n      - child-pipeline.yml\n\ntrigger-child:\n  stage: test\n  trigger:\n    include:\n      - artifact: child-pipeline.yml\n        job: generate-pipeline\n    strategy: depend' }
+        { type: 'code', language: 'yaml', value: '# Запуск пайплайна другого проекта (multi-project pipeline)\ntrigger-backend:\n  stage: deploy\n  trigger:\n    project: mygroup/backend-service\n    branch: main\n    strategy: depend  # ждать завершения дочернего пайплайна\n\n# Дочерний пайплайн из файла\ngenerate-pipeline:\n  stage: build\n  script:\n    - python generate_ci.py > child-pipeline.yml\n  artifacts:\n    paths:\n      - child-pipeline.yml\n\ntrigger-child:\n  stage: test\n  trigger:\n    include:\n      - artifact: child-pipeline.yml\n        job: generate-pipeline\n    strategy: depend' },
+        { type: 'tip', value: 'Динамические пайплайны особенно полезны в монорепозиториях: скрипт анализирует изменённые файлы и генерирует YAML только для затронутых сервисов, избегая запуска всего CI при изменении одного модуля.' },
+        { type: 'list', items: [
+          'strategy: depend — родительский пайплайн ждёт завершения дочернего',
+          'strategy: (без depend) — запустить дочерний и не ждать результата',
+          'Дочерний пайплайн имеет свой статус и логи отдельно от родительского',
+          'multi-project trigger создаёт связь между двумя отдельными репозиториями'
+        ]},
+        { type: 'note', value: 'Дочерний пайплайн (child pipeline) изолирован от родительского — у него своя область видимости переменных и артефактов. Передача данных осуществляется через artifacts или variables в блоке trigger.' }
       ]
     },
     {

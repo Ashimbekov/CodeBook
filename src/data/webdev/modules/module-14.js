@@ -37,7 +37,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'В JavaScript есть 8 типов данных. Первые 7 — примитивы, последний — объект.' },
-        { type: 'code', language: 'javascript', value: '// 1. Number — числа\nconst age = 25;\nconst price = 9.99;\nconst infinity = Infinity;\nconst notNumber = NaN; // Not a Number\n\n// 2. String — строки\nconst name = "Алина";\nconst greeting = \'Привет\';\nconst template = `Привет, ${name}!`; // шаблонная строка\n\n// 3. Boolean — логический\nconst isActive = true;\nconst isEmpty = false;\n\n// 4. null — намеренное отсутствие значения\nconst user = null;\n\n// 5. undefined — переменная не задана\nlet score;\nconsole.log(score); // undefined\n\n// 6. Symbol — уникальный идентификатор\nconst id = Symbol("id");\n\n// 7. BigInt — большие целые числа\nconst bigNum = 9007199254740991n;\n\n// 8. Object — объект (включает массивы, функции)\nconst person = { name: "Берик", age: 30 };\nconst nums = [1, 2, 3];\n\n// Проверка типа\nconsole.log(typeof 42);       // "number"\nconsole.log(typeof "hello");  // "string"\nconsole.log(typeof true);     // "boolean"\nconsole.log(typeof null);     // "object" (историческая ошибка JS)' }
+        { type: 'code', language: 'javascript', value: '// 1. Number — числа\nconst age = 25;\nconst price = 9.99;\nconst infinity = Infinity;\nconst notNumber = NaN; // Not a Number\n\n// 2. String — строки\nconst name = "Алина";\nconst greeting = \'Привет\';\nconst template = `Привет, ${name}!`; // шаблонная строка\n\n// 3. Boolean — логический\nconst isActive = true;\nconst isEmpty = false;\n\n// 4. null — намеренное отсутствие значения\nconst user = null;\n\n// 5. undefined — переменная не задана\nlet score;\nconsole.log(score); // undefined\n\n// 6. Symbol — уникальный идентификатор\nconst id = Symbol("id");\n\n// 7. BigInt — большие целые числа\nconst bigNum = 9007199254740991n;\n\n// 8. Object — объект (включает массивы, функции)\nconst person = { name: "Берик", age: 30 };\nconst nums = [1, 2, 3];\n\n// Проверка типа\nconsole.log(typeof 42);       // "number"\nconsole.log(typeof "hello");  // "string"\nconsole.log(typeof true);     // "boolean"\nconsole.log(typeof null);     // "object" (историческая ошибка JS)' },
+        { type: 'heading', value: 'Примитивы vs объекты' },
+        { type: 'list', items: [
+          'Примитивы (number, string, boolean, null, undefined, symbol, bigint) — неизменяемые значения',
+          'Объекты (object, array, function) — изменяемые, хранятся по ссылке',
+          'При копировании примитива создаётся копия значения',
+          'При копировании объекта создаётся копия ссылки (оба указывают на один объект)'
+        ]},
+        { type: 'tip', value: 'typeof null возвращает "object" — это историческая ошибка JavaScript, исправлять которую нельзя из соображений обратной совместимости. Для проверки на null используй строгое равенство: value === null.' }
       ]
     },
     {
@@ -56,7 +64,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'if/else позволяет выполнять разный код в зависимости от условия.' },
-        { type: 'code', language: 'javascript', value: 'const age = 18;\n\n// Простой if\nif (age >= 18) {\n  console.log("Доступ разрешён");\n}\n\n// if/else\nif (age >= 18) {\n  console.log("Взрослый");\n} else {\n  console.log("Несовершеннолетний");\n}\n\n// if/else if/else\nconst score = 75;\nif (score >= 90) {\n  console.log("Отлично");\n} else if (score >= 75) {\n  console.log("Хорошо");\n} else if (score >= 60) {\n  console.log("Удовлетворительно");\n} else {\n  console.log("Неудовлетворительно");\n}\n\n// Тернарный оператор (короткий if/else)\nconst status = age >= 18 ? "Взрослый" : "Ребёнок";\nconsole.log(status); // "Взрослый"\n\n// Switch\nconst day = "понедельник";\nswitch (day) {\n  case "понедельник":\n  case "вторник":\n    console.log("Начало недели");\n    break;\n  case "пятница":\n    console.log("Почти выходные!");\n    break;\n  default:\n    console.log("Будний день");\n}' }
+        { type: 'code', language: 'javascript', value: 'const age = 18;\n\n// Простой if\nif (age >= 18) {\n  console.log("Доступ разрешён");\n}\n\n// if/else\nif (age >= 18) {\n  console.log("Взрослый");\n} else {\n  console.log("Несовершеннолетний");\n}\n\n// if/else if/else\nconst score = 75;\nif (score >= 90) {\n  console.log("Отлично");\n} else if (score >= 75) {\n  console.log("Хорошо");\n} else if (score >= 60) {\n  console.log("Удовлетворительно");\n} else {\n  console.log("Неудовлетворительно");\n}\n\n// Тернарный оператор (короткий if/else)\nconst status = age >= 18 ? "Взрослый" : "Ребёнок";\nconsole.log(status); // "Взрослый"\n\n// Switch\nconst day = "понедельник";\nswitch (day) {\n  case "понедельник":\n  case "вторник":\n    console.log("Начало недели");\n    break;\n  case "пятница":\n    console.log("Почти выходные!");\n    break;\n  default:\n    console.log("Будний день");\n}' },
+        { type: 'tip', value: 'Тернарный оператор ? : — компактная замена простого if/else. Используй его только для коротких выражений. Вложенные тернарные операторы (a ? b ? c : d : e) трудно читать — лучше используй if/else.' },
+        { type: 'list', items: [
+          'Truthy значения: любое число кроме 0, непустая строка, объект, массив, true',
+          'Falsy значения: 0, "", null, undefined, NaN, false',
+          'Оператор && возвращает первый falsy или последнее значение (a && b)',
+          'Оператор || возвращает первый truthy или последнее значение (a || "default")',
+          'Оператор ?? (nullish coalescing) возвращает правую часть только при null/undefined'
+        ]},
+        { type: 'note', value: 'Логические операторы && и || часто используются для условного рендеринга: user && user.name — вернёт user.name если user не falsy. config.timeout ?? 3000 — дефолтное значение только при null/undefined (не при 0).' }
       ]
     },
     {
@@ -65,7 +82,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Циклы позволяют выполнять код повторно.' },
-        { type: 'code', language: 'javascript', value: '// for — когда знаем количество итераций\nfor (let i = 0; i < 5; i++) {\n  console.log(i); // 0, 1, 2, 3, 4\n}\n\n// while — пока условие истинно\nlet count = 0;\nwhile (count < 3) {\n  console.log(count);\n  count++;\n}\n\n// do/while — выполнится хотя бы раз\ndo {\n  console.log("Привет");\n  count++;\n} while (count < 3);\n\n// for...of — перебор элементов массива\nconst fruits = ["яблоко", "груша", "банан"];\nfor (const fruit of fruits) {\n  console.log(fruit);\n}\n\n// for...in — перебор ключей объекта\nconst person = { name: "Айгерим", age: 25 };\nfor (const key in person) {\n  console.log(`${key}: ${person[key]}`);\n}\n\n// break и continue\nfor (let i = 0; i < 10; i++) {\n  if (i === 7) break;      // выйти из цикла\n  if (i % 2 === 0) continue; // пропустить чётные\n  console.log(i); // 1, 3, 5\n}' }
+        { type: 'code', language: 'javascript', value: '// for — когда знаем количество итераций\nfor (let i = 0; i < 5; i++) {\n  console.log(i); // 0, 1, 2, 3, 4\n}\n\n// while — пока условие истинно\nlet count = 0;\nwhile (count < 3) {\n  console.log(count);\n  count++;\n}\n\n// do/while — выполнится хотя бы раз\ndo {\n  console.log("Привет");\n  count++;\n} while (count < 3);\n\n// for...of — перебор элементов массива\nconst fruits = ["яблоко", "груша", "банан"];\nfor (const fruit of fruits) {\n  console.log(fruit);\n}\n\n// for...in — перебор ключей объекта\nconst person = { name: "Айгерим", age: 25 };\nfor (const key in person) {\n  console.log(`${key}: ${person[key]}`);\n}\n\n// break и continue\nfor (let i = 0; i < 10; i++) {\n  if (i === 7) break;      // выйти из цикла\n  if (i % 2 === 0) continue; // пропустить чётные\n  console.log(i); // 1, 3, 5\n}' },
+        { type: 'heading', value: 'Когда какой цикл использовать' },
+        { type: 'list', items: [
+          'for — когда известно количество итераций или нужен индекс',
+          'for...of — для перебора массивов и итерируемых коллекций (рекомендуется)',
+          'for...in — для перебора ключей объекта (осторожно: включает прототипные свойства)',
+          'while — когда условие остановки сложное или неизвестно заранее',
+          'forEach — метод массива, удобен для побочных эффектов (но нельзя прервать через break)'
+        ]},
+        { type: 'tip', value: 'Для работы с массивами предпочитай методы map, filter, reduce вместо циклов — они декларативнее и возвращают новый массив. Циклы for/while подходят когда нужно прервать итерацию или манипулировать индексами.' }
       ]
     },
     {

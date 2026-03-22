@@ -48,7 +48,16 @@ export default {
       title: 'Работа с Enum: итерация и проверки',
       type: 'theory',
       content: [
-        { type: 'code', language: 'typescript', value: 'enum Weekday {\n    Mon = 1, Tue, Wed, Thu, Fri, Sat, Sun\n}\n\n// Итерация по числовому enum\nfor (const key in Weekday) {\n    if (isNaN(Number(key))) { // Фильтруем числовые ключи (обратный маппинг)\n        console.log(`${key}: ${Weekday[key as keyof typeof Weekday]}`);\n    }\n}\n\n// Получить все значения\nconst values = Object.values(Weekday).filter(v => typeof v === "string");\n\n// Проверить принадлежность\nfunction isWeekday(value: unknown): value is Weekday {\n    return Object.values(Weekday).includes(value as Weekday);\n}\n\nconsole.log(isWeekday(Weekday.Mon)); // true\nconsole.log(isWeekday(8));           // false' }
+        { type: 'text', value: 'Числовые enum имеют двунаправленный маппинг — это нужно учитывать при итерации. Строковые enum итерируются проще.' },
+        { type: 'code', language: 'typescript', value: 'enum Weekday {\n    Mon = 1, Tue, Wed, Thu, Fri, Sat, Sun\n}\n\n// Итерация по числовому enum\nfor (const key in Weekday) {\n    if (isNaN(Number(key))) { // Фильтруем числовые ключи (обратный маппинг)\n        console.log(`${key}: ${Weekday[key as keyof typeof Weekday]}`);\n    }\n}\n\n// Получить все значения\nconst values = Object.values(Weekday).filter(v => typeof v === "string");\n\n// Проверить принадлежность\nfunction isWeekday(value: unknown): value is Weekday {\n    return Object.values(Weekday).includes(value as Weekday);\n}\n\nconsole.log(isWeekday(Weekday.Mon)); // true\nconsole.log(isWeekday(8));           // false' },
+        { type: 'list', items: [
+          'Числовой enum: for...in включает как строковые ключи ("Mon"), так и числовые ("1") — обратный маппинг. Фильтруй isNaN(Number(key))',
+          'Object.values(Weekday).filter(v => typeof v === "string") — получить только имена членов enum',
+          'Строковый enum: for...in и Object.values работают без фильтрации — нет обратного маппинга',
+          'typeof Weekday — тип самого объекта enum; keyof typeof Weekday — union ключей ("Mon" | "Tue" | ...)',
+          'Type guard value is Weekday: Object.values(SomeEnum).includes(value) — безопасная проверка принадлежности'
+        ]},
+        { type: 'tip', value: 'Для строкового enum итерацию можно упростить: Object.values(UserStatus) вернёт ["active", "inactive", "banned", "pending"] — без лишних числовых ключей.' }
       ]
     },
     {

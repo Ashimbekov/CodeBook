@@ -47,7 +47,14 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Дублирование конфигурации CI/CD трудно поддерживать. Используй reusable workflows, composite actions и шаблоны.' },
-        { type: 'code', language: 'yaml', value: '# Composite Action: .github/actions/setup-python/action.yml\nname: "Setup Python"\ndescription: "Установить Python с кешем и зависимостями"\ninputs:\n  python-version:\n    default: "3.12"\n  requirements-file:\n    default: "requirements.txt"\n\nruns:\n  using: composite\n  steps:\n    - uses: actions/setup-python@v5\n      with:\n        python-version: ${{ inputs.python-version }}\n        cache: pip\n    - shell: bash\n      run: pip install -r ${{ inputs.requirements-file }}\n\n# Использование:\nsteps:\n  - uses: ./.github/actions/setup-python\n    with:\n      python-version: "3.12"' }
+        { type: 'code', language: 'yaml', value: '# Composite Action: .github/actions/setup-python/action.yml\nname: "Setup Python"\ndescription: "Установить Python с кешем и зависимостями"\ninputs:\n  python-version:\n    default: "3.12"\n  requirements-file:\n    default: "requirements.txt"\n\nruns:\n  using: composite\n  steps:\n    - uses: actions/setup-python@v5\n      with:\n        python-version: ${{ inputs.python-version }}\n        cache: pip\n    - shell: bash\n      run: pip install -r ${{ inputs.requirements-file }}\n\n# Использование:\nsteps:\n  - uses: ./.github/actions/setup-python\n    with:\n      python-version: "3.12"' },
+        { type: 'heading', value: 'Три способа переиспользования в GitHub Actions' },
+        { type: 'list', items: [
+          'Composite Action — набор steps в отдельном файле, вызывается через uses: ./.github/actions/name',
+          'Reusable Workflow — целый workflow вызывается через uses: ./.github/workflows/deploy.yml',
+          'Workflow Templates — шаблоны видимые во вкладке Actions при создании нового workflow'
+        ]},
+        { type: 'tip', value: 'Composite Action идеально подходит для повторяющейся настройки среды (установка Python + зависимости). Reusable Workflow — для полных процессов (деплой на окружение) используемых в нескольких репозиториях.' }
       ]
     },
     {
@@ -66,7 +73,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Dependabot автоматически создаёт PR для обновления зависимостей. Настраивается через .github/dependabot.yml.' },
-        { type: 'code', language: 'yaml', value: '# .github/dependabot.yml\nversion: 2\nupdates:\n  # Python зависимости\n  - package-ecosystem: "pip"\n    directory: "/"\n    schedule:\n      interval: "weekly"\n      day: "monday"\n    open-pull-requests-limit: 5\n    groups:\n      django:\n        patterns: ["django*", "djangorestframework*"]\n\n  # GitHub Actions\n  - package-ecosystem: "github-actions"\n    directory: "/"\n    schedule:\n      interval: "weekly"\n    labels:\n      - "ci/cd"\n      - "dependencies"\n\n  # Docker базовые образы\n  - package-ecosystem: "docker"\n    directory: "/"\n    schedule:\n      interval: "monthly"' }
+        { type: 'code', language: 'yaml', value: '# .github/dependabot.yml\nversion: 2\nupdates:\n  # Python зависимости\n  - package-ecosystem: "pip"\n    directory: "/"\n    schedule:\n      interval: "weekly"\n      day: "monday"\n    open-pull-requests-limit: 5\n    groups:\n      django:\n        patterns: ["django*", "djangorestframework*"]\n\n  # GitHub Actions\n  - package-ecosystem: "github-actions"\n    directory: "/"\n    schedule:\n      interval: "weekly"\n    labels:\n      - "ci/cd"\n      - "dependencies"\n\n  # Docker базовые образы\n  - package-ecosystem: "docker"\n    directory: "/"\n    schedule:\n      interval: "monthly"' },
+        { type: 'tip', value: 'Группируй связанные зависимости через groups — Dependabot создаст один PR для обновления всего Django стека вместо отдельных PR для каждого пакета. Это уменьшает noise в PR списке.' },
+        { type: 'list', items: [
+          'Dependabot Security Updates — автоматически при обнаружении CVE уязвимостей',
+          'Dependabot Version Updates — плановые обновления по расписанию',
+          'open-pull-requests-limit — максимальное количество одновременных PR',
+          'groups — объединить связанные зависимости в один PR',
+          'ignore — пропустить конкретные зависимости или версии'
+        ]},
+        { type: 'note', value: 'Автоматически объединяй PR от Dependabot через Dependabot auto-merge если тесты прошли: добавь workflow реагирующий на dependabot[bot] pull requests и вызывающий auto-merge при статусе success.' }
       ]
     },
     {

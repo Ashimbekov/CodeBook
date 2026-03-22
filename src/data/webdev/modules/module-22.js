@@ -35,7 +35,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'LocalStorage поддерживает итерацию через ключи.' },
-        { type: 'code', language: 'javascript', value: '// Количество элементов\nconsole.log(localStorage.length);\n\n// Получить ключ по индексу\nconst key = localStorage.key(0);\n\n// Перебрать все ключи\nfor (let i = 0; i < localStorage.length; i++) {\n  const key = localStorage.key(i);\n  const value = localStorage.getItem(key);\n  console.log(`${key}: ${value}`);\n}\n\n// Конвертировать в объект\nfunction storageToObject() {\n  const result = {};\n  for (let i = 0; i < localStorage.length; i++) {\n    const key = localStorage.key(i);\n    try {\n      result[key] = JSON.parse(localStorage.getItem(key));\n    } catch {\n      result[key] = localStorage.getItem(key);\n    }\n  }\n  return result;\n}\n\n// StorageEvent — изменения в другой вкладке\nwindow.addEventListener("storage", (event) => {\n  console.log(event.key);      // изменённый ключ\n  console.log(event.oldValue); // старое значение\n  console.log(event.newValue); // новое значение\n});' }
+        { type: 'code', language: 'javascript', value: '// Количество элементов\nconsole.log(localStorage.length);\n\n// Получить ключ по индексу\nconst key = localStorage.key(0);\n\n// Перебрать все ключи\nfor (let i = 0; i < localStorage.length; i++) {\n  const key = localStorage.key(i);\n  const value = localStorage.getItem(key);\n  console.log(`${key}: ${value}`);\n}\n\n// Конвертировать в объект\nfunction storageToObject() {\n  const result = {};\n  for (let i = 0; i < localStorage.length; i++) {\n    const key = localStorage.key(i);\n    try {\n      result[key] = JSON.parse(localStorage.getItem(key));\n    } catch {\n      result[key] = localStorage.getItem(key);\n    }\n  }\n  return result;\n}\n\n// StorageEvent — изменения в другой вкладке\nwindow.addEventListener("storage", (event) => {\n  console.log(event.key);      // изменённый ключ\n  console.log(event.oldValue); // старое значение\n  console.log(event.newValue); // новое значение\n});' },
+        { type: 'list', items: [
+          'localStorage.length — количество записей в хранилище',
+          'localStorage.key(i) — получить ключ по индексу (для перебора)',
+          'Перебор через for с localStorage.length — стандартный способ итерации',
+          'StorageEvent срабатывает только в других вкладках того же origin, не в текущей',
+          'event.storageArea позволяет различить localStorage и sessionStorage в обработчике'
+        ]},
+        { type: 'tip', value: 'StorageEvent полезен для синхронизации состояния между вкладками: пользователь вышел из аккаунта в одной вкладке — другие тоже отреагируют. Это простой способ inter-tab communication без Service Workers.' }
       ]
     },
     {
@@ -44,7 +52,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'LocalStorage незаменим для хранения пользовательских настроек, кэширования и офлайн-функциональности.' },
-        { type: 'code', language: 'javascript', value: '// 1. Тема оформления\nfunction getTheme() {\n  return localStorage.getItem("theme") || "light";\n}\n\nfunction setTheme(theme) {\n  localStorage.setItem("theme", theme);\n  document.documentElement.setAttribute("data-theme", theme);\n}\n\n// При загрузке страницы\nsetTheme(getTheme());\n\n// 2. Корзина покупок\nfunction getCart() {\n  return JSON.parse(localStorage.getItem("cart")) || [];\n}\n\nfunction addToCart(product) {\n  const cart = getCart();\n  const existing = cart.find(item => item.id === product.id);\n  if (existing) {\n    existing.qty++;\n  } else {\n    cart.push({ ...product, qty: 1 });\n  }\n  localStorage.setItem("cart", JSON.stringify(cart));\n}\n\nfunction removeFromCart(productId) {\n  const cart = getCart().filter(item => item.id !== productId);\n  localStorage.setItem("cart", JSON.stringify(cart));\n}\n\n// 3. Недавние поиски\nfunction addRecentSearch(query) {\n  const searches = JSON.parse(localStorage.getItem("searches")) || [];\n  const updated = [query, ...searches.filter(s => s !== query)].slice(0, 5);\n  localStorage.setItem("searches", JSON.stringify(updated));\n}' }
+        { type: 'code', language: 'javascript', value: '// 1. Тема оформления\nfunction getTheme() {\n  return localStorage.getItem("theme") || "light";\n}\n\nfunction setTheme(theme) {\n  localStorage.setItem("theme", theme);\n  document.documentElement.setAttribute("data-theme", theme);\n}\n\n// При загрузке страницы\nsetTheme(getTheme());\n\n// 2. Корзина покупок\nfunction getCart() {\n  return JSON.parse(localStorage.getItem("cart")) || [];\n}\n\nfunction addToCart(product) {\n  const cart = getCart();\n  const existing = cart.find(item => item.id === product.id);\n  if (existing) {\n    existing.qty++;\n  } else {\n    cart.push({ ...product, qty: 1 });\n  }\n  localStorage.setItem("cart", JSON.stringify(cart));\n}\n\nfunction removeFromCart(productId) {\n  const cart = getCart().filter(item => item.id !== productId);\n  localStorage.setItem("cart", JSON.stringify(cart));\n}\n\n// 3. Недавние поиски\nfunction addRecentSearch(query) {\n  const searches = JSON.parse(localStorage.getItem("searches")) || [];\n  const updated = [query, ...searches.filter(s => s !== query)].slice(0, 5);\n  localStorage.setItem("searches", JSON.stringify(updated));\n}' },
+        { type: 'list', items: [
+          'Тема оформления — одно из самых частых применений localStorage',
+          'Корзина покупок — хранится локально до оформления или синхронизации с сервером',
+          'Недавние поиски: дедупликация через filter(s => s !== query) + ограничение slice(0, 5)',
+          'Черновики форм — автосохранение каждые N секунд, восстановление при возврате',
+          'Кэширование API-ответов с timestamp — экономия запросов для редко меняющихся данных'
+        ]},
+        { type: 'tip', value: 'Не хранить чувствительные данные в localStorage. Для темы, настроек, корзины — отлично. Для токенов авторизации, паролей, личных данных — только httpOnly cookies или серверная сессия.' }
       ]
     },
     {

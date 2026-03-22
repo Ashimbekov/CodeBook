@@ -19,7 +19,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'include добавляет дополнительные комбинации или параметры к существующим. exclude убирает конкретные комбинации.' },
-        { type: 'code', language: 'yaml', value: 'strategy:\n  matrix:\n    python-version: ["3.10", "3.11", "3.12"]\n    django-version: ["4.2", "5.0"]\n    exclude:\n      # Django 5.0 не поддерживает Python 3.10\n      - python-version: "3.10"\n        django-version: "5.0"\n    include:\n      # Добавить специальную комбинацию\n      - python-version: "3.12"\n        django-version: "5.0"\n        experimental: true  # дополнительный параметр\n\n    fail-fast: false  # не останавливать при первой ошибке\n    max-parallel: 4   # максимум 4 параллельных jobs' }
+        { type: 'code', language: 'yaml', value: 'strategy:\n  matrix:\n    python-version: ["3.10", "3.11", "3.12"]\n    django-version: ["4.2", "5.0"]\n    exclude:\n      # Django 5.0 не поддерживает Python 3.10\n      - python-version: "3.10"\n        django-version: "5.0"\n    include:\n      # Добавить специальную комбинацию\n      - python-version: "3.12"\n        django-version: "5.0"\n        experimental: true  # дополнительный параметр\n\n    fail-fast: false  # не останавливать при первой ошибке\n    max-parallel: 4   # максимум 4 параллельных jobs' },
+        { type: 'tip', value: 'include может не только добавлять новые комбинации, но и обогащать существующие дополнительными параметрами. Если include содержит только часть матрицы — он добавляет параметры ко всем совпавшим комбинациям.' },
+        { type: 'list', items: [
+          'exclude убирает конкретные комбинации из матрицы (несовместимые версии)',
+          'include добавляет новые комбинации которых нет в основной матрице',
+          'include также добавляет дополнительные переменные к существующим комбинациям',
+          'fail-fast: false — продолжать остальные jobs даже если один упал',
+          'max-parallel — ограничивает количество одновременных jobs (полезно при лимитах runner)'
+        ]},
+        { type: 'note', value: 'Матрица создаёт декартово произведение всех переменных. Две переменные с 3 и 4 значениями создадут 12 jobs. Используй exclude чтобы убрать несовместимые комбинации.' }
       ]
     },
     {
@@ -48,7 +57,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Получить outputs от всех matrix jobs непросто. Используй upload-artifact для хранения результатов каждой комбинации.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  test:\n    strategy:\n      matrix:\n        python-version: ["3.10", "3.11", "3.12"]\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: ${{ matrix.python-version }}\n          cache: "pip"\n      - run: pytest --junitxml=results-${{ matrix.python-version }}.xml\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: results-py${{ matrix.python-version }}\n          path: results-${{ matrix.python-version }}.xml\n\n  report:\n    needs: test\n    runs-on: ubuntu-latest\n    if: always()\n    steps:\n      - uses: actions/download-artifact@v4\n        with:\n          pattern: results-py*\n          merge-multiple: true\n      - run: ls *.xml' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  test:\n    strategy:\n      matrix:\n        python-version: ["3.10", "3.11", "3.12"]\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: ${{ matrix.python-version }}\n          cache: "pip"\n      - run: pytest --junitxml=results-${{ matrix.python-version }}.xml\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: results-py${{ matrix.python-version }}\n          path: results-${{ matrix.python-version }}.xml\n\n  report:\n    needs: test\n    runs-on: ubuntu-latest\n    if: always()\n    steps:\n      - uses: actions/download-artifact@v4\n        with:\n          pattern: results-py*\n          merge-multiple: true\n      - run: ls *.xml' },
+        { type: 'note', value: 'Имена артефактов должны быть уникальными в рамках одного workflow run. Включай параметры матрицы в имя: results-py3.10, results-py3.11. Параметр merge-multiple: true при скачивании объединяет все совпавшие артефакты в одну директорию.' },
+        { type: 'tip', value: 'Для агрегации результатов всех matrix jobs используй отдельный job с needs: [test] и if: always(). Это позволяет собрать и проанализировать все отчёты даже если некоторые matrix jobs упали.' },
+        { type: 'list', items: [
+          'Каждый matrix job загружает свой артефакт с уникальным именем',
+          'Job-агрегатор скачивает все артефакты через паттерн (results-py*)',
+          'merge-multiple: true объединяет несколько артефактов в одну папку',
+          'if: always() — агрегатор работает даже если часть matrix jobs упала'
+        ]}
       ]
     },
     {

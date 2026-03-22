@@ -56,7 +56,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Практическая реализация деплоя в GitHub Actions: SSH деплой, kubectl apply, docker-compose update.' },
-        { type: 'code', language: 'yaml', value: 'jobs:\n  deploy:\n    runs-on: ubuntu-latest\n    environment: production\n    steps:\n      # kubectl деплой\n      - uses: actions/checkout@v4\n      - uses: azure/setup-kubectl@v4\n\n      - name: Конфигурация kubectl\n        run: |\n          mkdir -p ~/.kube\n          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config\n\n      - name: Обновить образ\n        run: |\n          kubectl set image deployment/myapp \\\n            myapp=ghcr.io/${{ github.repository }}:${{ github.sha }}\n\n      - name: Ждать rollout\n        run: kubectl rollout status deployment/myapp --timeout=5m\n\n      - name: Откатиться при ошибке\n        if: failure()\n        run: kubectl rollout undo deployment/myapp' }
+        { type: 'code', language: 'yaml', value: 'jobs:\n  deploy:\n    runs-on: ubuntu-latest\n    environment: production\n    steps:\n      # kubectl деплой\n      - uses: actions/checkout@v4\n      - uses: azure/setup-kubectl@v4\n\n      - name: Конфигурация kubectl\n        run: |\n          mkdir -p ~/.kube\n          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config\n\n      - name: Обновить образ\n        run: |\n          kubectl set image deployment/myapp \\\n            myapp=ghcr.io/${{ github.repository }}:${{ github.sha }}\n\n      - name: Ждать rollout\n        run: kubectl rollout status deployment/myapp --timeout=5m\n\n      - name: Откатиться при ошибке\n        if: failure()\n        run: kubectl rollout undo deployment/myapp' },
+        { type: 'tip', value: 'kubectl rollout status блокирует выполнение пока деплой не завершится. Без этой команды GitHub Actions job завершится сразу после kubectl set image, не дожидаясь готовности новых подов.' },
+        { type: 'list', items: [
+          'kubectl set image — обновить образ у существующего Deployment',
+          'kubectl apply -f — применить изменения из YAML манифестов',
+          'kubectl rollout status — ждать завершения деплоя (блокирующий вызов)',
+          'kubectl rollout undo — откатить к предыдущей версии',
+          'kubectl rollout history — история деплоев (для выбора версии отката)'
+        ]},
+        { type: 'note', value: 'KUBECONFIG в secrets должен быть закодирован в base64 для безопасной передачи. Используй минимальные права для сервисного аккаунта — только namespace нужного приложения, только права на update deployments.' }
       ]
     },
     {
@@ -65,7 +74,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Feature flags позволяют включать/выключать фичи без нового деплоя. Код уже в продакшене, но скрыт флагом.' },
-        { type: 'code', language: 'bash', value: '# Концепция feature flags\n# flagsmith, LaunchDarkly, unleash — готовые решения\n\n# Django пример с простым флагом в БД:\n# class FeatureFlag(models.Model):\n#     name = models.CharField(max_length=100, unique=True)\n#     is_enabled = models.BooleanField(default=False)\n#\n# if FeatureFlag.objects.filter(name="new_checkout", is_enabled=True).exists():\n#     return new_checkout_view(request)\n# else:\n#     return old_checkout_view(request)\n\n# Преимущества:\n# - Деплой кода отделён от включения фичи\n# - Можно включить для 1% пользователей\n# - Мгновенный откат без нового деплоя\necho "Feature flags — современная практика CD"' }
+        { type: 'code', language: 'bash', value: '# Концепция feature flags\n# flagsmith, LaunchDarkly, unleash — готовые решения\n\n# Django пример с простым флагом в БД:\n# class FeatureFlag(models.Model):\n#     name = models.CharField(max_length=100, unique=True)\n#     is_enabled = models.BooleanField(default=False)\n#\n# if FeatureFlag.objects.filter(name="new_checkout", is_enabled=True).exists():\n#     return new_checkout_view(request)\n# else:\n#     return old_checkout_view(request)\n\n# Преимущества:\n# - Деплой кода отделён от включения фичи\n# - Можно включить для 1% пользователей\n# - Мгновенный откат без нового деплоя\necho "Feature flags — современная практика CD"' },
+        { type: 'heading', value: 'Типы feature flags' },
+        { type: 'list', items: [
+          'Release flags — скрывают незавершённые фичи до готовности',
+          'Experiment flags — A/B тестирование для разных групп пользователей',
+          'Ops flags — быстрое отключение проблемных функций без деплоя',
+          'Permission flags — включение фич для конкретных пользователей или ролей'
+        ]},
+        { type: 'tip', value: 'Не накапливай feature flags — удаляй их после включения фичи для всех пользователей. Технический долг от старых флагов усложняет код и затрудняет понимание бизнес-логики.' }
       ]
     },
     {
