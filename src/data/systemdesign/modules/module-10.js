@@ -107,6 +107,15 @@ export default {
       id: 7,
       title: 'Практика: спроектируй API для Twitter',
       type: 'practice',
+      requirements: [
+        'Спроектировать RESTful эндпоинты для твитов (CRUD)',
+        'Реализовать API для социального графа (follow/unfollow/followers)',
+        'Добавить API для ленты с cursor-based пагинацией',
+        'Использовать правильные HTTP методы и статус-коды',
+        'Описать API для лайков и поиска'
+      ],
+      hint: 'Используй существительные в URL (не глаголы), HTTP методы для действий. Для лент и списков обязательна cursor-based пагинация — offset-based ломается при большом количестве записей. Вложенные ресурсы: /users/{id}/followers.',
+      expectedOutput: 'REST API спроектирован: эндпоинты для твитов, лайков, ленты, социального графа и поиска. URL используют существительные. HTTP методы правильные. Статус-коды корректны (201 для создания, 204 для удаления). Лента использует cursor-based пагинацию.',
       solution: 'REST API для Twitter-подобного сервиса:\n\nTweets:\n- POST /api/v1/tweets → 201 Created {tweet_id, text, author, created_at}\n- GET /api/v1/tweets/{tweet_id} → 200 {tweet_id, text, author, likes, retweets}\n- DELETE /api/v1/tweets/{tweet_id} → 204\n- POST /api/v1/tweets/{tweet_id}/likes → 201 {liked: true}\n- DELETE /api/v1/tweets/{tweet_id}/likes → 204\n\nFeed (cursor-based пагинация):\n- GET /api/v1/timeline/home?limit=20&cursor={cursor} → {tweets: [...], next_cursor: "..."}\n- GET /api/v1/timeline/user/{user_id}?limit=20&cursor={cursor}\n\nUsers и Social Graph:\n- GET /api/v1/users/{username} → {id, name, bio, followers_count}\n- POST /api/v1/users/{username}/follow → 201\n- DELETE /api/v1/users/{username}/follow → 204\n- GET /api/v1/users/{username}/followers?limit=20&cursor={cursor}\n\nПоиск:\n- GET /api/v1/search/tweets?q=openai&limit=20&cursor={cursor}',
       explanation: 'Ключевые принципы: ресурсы (существительные), HTTP методы (GET/POST/DELETE), правильные статус-коды (201 для создания, 204 для удаления без тела). Cursor-based пагинация вместо offset — обязательна для лент с миллиардами записей. Вложенные ресурсы (/users/{id}/followers) для связанных данных.',
       content: [

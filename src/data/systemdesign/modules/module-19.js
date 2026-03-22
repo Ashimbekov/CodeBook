@@ -7,6 +7,15 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и оценка',
       type: 'practice',
+      requirements: [
+        'Определить функциональные требования (фото, лента, Stories)',
+        'Указать нефункциональные требования (масштаб, latency)',
+        'Рассчитать upload RPS и объём данных',
+        'Рассчитать feed read RPS',
+        'Сделать вывод о ключевых компонентах'
+      ],
+      hint: 'Instagram = медиа-ориентированный Twitter. 100M фото/день × 3 МБ = 300 ГБ/день — нужно объектное хранилище + CDN. Feed: 500M DAU × 50 загрузок = 290K RPS — нужен кеш лент. Stories — эфемерный контент (24 часа) — Redis с TTL.',
+      expectedOutput: 'Upload: 300 ГБ/день, 1 157 uploads/сек. Feed: 290K RPS (кеш обязателен). Фото: 578K RPS (CDN). Хранилище за 10 лет: ~30 ЭБ. Вывод: S3+CDN для медиа, Redis для лент и Stories, Cassandra для постов.',
       solution: 'Функциональные требования:\n- Загрузка фото и видео (Reels до 90 сек)\n- Лента новостей (хронологически и по алгоритму)\n- Stories (исчезают через 24 часа)\n- Лайки, комментарии\n- Подписки (follow/unfollow)\n- Поиск по хештегам и пользователям\n- Explore (рекомендации)\n\nНефункциональные:\n- 2B пользователей, 500M DAU\n- 100M новых фото/видео в день\n- Лента < 500 мс, фото < 200 мс\n- Доступность: 99.99%\n\nОценка:\n- Upload: 100M фото × 3 МБ = 300 ГБ/день, 1,157 uploads/сек\n- Feed reads: 500M × 50 загрузок / 86,400 ≈ 290K RPS\n- Photo views: 500M × 100 / 86,400 ≈ 578K RPS (обрабатывает CDN)',
       explanation: '290K RPS на ленту и 578K на фото — значительная нагрузка, которую решает CDN (фото) и кеш лент в Redis (feed). Upload 300 ГБ/день требует объектного хранилища (S3) и асинхронной обработки изображений. Stories — эфемерный контент: Redis с TTL идеален, не нужна дорогая долгосрочная персистентность.',
       content: [
@@ -37,6 +46,15 @@ export default {
       id: 2,
       title: 'Шаг 2: Загрузка и хранение медиа',
       type: 'practice',
+      requirements: [
+        'Описать upload pipeline через pre-signed S3 URL',
+        'Перечислить все размеры изображений для обработки',
+        'Объяснить преимущество WebP',
+        'Описать структуру S3 для хранения файлов',
+        'Объяснить зачем предгенерировать размеры при upload, не при запросе'
+      ],
+      hint: 'Прямая загрузка в S3 bypass серверов — сервер не bottleneck. Image Processing: несколько размеров параллельно (thumbnail, feed, detail) + WebP версии. WebP: на 25–35% меньше JPEG при том же качестве. Предгенерация: CDN раздаёт готовые файлы, не нужна динамическая обработка.',
+      expectedOutput: 'Upload: POST /media → pre-signed S3 URL → клиент загружает напрямую. S3 Event → Image Processor: thumbnail 150×150, feed 1080×1080, detail 1440×1440 + WebP. S3 структура описана. CDN URL: cdn.instagram.com/p/{media_id}/1080x1080.webp. Предгенерация обоснована.',
       solution: 'Upload Pipeline:\n1. POST /api/v1/media/upload → pre-signed S3 URL\n2. Клиент загружает оригинал напрямую в S3 "instagram-originals"\n3. S3 Event → SNS/SQS → Image Processing Service\n\nImage Processing (параллельно):\n- Thumbnail: 150×150 px (сетка профиля)\n- Feed size: 1080×1080 px\n- Detail: 1440×1440 px\n- WebP версии каждого размера\n- Обновить media metadata в БД\n\nS3 структура:\n/originals/{year}/{month}/{day}/{media_id}.jpg\n/processed/{media_id}/150x150.webp\n/processed/{media_id}/1080x1080.webp\n\nCDN (Cloudflare/CloudFront):\nURL: cdn.instagram.com/p/{media_id}/1080x1080.webp\nCache-Control: public, max-age=86400\n\nЗа 10 лет: ~30 ЭБ хранилища',
       explanation: 'Прямая загрузка в S3 (bypass серверов) + несколько размеров изображений — два ключевых решения. WebP снижает размер файлов на 25–35% по сравнению с JPEG при том же качестве. Предгенерация размеров при upload (не при запросе) упрощает CDN: все запросы идут к готовым файлам, не к динамической обработке.',
       content: [
@@ -51,6 +69,15 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      requirements: [
+        'Спроектировать таблицу posts с полем media_keys',
+        'Описать два индекса для user_follows',
+        'Объяснить хранение Stories в Redis с TTL',
+        'Выбрать хранилище для каждого типа данных',
+        'Обосновать Snowflake ID для постов'
+      ],
+      hint: 'Два индекса для user_follows — для двух разных запросов: "кого я фоллоую" (follower_id как PK) и "кто фоллоует меня" (followee_id как PK). Stories в Redis: TTL = автоудаление через 24 часа без фонового cleanup. Snowflake ID содержит timestamp — сортировка без дополнительного поля.',
+      expectedOutput: 'Таблица posts: Snowflake PK, media_keys ARRAY. Два индекса user_follows: following_by_user и followers_of_user — оба необходимы. Stories: Redis Hash "stories:{user_id}" + Sorted Set для чистки. Хранилища: Cassandra (posts), PostgreSQL (users), Redis (stories, feed), S3+CDN (media).',
       solution: 'Таблица posts (Cassandra, шардирование по user_id):\npost_id BIGINT PK (Snowflake), user_id BIGINT\ncaption VARCHAR(2200), media_keys ARRAY<VARCHAR>\nlike_count INT, comment_count INT, created_at TIMESTAMP\nИндекс: (user_id, created_at DESC)\n\nUser follows (два Cassandra индекса):\nfollowing_by_user: follower_id → followee_id (кто я фоллоую)\nfollowers_of_user: followee_id → follower_id (кто фоллоует меня)\n\nStories (Redis — эфемерные, 24 часа):\nHash: "stories:{user_id}" → {story_id: {media_url, created_at, views}}\nSorted Set: "active_stories" → score: expiry_timestamp, member: user_id\nЧистка: ZRANGEBYSCORE "active_stories" 0 {now} → удалить устаревшие\n\nВыбор хранилищ:\n- Posts: Cassandra (высокий write throughput)\n- User data: PostgreSQL (ACID)\n- Stories: Redis (TTL = автоудаление)\n- Likes: Cassandra (два индекса)\n- Media: S3 + CDN',
       explanation: 'Два индекса для user_follows — необходимость: "кто я фоллоую" и "кто фоллоует меня" — разные запросы с разными partition key. Stories в Redis с TTL — элегантное решение: Redis автоматически удаляет истёкшие ключи, не нужен фоновый cleanup job. Snowflake ID содержит timestamp — сортировка по времени без дополнительного индекса.',
       content: [
@@ -67,6 +94,15 @@ export default {
       id: 4,
       title: 'Шаг 4: Алгоритмическая лента новостей',
       type: 'practice',
+      requirements: [
+        'Описать факторы ранжирования Instagram Feed',
+        'Описать offline batch компонент генерации ленты',
+        'Описать online real-time компонент при запросе',
+        'Объяснить Bloom Filter для seen_filter',
+        'Описать pipeline: candidates → ranking → топ-20'
+      ],
+      hint: 'Гибридный offline+online подход: offline (ML на полном датасете, раз в N минут) → результат в Redis. Online при запросе: взять кеш + добавить свежие посты + исключить просмотренные через Bloom Filter + вернуть топ-20. Bloom Filter: константная память vs точный подсчёт.',
+      expectedOutput: 'Факторы ранжирования: interest score, recency, relationship, engagement probability. Offline: ML переранжирует кандидатов → Redis "feed:{user_id}". Online: базовый кеш + свежие посты 5 мин + Bloom Filter seen_filter + топ-20. Candidates: ~1000 постов от подписок за 7 дней.',
       solution: 'Факторы ранжирования ленты Instagram:\n- Interest Score: насколько пользователь взаимодействовал с автором\n- Recency: свежесть поста\n- Relationship: часто лайкаемые, близкие друзья\n- Engagement probability: ML предсказание вероятности лайка/комментария\n\nFeed Generation Architecture:\nОффлайн (Batch, раз в N минут):\n- ML модель переранжирует кандидатов для каждого пользователя\n- Результат → Redis: "feed:{user_id}"\n\nОнлайн (при запросе):\n1. Базовый кеш из Redis\n2. Добавить свежие посты за последние 5 мин от followings\n3. Исключить просмотренные (Bloom Filter в Redis Bitmap)\n4. Вернуть топ-20\n\nCandidates (~1000 постов → ранжируем → 20 для показа):\n- Последние посты from followings за 7 дней\n- Рекомендации от Explore',
       explanation: 'Гибридный offline+online подход — стандарт для ML-ранжированных лент. Offline (тяжёлые модели на полном датасете) + Online (лёгкая real-time корректировка) = баланс качества и latency. Bloom Filter для seen_filter экономит память: точный подсчёт потребовал бы 500M × N MB, Bloom Filter даёт приемлемую погрешность за константную память.',
       content: [
@@ -83,6 +119,15 @@ export default {
       id: 5,
       title: 'Шаг 5: Поиск и Explore',
       type: 'practice',
+      requirements: [
+        'Описать индексирование хештегов в Elasticsearch',
+        'Спроектировать автодополнение хештегов',
+        'Описать алгоритм Explore Page (рекомендации)',
+        'Объяснить offline предвычисление Explore',
+        'Описать отличие Поиска и Explore как систем'
+      ],
+      hint: 'Поиск и Explore — разные задачи: Elasticsearch для full-text поиска по введённому тексту, ML pipeline для discovery (показать что понравится). Offline предвычисление раз в час — баланс актуальности и стоимости. Trending компонент добавляется онлайн для свежести.',
+      expectedOutput: 'Поиск: Elasticsearch, хештеги индексируются при создании поста. Автодополнение: Redis Sorted Set популярных хештегов. Explore: candidates (похожие хештеги + collaborative filtering + trending) → ML ranking → diversity. Offline раз в час → Redis/Cassandra. Онлайн: + trending real-time.',
       solution: 'Поиск по хештегам:\n- При создании поста → извлечь хештеги из caption\n- Elasticsearch: {hashtag: "sunset", post_id, created_at, like_count}\n- GET /search/hashtags?q=sunset → ES match + sort по post_count DESC\n- Cassandra: посты по хештегу (partition: hashtag, clustering: like_count DESC)\n- Автодополнение: Redis Sorted Set популярных хештегов\n\nExplore Page (персонализированные рекомендации):\n1. Анализ интересов: что лайкал, что смотрел долго, хештеги\n2. Candidate generation:\n   - Посты с похожими хештегами\n   - Посты от "похожих пользователей" (collaborative filtering)\n   - Trending посты в регионе\n3. ML Ranking: score каждого кандидата\n4. Diversity: разные типы контента\n5. Оффлайн предвычисление (раз в час) → Redis/Cassandra\n6. Онлайн: добавить trending real-time + A/B тестирование',
       explanation: 'Поиск и Explore — разные системы: Elasticsearch для full-text поиска по тексту, ML pipeline для discovery и рекомендаций. Предвычисление Explore раз в час — баланс между актуальностью (не устаревшие рекомендации) и стоимостью (не пересчитывать на каждый запрос). Trending компонент добавляется онлайн для свежести.',
       content: [
@@ -97,6 +142,15 @@ export default {
       id: 6,
       title: 'Шаг 6: Лайки, комментарии и счётчики',
       type: 'practice',
+      requirements: [
+        'Спроектировать таблицу likes с двумя индексами',
+        'Описать Redis INCR для счётчиков + batch flush',
+        'Спроектировать таблицу comments',
+        'Объяснить soft delete для модерации',
+        'Рассчитать снижение нагрузки от batch flush'
+      ],
+      hint: 'Два индекса для лайков: (post_id → user_id) для "кто лайкнул пост" и (user_id → post_id) для "что лайкнул пользователь". Redis INCR/DECR для счётчиков + batch flush каждые 30 сек. Soft delete: скрыть комментарий без физического удаления — можно восстановить при ошибке модерации.',
+      expectedOutput: 'Таблица likes: два индекса обоснованы. Счётчик: Redis INCR "like_count:{post_id}" → batch flush в Cassandra каждые 30 сек. Снижение нагрузки в тысячи раз. Таблица comments: parent_id для threading. Модерация: ML + soft delete (скрыть, не удалить).',
       solution: 'Лайки (Cassandra):\nТаблица likes: PK (post_id, user_id) → created_at\nОбратный индекс user_likes: PK (user_id, post_id)\nСчётчик: Redis INCR/DECR "like_count:{post_id}" → batch flush в Cassandra каждые 30 сек\n\nПроверка "лайкнул ли я?":\nSELECT FROM likes WHERE post_id=? AND user_id=? → O(1) по PK\n\nКомментарии (Cassandra):\nтаблица comments: PK (post_id, comment_id DESC)\nuser_id, text VARCHAR(2200), parent_id (для ответов), created_at\nЗапрос: SELECT * FROM comments WHERE post_id=? LIMIT 20\n\nМодерация:\n- ML модель проверяет на спам/hate speech в реальном времени\n- Violation: скрыть комментарий (soft delete, не физическое удаление)\n\nСчётчики:\n- Redis INCR/DECR для лайков и комментариев\n- Batch flush в БД каждые 30 сек — снижение нагрузки в тысячи раз',
       explanation: 'Redis для счётчиков + batch flush — образцовый паттерн для высокочастотных инкрементов. Потеря ~30 сек данных при сбое Redis допустима для счётчиков лайков. Два индекса для лайков решают два разных запроса: "кто лайкнул этот пост" и "что лайкнул этот пользователь". Soft delete для комментариев позволяет восстановить при ошибке модерации.',
       content: [
@@ -112,6 +166,15 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура',
       type: 'practice',
+      requirements: [
+        'Перечислить все сервисы Instagram',
+        'Назвать 6 ключевых архитектурных решений',
+        'Объяснить сходство и отличие от Twitter',
+        'Обосновать выбор Cassandra для постов',
+        'Описать роль Redis в системе'
+      ],
+      hint: 'Instagram архитектурно близок к Twitter (Feed, Social Graph) с ключевыми отличиями: медиа-ориентированность (обработка изображений), Stories (эфемерный контент TTL), Explore (discovery). Cassandra для постов: high write throughput, простые запросы по partition key.',
+      expectedOutput: 'Сервисы: Media, Post, Feed, Social, Search, Stories, Notification, User, Recommendation. 6 решений: direct S3 upload, precomputed image sizes, push/pull hybrid, Redis INCR+batch, Stories TTL, Cassandra для постов. Сравнение с Twitter: Feed и Social Graph похожи, медиа и Stories уникальны.',
       solution: 'Сервисы Instagram:\n- Media Service: загрузка, обработка фото/видео → S3 + CDN\n- Post Service: создание/получение постов → Cassandra\n- Feed Service: генерация и кеширование ленты → Redis\n- Social Service: follow/unfollow, social graph → Cassandra\n- Search Service: Elasticsearch + автодополнение\n- Stories Service: Stories с TTL → Redis\n- Notification Service: push уведомления → Kafka + APNs/FCM\n- User Service: профили, аутентификация → PostgreSQL\n- Recommendation Service: Explore + ML рекомендации\n\nКлючевые архитектурные решения:\n1. Прямая загрузка в S3 → серверы не bottleneck\n2. Предгенерация размеров изображений → CDN раздаёт готовые файлы\n3. Push-based feed (обычные), pull для знаменитостей\n4. Redis INCR для счётчиков + batch persistence\n5. Stories в Redis с TTL — автоочистка без background jobs\n6. Cassandra для постов — high write throughput, простые запросы по PK',
       explanation: 'Instagram архитектурно похож на Twitter (Feed, Social Graph, Media) с ключевыми отличиями: медиа-ориентированность (обработка изображений), Stories (эфемерный контент с TTL), Explore (discovery через ML). Простота исходной архитектуры (Python/Django + PostgreSQL на 12 инженеров) — пример "monolith-first" подхода до реального масштаба.',
       content: [

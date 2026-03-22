@@ -135,6 +135,15 @@ export default {
       id: 7,
       title: 'Практика: декомпозиция монолита',
       type: 'practice',
+      requirements: [
+        'Определить сервисы по бизнес-доменам',
+        'Назначить каждому сервису собственную базу данных',
+        'Описать синхронное и асинхронное взаимодействие между сервисами',
+        'Предложить порядок выделения сервисов (от независимых к зависимым)',
+        'Описать роль API Gateway в архитектуре'
+      ],
+      hint: 'Начни с наиболее независимых сервисов — тех, которые только потребляют события и ни от кого не требуют данных в реальном времени. Применяй Strangler Fig: выделяй сервисы постепенно, не переписывай всё сразу.',
+      expectedOutput: 'Монолит декомпозирован: выделены 5–7 сервисов с чёткими бизнес-доменами. Каждый сервис имеет свою БД. Описана коммуникация (gRPC синхронно, Kafka асинхронно). Предложен порядок выделения сервисов. API Gateway централизует аутентификацию.',
       solution: 'Декомпозиция e-commerce монолита на микросервисы (Strangler Fig pattern):\n\nВыделяемые сервисы:\n- User Service: аутентификация, профили → PostgreSQL (users)\n- Product Catalog Service: каталог, поиск → PostgreSQL + Elasticsearch\n- Order Service: заказы, история → PostgreSQL (orders)\n- Payment Service: платежи → PostgreSQL (строгий ACID)\n- Notification Service: email/SMS/push → stateless, Kafka consumer\n- Analytics Service: события, статистика → ClickHouse (OLAP)\n\nКоммуникация:\n- Синхронная (gRPC): User Service → получить профиль (< 5 мс)\n- Асинхронная (Kafka): "order_created" → Payment + Notification + Analytics\n\nAPI Gateway (Kong): внешний трафик → роутинг + JWT проверка → X-User-ID в заголовке\n\nПорядок выделения: сначала Notification и Analytics (независимы, только читают события), затем Product Catalog (read-heavy, отдельно масштабируется), затем Payment (изоляция финансов).',
       explanation: 'Strangler Fig: не переписывать с нуля, а постепенно выделять сервисы из монолита. Сначала — наименее связанные. Notification Service идеален: только потребляет события, ничего не требует от других сервисов. Каждый сервис — своя БД (Database per Service). API Gateway централизует аутентификацию — сервисы доверяют заголовку от Gateway.',
       content: [

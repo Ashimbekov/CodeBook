@@ -7,6 +7,15 @@ export default {
       id: 1,
       title: 'Задача 1: Спроектируй систему ограничения скорости (Rate Limiter)',
       type: 'practice',
+      requirements: [
+        'Описать компоненты Rate Limiter (API Gateway, Redis, Rules Service)',
+        'Реализовать Sliding Window через Redis Sorted Set',
+        'Объяснить атомарность через Lua скрипт',
+        'Описать масштабирование до 5M RPS',
+        'Описать поведение в multi-datacenter сценарии'
+      ],
+      hint: 'Lua скрипт в Redis обеспечивает атомарность: ZREMRANGEBYSCORE + ZCARD + ZADD — три операции выполняются как одна. Без скрипта race condition между check и set. Local cache в API Gateway снижает нагрузку на Redis. Redis Cluster шардируется по identifier (user_id или IP).',
+      expectedOutput: 'Компоненты: API Gateway + Rate Limiter Middleware → Rate Limiter Service → Redis Cluster. Sliding Window Log: Sorted Set, score=timestamp. Lua скрипт атомарен. 5M RPS: 8 шардов Redis × 625K ops. Local cache 100 мс. Multi-DC: per-DC лимит или центральный Redis. 429 Too Many Requests с Retry-After.',
       solution: 'Архитектура распределённого Rate Limiter:\n\nКомпоненты:\nAPI Gateway с Rate Limiter Middleware — перехватывает входящие запросы\nRate Limiter Service — проверяет лимиты через Redis\nRedis Cluster — хранит счётчики и окна запросов\nRules Service — управление конфигурацией лимитов (PostgreSQL + кеш)\n\nАлгоритм Sliding Window Log в Redis:\nkey: "rl:{rule_id}:{identifier}"\nТип: Sorted Set, score = timestamp, member = request_id\nLua скрипт (атомарно):\n1. ZREMRANGEBYSCORE — удалить записи старше window\n2. ZCARD — подсчитать текущие запросы\n3. Если count < limit → ZADD, EXPIRE → allow (200 OK)\n4. Иначе → reject (429 Too Many Requests, Retry-After header)\n\nМасштабирование до 5M RPS:\nRedis Cluster: шардировать по identifier (user_id, IP)\n8 шардов × 625K ops/сек = 5M RPS\nLocal cache в API Gateway: кешировать решения на 100 мс → снизить нагрузку на Redis\n\nMulti-datacenter:\nКаждый DC — свой Redis Cluster (локальный лимит = global_limit / DC_count)\nДля строгого глобального лимита: центральный Redis с репликацией между DC',
       explanation: 'Ключевая сложность: атомарность через Lua скрипт в Redis. Без него ZCARD и ZADD — два отдельных вызова с race condition. Local cache в API Gateway критичен для latency < 1 мс. Sliding Window Log точнее Fixed Window, но дороже по памяти. Для 5M RPS Lua скрипт + Redis Cluster + local cache — оптимальное сочетание.',
       content: [
@@ -22,6 +31,15 @@ export default {
       id: 2,
       title: 'Задача 2: Спроектируй систему поиска (Google Search)',
       type: 'practice',
+      requirements: [
+        'Описать Web Crawler компонент (URL Frontier, politeness)',
+        'Описать Document Processor (parsing, deduplication)',
+        'Описать структуру Inverted Index',
+        'Объяснить алгоритмы ранжирования (TF-IDF, PageRank)',
+        'Описать Serving Layer для обработки запросов'
+      ],
+      hint: 'Поиск — две фазы: offline (crawling + indexing) и online (query serving). Inverted Index: слово → список документов. TF-IDF: важность слова в документе. PageRank: авторитетность по ссылкам. SimHash для дедупликации похожих страниц. Кеш популярных запросов снимает основную нагрузку.',
+      expectedOutput: 'Web Crawler: URL Frontier + Politeness (robots.txt). Document Processor: HTML parse → SimHash dedup → Link Extraction. Inverted Index: 80 ТБ. Ranking: TF-IDF + PageRank. Serving: параллельно по шардам + merge + re-rank. Кеш 20% запросов = 80% трафика. Ответ < 500 мс.',
       solution: 'Архитектура поисковой системы:\n\nКомпоненты:\n1. Web Crawler — URL Frontier (приоритетная очередь) → Crawler Workers → скачать страницы\n   Politeness: robots.txt, crawl-delay, не перегружать серверы\n   DNS Resolver с кешем: избежать повторных DNS запросов\n\n2. Document Processor — HTML Parser → Language Detection → Deduplication (SimHash)\n   Link Extractor: новые URL → обратно в URL Frontier\n\n3. Inverted Index — word → [(doc_id, positions, tf_score)]\n   "python" → [page_123: [15, 87], page_456: [5]]\n   10B страниц × 1000 слов × 8 байт = 80 ТБ\n   Хранение: Elasticsearch/Apache Lucene шардированный\n\n4. Ranking Engine — TF-IDF (важность слова в документе) + PageRank (авторитетность)\n   Query time: fetch posting lists → merge → rank → top-10\n\n5. Serving Layer — Query → Index Servers (параллельно по шардам) → Merge → Return\n   Query Understanding: spell check, synonyms, intent classification\n   Кеш популярных запросов (top 20% запросов = 80% трафика)',
       explanation: 'Поиск — это две фазы: Crawling/Indexing (offline, batch) и Query Serving (online, real-time). Inverted Index — ключевая структура данных: эффективный поиск по слову за O(1). PageRank — революционная идея Google: авторитетность через граф ссылок, а не только текст. SimHash позволяет находить похожие (но не идентичные) дубли страниц.',
       content: [
@@ -36,6 +54,15 @@ export default {
       id: 3,
       title: 'Задача 3: Спроектируй Dropbox (File Storage)',
       type: 'practice',
+      requirements: [
+        'Описать block-level хранение с SHA256 дедупликацией',
+        'Описать upload flow с проверкой существующих блоков',
+        'Описать sync flow через WebSocket уведомления',
+        'Спроектировать схему metadata (PostgreSQL)',
+        'Объяснить экономию трафика при обновлении файла'
+      ],
+      hint: 'Ключевой insight: файл → блоки по 4 МБ → SHA256 каждого блока → upload только отсутствующих. Изменил одну страницу Word → 1 блок из 100 передаётся, не весь файл. Это экономит 60–70% трафика. PostgreSQL для metadata: ACID, сложные запросы по path и версиям.',
+      expectedOutput: 'Block Storage: файл → 4 МБ блоки → SHA256 → POST /blocks/check → upload отсутствующих. Экономия: 60–70% при частичных изменениях. Sync: WebSocket уведомление → скачать только изменившиеся блоки. Schema: files, file_versions, blocks (ref_count), shares. PostgreSQL обоснован.',
       solution: 'Архитектура файлового хранилища с синхронизацией:\n\nКлючевая идея — Block Storage:\nФайл разбивается на блоки по 4 МБ\nКаждый блок: block_hash = SHA256(block_data) — уникальный идентификатор\nДедупликация: одинаковые блоки хранятся один раз (экономия 40–60%)\nПри изменении файла — загружать только изменившиеся блоки\n\nData Flow (Upload):\nClient: разбить файл → вычислить хеши всех блоков\nPOST /blocks/check {hashes} → сервер возвращает список отсутствующих\nЗагрузить только отсутствующие блоки в S3 (pre-signed URLs)\nPOST /files/commit {path, version, block_hashes_ordered}\n\nData Flow (Sync другого устройства):\nWebSocket: сервер push-уведомляет об изменениях файлов\nClient скачивает только новые/изменившиеся блоки из S3/CDN\n\nSchema (PostgreSQL):\nfiles: file_id, user_id, path, current_version, updated_at\nfile_versions: version_id, file_id, block_hashes (array), created_at\nblocks: block_hash (PK), s3_key, size, ref_count\nshares: share_id, file_id, owner_id, permissions, link_token',
       explanation: 'Block-level деление с SHA256 дедупликацией — ключевой insight. Без этого каждое изменение файла = полная перезагрузка. С блоками: изменили одну страницу Word → 1 блок из 100. PostgreSQL для metadata (сложные запросы, ACID). S3 для блоков (дешево, надёжно, масштабируемо). WebSocket обеспечивает near real-time синхронизацию.',
       content: [
@@ -50,6 +77,15 @@ export default {
       id: 4,
       title: 'Задача 4: Спроектируй систему нотификаций',
       type: 'practice',
+      requirements: [
+        'Описать компоненты системы уведомлений',
+        'Объяснить разделение на Priority Queue и Bulk Queue',
+        'Описать Device Token Store и его хранение',
+        'Описать Template Engine с поддержкой i18n',
+        'Описать Dead Letter Queue и retry стратегию'
+      ],
+      hint: 'OTP должен приходить за секунды, маркетинг может подождать — два разных пути обработки. Cassandra для Device Token Store: write-heavy (постоянное обновление токенов), lookup только по user_id. Kafka буферизирует пики нагрузки (праздники). Dead Letter Queue с exponential backoff (1s, 2s, 4s).',
+      expectedOutput: 'Поток: Source Services → Kafka → Notification Service → P1/P0 очереди → APNs/FCM/Email/SMS. Device Token Store: Cassandra user_id → [tokens]. Template Engine: Jinja2 + i18n. Dead Letter: retry exponential backoff, инвалидный token → деактивировать. Аналитика: ClickHouse (sent, delivered, opened, clicked).',
       solution: 'Архитектура системы уведомлений для 1B пользователей:\n\nПоток:\nSource Services (Order, Payment, Social) → publish events → Kafka\nNotification Service → consume → определить канал, шаблон, приоритет\nPriority Queue: P1 (OTP, транзакционные) → обработка немедленно\nBulk Queue: P0 (маркетинг, промо) → обработка пакетами\nProviders: APNs (iOS), FCM (Android), SendGrid (Email), Twilio (SMS)\n\nDevice Token Store (Cassandra):\nuser_id → [{device_id, platform, token, active, last_seen}]\nPartition key: user_id, горизонтальный scale\n\nTemplate Engine:\nШаблоны в S3/DB: "Привет, {{name}}! Ваш заказ #{{order_id}} готов"\nRendering: Jinja2/Mustache → персонализированное сообщение\ni18n: шаблоны на разных языках\n\nReliability:\nDead Letter Queue: failed → retry с exponential backoff (1s, 2s, 4s, max 1h)\nInvalid token (APNs/FCM вернул 410) → деактивировать в Device Store\n\nAnalytics (ClickHouse):\nКафка события: sent, delivered, opened, clicked, bounced\nДашборды: delivery rate, open rate, CTR по кампании',
       explanation: 'Разделение на P1/P0 очереди критично: OTP должен придти за секунды, маркетинг может подождать. Cassandra оптимальна для Device Token Store: write-heavy (постоянное обновление токенов), lookup только по user_id. Kafka обеспечивает буферизацию при пиковой нагрузке (праздники, распродажи). Dead Letter Queue гарантирует eventually delivered.',
       content: [
@@ -64,6 +100,15 @@ export default {
       id: 5,
       title: 'Задача 5: Спроектируй систему live streaming',
       type: 'practice',
+      requirements: [
+        'Описать ingest pipeline (RTMP → транскодинг → HLS сегменты)',
+        'Описать CDN распределение с коротким TTL',
+        'Объяснить Adaptive Bitrate для live стриминга',
+        'Описать Low-Latency HLS и WebRTC для интерактивных стримов',
+        'Спроектировать chat для 1M одновременных пользователей'
+      ],
+      hint: 'HLS: нарезать на сегменты по 2 сек → CDN с TTL 2–4 сек → 1M зрителей, Origin видит только cache misses. LL-HLS: partial segments 0.2 сек → задержка 1–3 сек. WebRTC: < 500 мс для аукционов/gaming. Chat: partitioned rooms по 10K пользователей → Kafka partition → WebSocket Workers.',
+      expectedOutput: 'Ingest: Streamer → RTMP → Ingest Server → Transcode (360p/720p/1080p) → HLS segments → S3 + CDN. CDN TTL: 2–4 сек. 1M зрителей: CDN поглощает, Origin видит только misses. LL-HLS 1–3 сек задержка. Chat: комнаты 10K + Kafka + ML модерация. Выбор протокола обоснован trade-off.',
       solution: 'Архитектура live streaming платформы:\n\nIngest Pipeline (стример → платформа):\nStreamer → RTMP/SRT → Ingest Server (принять видео поток)\nIngest Server → Transcoder (параллельно): 360p, 720p, 1080p\nHLS Segmenter: нарезать на сегменты по 2 сек → S3\nPlaylist (.m3u8): обновляется каждые 2 сек с новыми сегментами\n\nDistribution (зрители):\nViewer → CDN Edge (TTL = 2–4 сек для live segments)\nEdge miss → Regional PoP → Origin (Ingest Server / S3)\nAdaptive Bitrate: плеер выбирает качество под bandwidth\n\nАрхитектура для 1M одновременных зрителей:\nCDN справляется: 1M × 2 сек segment × 2 Мбит/сек = 2 Тбит/сек → CDN поглощает\nOrigin видит: только cache misses, не 1M запросов\n\nLow-Latency решения:\nLL-HLS (Low-Latency HLS): partial segments по 0.2 сек → задержка 1–3 сек\nWebRTC: задержка < 500 мс (для интерактивных, аукционы, гейминг)\n\nChat (1M concurrent):\nPartitioned chat rooms: группы по 10K пользователей\nКаждая группа → своя Kafka partition → WebSocket Workers\nModeration: real-time ML фильтр + ручная модерация',
       explanation: 'HLS (HTTP Live Streaming) позволяет использовать обычный CDN для доставки — ключевое преимущество. CDN снимает огромную нагрузку: 1M зрителей не обращаются к origin. Транскодинг параллельно — несколько форматов одновременно. Задержка определяется размером сегмента: большой сегмент = высокая задержка, маленький = нагрузка на систему.',
       content: [
@@ -78,6 +123,15 @@ export default {
       id: 6,
       title: 'Задача 6: Спроектируй distributed job scheduler',
       type: 'practice',
+      requirements: [
+        'Спроектировать схему данных (tasks, task_runs)',
+        'Описать Scheduler через PostgreSQL FOR UPDATE SKIP LOCKED',
+        'Объяснить почему FOR UPDATE SKIP LOCKED это distributed lock',
+        'Описать Workers через Kafka consumer group',
+        'Описать обработку missed jobs при перезапуске'
+      ],
+      hint: 'FOR UPDATE SKIP LOCKED — элегантный distributed lock без внешних систем: одна строка берётся только одним Scheduler, остальные пропускают. Kafka для задач: Workers масштабируются горизонтально. Exponential backoff при retry. Missed jobs: при старте найти next_run_at в прошлом → запустить сразу.',
+      expectedOutput: 'Schema: tasks (cron_expr, next_run_at, status, retry_count), task_runs. Scheduler: SELECT FOR UPDATE SKIP LOCKED → status=RUNNING → Kafka. Workers: Kafka consumer group → выполнить → SUCCESS/FAILED. Retry: exponential backoff. Missed jobs: при старте найти просроченные. Long-running: heartbeat.',
       solution: 'Архитектура распределённого планировщика задач:\n\nСхема данных (PostgreSQL):\ntasks: id, name, cron_expr, next_run_at, status [SCHEDULED/RUNNING/FAILED], handler, payload, retry_count, max_retries\ntask_runs: run_id, task_id, scheduler_id, started_at, finished_at, status, result, error\n\nScheduler (Leader-based polling):\nКаждые 1 сек:\nSELECT id, handler, payload FROM tasks\nWHERE next_run_at <= NOW() AND status = SCHEDULED\nFOR UPDATE SKIP LOCKED LIMIT 100\n\nFOR UPDATE SKIP LOCKED — distributed lock через PostgreSQL:\nТолько один scheduler берёт строку, остальные её пропускают\nОбновить: status = RUNNING, locked_by = scheduler_id\nPublish задачу в Kafka → Workers выполняют\n\nWorkers:\nKafka consumer group: горизонтальный scale\nВыполнить handler → UPDATE task_runs SET status = SUCCESS/FAILED\nЕсли SUCCESS: пересчитать next_run_at по cron_expr, status = SCHEDULED\nЕсли FAILED: retry_count++, next_run_at = NOW() + exponential_backoff\nЕсли retry_count >= max_retries: status = DEAD, notify on-call\n\nEdge cases:\nMissed jobs (system was down): при старте найти задачи с next_run_at в прошлом → запустить немедленно\nLong-running jobs: heartbeat обновляет locked_at, timeout detection',
       explanation: 'FOR UPDATE SKIP LOCKED — элегантный способ distributed locking без внешних систем. PostgreSQL гарантирует что две транзакции не возьмут одну строку. Kafka буферизирует задачи, Workers масштабируются независимо. Exponential backoff при retry — стандартный паттерн предотвращения перегрузки. Cron expression парсинг: библиотеки типа Quartz/cron-parser вычисляют next_run_at.',
       content: [
@@ -92,6 +146,15 @@ export default {
       id: 7,
       title: 'Задача 7: Спроектируй Ticketmaster (продажа билетов)',
       type: 'practice',
+      requirements: [
+        'Спроектировать схему данных (events, seats, orders)',
+        'Описать Hold механизм через Redis Lua script',
+        'Объяснить TTL для автоматического освобождения мест',
+        'Описать виртуальную очередь при flash sale',
+        'Описать real-time обновления статуса мест'
+      ],
+      hint: 'Ключевая проблема: нельзя продать одно место дважды при одновременном доступе. Redis Lua script: атомарный check-and-set. TTL 10 мин: неоплаченное место освобождается автоматически. Виртуальная очередь: lottery число при входе, сортировка → справедливый порядок. Redis source of truth + PostgreSQL финальная запись.',
+      expectedOutput: 'Schema: events, seats (status: AVAILABLE/HELD/SOLD), orders (expires_at). Redis Lua: if "seat:{id}" == nil → setex 600 "HELD:{user_id}" → return "held". Flow: Hold → оплата → CONFIRMED в PostgreSQL. Виртуальная очередь: waiting room + lottery + пускать по 1000/сек. SSE/WebSocket для real-time.',
       solution: 'Архитектура системы продажи билетов:\n\nСхема данных:\nevents: event_id, name, venue_id, date, on_sale_at\nseats: seat_id, event_id, section, row, number, price_tier\norders: order_id, user_id, seat_ids, status [PENDING/CONFIRMED/CANCELLED], expires_at, payment_id\n\nHold механизм (временное резервирование):\nAtomically через Redis Lua script:\nif redis.get("seat:{seat_id}") == nil:\n  redis.setex("seat:{seat_id}", 600, "HELD:{user_id}")  // 10 мин TTL\n  return "held"\nelse:\n  return "taken"\n\nFlow покупки:\n1. User выбирает место → Hold в Redis (10 мин) + create PENDING order\n2. User оплачивает → Payment Service\n3. Успех → CONFIRMED order + записать в PostgreSQL seats.status = SOLD\n4. Если время истекло → Redis TTL expires → место снова AVAILABLE\n\nВиртуальная очередь (Flash Sale):\nЗа 15 мин до старта: пользователи заходят в "waiting room"\nКаждому → случайный ticket (lottery number)\nВ момент X: открыть продажи, пускать по порядку lottery number\nRate limiting: впускать 1000 пользователей/сек\n\nReal-time обновления:\nSSE или WebSocket: при изменении статуса → pub/sub → клиенты',
       explanation: 'Redis Lua script обеспечивает атомарный check-and-set без race condition. TTL автоматически освобождает неоплаченные места — без cron jobs. Виртуальная очередь решает thundering herd при старте продаж. PostgreSQL как source of truth: Redis — кеш статуса, PostgreSQL — финальная запись. При расхождении — PostgreSQL побеждает.',
       content: [
@@ -106,6 +169,15 @@ export default {
       id: 8,
       title: 'Задача 8: Спроектируй Stock Exchange (биржу)',
       type: 'practice',
+      requirements: [
+        'Описать однопоточный Matching Engine и его преимущества',
+        'Описать структуру In-memory Order Book (Heap)',
+        'Объяснить роль Sequencer для справедливости',
+        'Описать Write-Ahead Log через Kafka',
+        'Описать Hot Standby для failover'
+      ],
+      hint: 'Matching Engine однопоточный — намеренно: устраняет все race conditions. In-memory Heap: Bids (Max-Heap по цене), Asks (Min-Heap). Matching: новый BUY → Ask.top().price <= P → match. Kafka как WAL: каждый ордер перед обработкой. Failover: Standby читает тот же Kafka, синхронизирован.',
+      expectedOutput: 'Однопоточный Matching Engine обоснован. Order Book: Bids Max-Heap + Asks Min-Heap. Алгоритм matching описан. Sequencer: один поток → global order → fairness. Kafka WAL: replay для восстановления. Checkpoint каждые N событий. Hot Standby: ~100 мс failover. Latency < 1 мс.',
       solution: 'Архитектура электронной торговой биржи:\n\nMatching Engine (критичный компонент):\nОднопоточный — нет race conditions, максимальная производительность\nIn-memory Order Book per ticker:\n  Bids: Max-Heap (покупатели, sorted by price desc)\n  Asks: Min-Heap (продавцы, sorted by price asc)\nАлгоритм: новая BUY order P → пока Ask.top().price <= P → match & trade\n\nArchitecture:\nOrder Router → Sequencer → Kafka (ordered log) → Matching Engine\nMatching Engine → Trade Events Kafka → Settlement Service\nMatching Engine → Market Data Publisher → WebSocket → клиенты (Level 2 quotes)\n\nSequencer:\nОдин поток, один процессор — присваивает sequence_number каждому ордеру\nГарантирует глобальный порядок (важно для справедливости)\n\nPersistence (Write-Ahead Log):\nКаждый ордер и трейд → лог до применения к Order Book\nEvent replay: восстановить Order Book из лога после падения\nCheckpoint каждые N событий: snapshot Order Book + sequence_number\n\nFault Tolerance:\nHot Standby: читает тот же Kafka лог, синхронизирован с Primary\nFailover: при падении Primary → Standby берёт управление за ~100 мс',
       explanation: 'Биржа — экстремальный случай latency и correctness. Однопоточный Matching Engine — намеренное решение: устраняет все проблемы конкурентности. In-memory структуры дают microsecond latency. Kafka как Write-Ahead Log обеспечивает durability без замедления hot path. Sequencer гарантирует fairness: первый пришёл — первый исполнен.',
       content: [
@@ -120,6 +192,15 @@ export default {
       id: 9,
       title: 'Задача 9: Спроектируй Google Docs (совместное редактирование)',
       type: 'practice',
+      requirements: [
+        'Описать проблему конкурентных изменений',
+        'Объяснить Operational Transformation (OT) на примере',
+        'Объяснить CRDT как альтернативу OT',
+        'Описать хранение документа как append-only лог операций',
+        'Описать WebSocket flow для real-time синхронизации'
+      ],
+      hint: 'OT: операция трансформируется с учётом уже применённых. User A вставил символ на pos 5 → операция User B (удалить pos 3) не меняется, но если B удалял pos 7 → трансформируется в pos 8. CRDT: уникальный ID для каждого символа, порядок применения неважен. Append-only лог + snapshots каждые 100 операций.',
+      expectedOutput: 'OT объяснён на примере insert+delete. Трансформация: если pos_A < pos_B → pos_B += 1. CRDT: каждый символ = уникальный ID, коммутативны. Append-only лог + snapshot каждые 100 ops. WebSocket: все редакторы → Document Server → трансформировать → broadcast. Cursor positions через ephemeral channels.',
       solution: 'Архитектура совместного редактирования документов:\n\nКлючевая проблема: конкурентные изменения\nUser A: insert "X" at pos 5\nUser B: delete char at pos 3\nОба отправили одновременно — без трансформации документ рассинхронизируется\n\nОперационная Трансформация (OT):\nСервер получает op_A: {type: insert, pos: 5, char: "X", client_rev: 10}\nСервер получает op_B: {type: delete, pos: 3, client_rev: 10}\nТрансформация op_B относительно op_A:\n  insert на pos 5 сдвигает всё после pos 5\n  delete.pos (3) < insert.pos (5) → трансформация не нужна\n  Применить: сначала op_A, потом трансформированный op_B\n\nAlternative: CRDT (Conflict-free Replicated Data Types)\nКаждый символ имеет уникальный ID (author_id + timestamp)\nОперации всегда коммутативны — порядок применения не важен\nФигма, Linear, Notion используют CRDT\n\nData Storage:\ndocuments: doc_id → append-only операции лог\nSnapshot каждые 100 операций → полный текст\nВосстановление: применить операции к ближайшему snapshot\n\nReal-time:\nWebSocket соединение: каждый редактор подключён к Document Server\nОперации проходят через сервер → трансформируются → broadcast всем',
       explanation: 'OT решает конкурентное редактирование: трансформировать операцию с учётом уже применённых операций. Сложность OT в деталях (алгоритм Diamond). CRDT проще для понимания, но тяжелее для памяти. Append-only лог операций + snapshots — стандартный Event Sourcing паттерн. Позволяет бесконечный undo/redo и полную историю изменений.',
       content: [
@@ -134,6 +215,15 @@ export default {
       id: 10,
       title: 'Задача 10: Спроектируй систему рекомендаций',
       type: 'practice',
+      requirements: [
+        'Описать двухуровневую архитектуру (Candidate Generation + Ranking)',
+        'Объяснить Collaborative Filtering и Matrix Factorization',
+        'Описать Two-Tower Neural Network для ранжирования',
+        'Описать Offline Pipeline (batch) и Online Serving',
+        'Описать решение Cold Start проблемы'
+      ],
+      hint: 'Двухуровневость — стандарт: candidate generation (сотни кандидатов из миллионов, грубо) + ranking (точный ML на кандидатах). Offline batch: тяжёлые модели на всём датасете, предвычислить топ-500 → Redis. Online: Redis lookup < 5 мс + real-time re-ranking по действиям последних 30 мин. Cold start: жанры при онбординге + popularity fallback.',
+      expectedOutput: 'Candidate Generation: collaborative filtering (ALS matrix factorization) + content-based + popularity. Ranking: Two-Tower NN, user + item embeddings, dot product score. Offline: batch training + топ-500 → Redis "recs:{user_id}". Online: Redis lookup + real-time re-rank. Cold start: онбординг 3–5 жанра + popular items.',
       solution: 'Архитектура рекомендательной системы (Netflix-style):\n\nДвухуровневая архитектура:\n1. Candidate Generation — сотни кандидатов из миллионов\n  Collaborative Filtering: "похожие пользователи смотрели..."\n    User-Item Matrix → Matrix Factorization (ALS)\n    User embedding, Item embedding → cosine similarity → топ-500\n  Content-Based: похожие по атрибутам (жанр, актёры, режиссёр)\n  Popularity: топ просматриваемых в регионе\n\n2. Ranking — топ-20 из сотен кандидатов\n  Two-Tower Neural Network:\n    User Tower: user_id, история, демография, контекст (время, устройство)\n    Item Tower: item_id, жанр, рейтинг, popularity\n    Score: dot product embeddings → вероятность engagement\n  Features: watch_time, completion_rate, like/dislike, recency\n\nOffline Pipeline (batch, ежедневно):\nОбучить/обновить модели на свежих данных\nПредвычислить топ-500 кандидатов для каждого из 200M пользователей\nСохранить в Redis: "recs:{user_id}" → [item_ids]\n\nOnline Serving:\nGET /recommendations → Redis lookup (< 5 мс)\nReal-time re-ranking: учесть действия последних 30 мин\nA/B тестирование: разные модели → сравнение метрик\n\nCold Start:\nНовый пользователь → онбординг: выбрать жанры/интересы\nПервые 5 просмотров → начальная персонализация\nPopularity fallback: топ контент в регионе',
       explanation: 'Двухуровневость — стандарт индустрии: грубый candidate generation + точный ranking. Matrix Factorization раскрывает скрытые факторы ("пользователь любит драмы 90-х"). Redis для хранения предвычисленных рекомендаций: O(1) lookup. Batch обучение offline + real-time re-ranking online — баланс точности и latency. Cold start — отдельная проблема: без истории нет персонализации.',
       content: [
