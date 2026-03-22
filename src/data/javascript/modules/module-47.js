@@ -70,7 +70,8 @@ export default {
       solution: {
         code: '// Код с багами\nfunction groupByCategory(items) {\n  const result = {};\n  for (const item of items) {\n    const cat = item.category;\n    if (!result[cat]) result[cat] = [];\n    result[cat].push(item);\n  }\n  return result;\n}\n\n// Отладка\nconst items = [\n  { name: "Яблоко", category: "Фрукт" },\n  { name: "Морковь", category: "Овощ" },\n  { name: "Банан", category: "Фрукт" }\n];\n\nconsole.time("groupByCategory");\nconst grouped = groupByCategory(items);\nconsole.timeEnd("groupByCategory");\n\nconsole.table(Object.entries(grouped).map(([cat, arr]) => ({\n  Категория: cat,\n  Количество: arr.length,\n  Названия: arr.map(i => i.name).join(", ")\n})));\n\nconsole.assert(\n  Object.keys(grouped).length === 2,\n  "Ожидается 2 категории, получено:",\n  Object.keys(grouped).length\n);\n\n// Условный debugger\nconst processItems = (count) => {\n  if (count > 100) debugger;\n  return count * 2;\n};\n\n// Глобальный обработчик\nprocess.on("unhandledRejection", (reason) => {\n  console.error("Unhandled Promise Rejection:", reason);\n  // В production: логировать и завершить процесс\n  process.exit(1);\n});\n\nconsole.log("Готово");',
         language: 'javascript'
-      }
+      },
+      explanation: 'console.time/timeEnd создаёт именованный таймер — имена должны совпадать. console.table принимает массив объектов и выводит их как таблицу с именованными столбцами. console.assert не выводит ничего если условие true — выводит ошибку только при false, что удобно для проверки инвариантов без засорения вывода. Условный debugger срабатывает только при count > 100 — не мешает при нормальных значениях. unhandledRejection перехватывает Promise без .catch() — без обработчика Node.js завершится с ошибкой.'
     }
   ]
 };

@@ -82,7 +82,8 @@ export default {
       solution: {
         code: '// vite.config.ts\nimport { defineConfig, loadEnv } from "vite";\nimport react from "@vitejs/plugin-react";\nimport path from "path";\n\nexport default defineConfig(({ command, mode }) => {\n  const env = loadEnv(mode, process.cwd(), "");\n  const isProduction = mode === "production";\n\n  return {\n    plugins: [react()],\n\n    resolve: {\n      alias: { "@": path.resolve(__dirname, "./src") }\n    },\n\n    server: {\n      port: 3000,\n      open: true,\n      proxy: {\n        "/api": {\n          target: "http://localhost:8080",\n          changeOrigin: true\n        }\n      }\n    },\n\n    define: {\n      __BUILD_DATE__: JSON.stringify(new Date().toISOString())\n    },\n\n    assetsInclude: ["**/*.woff", "**/*.woff2"],\n\n    build: {\n      outDir: "dist",\n      sourcemap: isProduction,\n      minify: isProduction ? "terser" : false,\n      rollupOptions: {\n        output: {\n          manualChunks: {\n            vendor: ["react", "react-dom"],\n            router: ["react-router-dom"]\n          }\n        }\n      }\n    }\n  };\n});\n\n// .env.development\nVITE_API_URL=http://localhost:8080\nVITE_APP_TITLE=My App (Dev)\n\n// .env.production\nVITE_API_URL=https://api.myapp.com\nVITE_APP_TITLE=My App',
         language: 'javascript'
-      }
+      },
+      explanation: 'defineConfig принимает функцию с { command, mode } — это позволяет менять конфигурацию в зависимости от режима. loadEnv загружает переменные из .env файлов для использования в конфиге (не в клиентском коде). Алиас @ на ./src упрощает импорты: import Button from "@/components/Button". Proxy перенаправляет /api запросы на бэкенд, обходя CORS в development. manualChunks разделяет vendor код (react, react-dom) в отдельный чанк — браузер кэширует его отдельно от бизнес-кода. __BUILD_DATE__ встраивается в bundle как строка во время сборки.'
     }
   ]
 };
