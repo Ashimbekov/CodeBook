@@ -1,0 +1,178 @@
+export default {
+  id: 55,
+  title: 'Практикум — Async',
+  description: 'Практические задачи по асинхронному JavaScript: Promise, async/await, параллельность, отмена запросов, retry',
+  lessons: [
+    {
+      id: 1,
+      title: 'Promise.all с обработкой ошибок',
+      type: 'practice',
+      difficulty: 'easy',
+      description: 'Реализуйте функцию allSettledCustom(promises): как Promise.allSettled — выполняет все промисы и возвращает результаты, даже если некоторые упали.',
+      requirements: [
+        'Возвращает массив { status: "fulfilled", value } или { status: "rejected", reason }',
+        'Не останавливается при ошибке одного промиса',
+        'allSettledCustom([Promise.resolve(1), Promise.reject("err"), Promise.resolve(3)])',
+        'Не использовать Promise.allSettled напрямую'
+      ],
+      solution: {
+        code: 'async function allSettledCustom(promises) {\n  return Promise.all(\n    promises.map(p =>\n      Promise.resolve(p)\n        .then(value => ({ status: "fulfilled", value }))\n        .catch(reason => ({ status: "rejected", reason }))\n    )\n  );\n}\n\nconst results = await allSettledCustom([\n  Promise.resolve(1),\n  Promise.reject("ошибка"),\n  new Promise(resolve => setTimeout(() => resolve(3), 100))\n]);\n\nconsole.log(results);\n// [\n//   { status: "fulfilled", value: 1 },\n//   { status: "rejected", reason: "ошибка" },\n//   { status: "fulfilled", value: 3 }\n// ]\n\nconst fulfilled = results.filter(r => r.status === "fulfilled").map(r => r.value);\nconsole.log("Успешные:", fulfilled); // [1, 3]',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 2,
+      title: 'Retry с экспоненциальным backoff',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Функция retry(fn, maxAttempts, baseDelay): повторяет async функцию при ошибке. Задержка растёт экспоненциально: 100ms, 200ms, 400ms...',
+      requirements: [
+        'retry(fetchData, 3, 100) — 3 попытки, начальная задержка 100ms',
+        'Экспоненциальный backoff: delay = baseDelay * 2^attempt',
+        'Jitter: случайность +-20% для предотвращения thundering herd',
+        'Бросить последнюю ошибку если все попытки провалились'
+      ],
+      solution: {
+        code: 'function sleep(ms) {\n  return new Promise(resolve => setTimeout(resolve, ms));\n}\n\nasync function retry(fn, maxAttempts = 3, baseDelay = 100) {\n  let lastError;\n\n  for (let attempt = 0; attempt < maxAttempts; attempt++) {\n    try {\n      return await fn();\n    } catch (err) {\n      lastError = err;\n\n      if (attempt < maxAttempts - 1) {\n        const delay = baseDelay * Math.pow(2, attempt);\n        // Jitter +-20%\n        const jitter = delay * 0.2 * (Math.random() * 2 - 1);\n        console.log(`Попытка ${attempt + 1} неудачна, ждём ${Math.round(delay + jitter)}ms`);\n        await sleep(delay + jitter);\n      }\n    }\n  }\n\n  throw lastError;\n}\n\n// Тест: функция которая падает 2 раза, потом работает\nlet callCount = 0;\nconst unreliableApi = async () => {\n  callCount++;\n  if (callCount < 3) throw new Error(`Ошибка попытки ${callCount}`);\n  return { data: "Успех!" };\n};\n\ntry {\n  const result = await retry(unreliableApi, 5, 50);\n  console.log("Результат:", result);\n} catch (err) {\n  console.error("Все попытки провалились:", err.message);\n}',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 3,
+      title: 'Timeout для промисов',
+      type: 'practice',
+      difficulty: 'easy',
+      description: 'Функция withTimeout(promise, ms): добавляет timeout к любому промису. Если промис не завершился за ms — отклоняет с TimeoutError.',
+      requirements: [
+        'withTimeout(fetch(url), 5000) — 5 секунд на запрос',
+        'withTimeout(slowOperation(), 1000) -> TimeoutError если > 1000ms',
+        'Если промис завершился раньше — вернуть его результат',
+        'Очищать setTimeout при завершении'
+      ],
+      solution: {
+        code: 'class TimeoutError extends Error {\n  constructor(ms) {\n    super(`Операция превысила ${ms}ms`);\n    this.name = "TimeoutError";\n  }\n}\n\nfunction withTimeout(promise, ms) {\n  let timeoutId;\n\n  const timeoutPromise = new Promise((_, reject) => {\n    timeoutId = setTimeout(() => reject(new TimeoutError(ms)), ms);\n  });\n\n  return Promise.race([promise, timeoutPromise])\n    .finally(() => clearTimeout(timeoutId));\n}\n\n// Тест\nconst slowOp = new Promise(resolve => setTimeout(() => resolve("готово"), 2000));\n\ntry {\n  const result = await withTimeout(slowOp, 1000);\n  console.log(result);\n} catch (err) {\n  if (err instanceof TimeoutError) {\n    console.log("Timeout:", err.message);\n  }\n}\n\n// Быстрая операция — успех\nconst fastOp = Promise.resolve("быстро");\nconsole.log(await withTimeout(fastOp, 1000)); // "быстро"',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 4,
+      title: 'Очередь задач',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Реализуйте TaskQueue: очередь async задач с ограничением параллельности (concurrency). Не более N задач выполняются одновременно.',
+      requirements: [
+        'new TaskQueue({ concurrency: 3 })',
+        'queue.add(asyncFn) — добавить задачу',
+        'Выполнять максимум concurrency задач одновременно',
+        'queue.onComplete — Promise на завершение всех задач'
+      ],
+      solution: {
+        code: 'class TaskQueue {\n  constructor({ concurrency = 3 } = {}) {\n    this.concurrency = concurrency;\n    this.running = 0;\n    this.queue = [];\n  }\n\n  add(task) {\n    return new Promise((resolve, reject) => {\n      this.queue.push({ task, resolve, reject });\n      this._run();\n    });\n  }\n\n  _run() {\n    while (this.running < this.concurrency && this.queue.length > 0) {\n      const { task, resolve, reject } = this.queue.shift();\n      this.running++;\n      task()\n        .then(resolve)\n        .catch(reject)\n        .finally(() => {\n          this.running--;\n          this._run(); // Запустить следующую задачу\n        });\n    }\n  }\n\n  async addAll(tasks) {\n    return Promise.all(tasks.map(t => this.add(t)));\n  }\n}\n\n// Тест\nconst queue = new TaskQueue({ concurrency: 2 });\n\nconst createTask = (id, delay) => () =>\n  new Promise(resolve => setTimeout(() => {\n    console.log(`Задача ${id} выполнена`);\n    resolve(id);\n  }, delay));\n\nconst results = await queue.addAll([\n  createTask(1, 300),\n  createTask(2, 100),\n  createTask(3, 200),\n  createTask(4, 150),\n  createTask(5, 50)\n]);\n\nconsole.log("Все выполнены:", results);',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 5,
+      title: 'Отмена fetch запросов',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Реализуйте cancellableFetch(url): fetch с поддержкой отмены. При повторном вызове отменяет предыдущий запрос. Применение: поиск при вводе.',
+      requirements: [
+        'Используйте AbortController для отмены',
+        'Повторный вызов автоматически отменяет предыдущий',
+        'Возвращает { data, cancel } или бросает AbortError',
+        'Не логировать AbortError как ошибку'
+      ],
+      solution: {
+        code: '// Функция которая отменяет предыдущий вызов\nfunction createCancellableFetch() {\n  let controller = null;\n\n  return async function cancellableFetch(url, options = {}) {\n    // Отменяем предыдущий запрос\n    if (controller) {\n      controller.abort();\n    }\n\n    controller = new AbortController();\n\n    try {\n      const response = await fetch(url, {\n        ...options,\n        signal: controller.signal\n      });\n\n      if (!response.ok) throw new Error(`HTTP ${response.status}`);\n      const data = await response.json();\n      controller = null;\n      return data;\n    } catch (err) {\n      if (err.name === "AbortError") {\n        return null; // Запрос отменён — не ошибка\n      }\n      throw err;\n    }\n  };\n}\n\n// Использование для поиска\nconst searchFetch = createCancellableFetch();\n\nconst searchInput = document.getElementById("search");\nsearchInput.addEventListener("input", async (e) => {\n  const query = e.target.value;\n  if (!query) return;\n\n  const results = await searchFetch(`/api/search?q=${query}`);\n  if (results) displayResults(results);\n  // null — запрос был отменён новым вводом\n});\n\nconsole.log("Cancellable fetch готов");',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 6,
+      title: 'Cache с TTL',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Реализуйте AsyncCache: кэш для async функций с TTL. Повторные вызовы с теми же аргументами в период TTL возвращают кэшированный результат.',
+      requirements: [
+        'cache.wrap(fn, ttl) — оборачивает функцию с кэшированием',
+        'cache.get/set/delete/clear — прямой доступ',
+        'Конкурентные вызовы к одному ключу: один запрос, все ждут его',
+        'TTL в миллисекундах'
+      ],
+      solution: {
+        code: 'class AsyncCache {\n  constructor() {\n    this.store = new Map();\n    this.pending = new Map(); // Для предотвращения дублирующих запросов\n  }\n\n  wrap(fn, ttl = 60000) {\n    return async (...args) => {\n      const key = JSON.stringify(args);\n\n      // Проверить кэш\n      const cached = this.store.get(key);\n      if (cached && Date.now() < cached.expires) {\n        return cached.value;\n      }\n\n      // Проверить pending — если уже выполняется, ждём\n      if (this.pending.has(key)) {\n        return this.pending.get(key);\n      }\n\n      // Запустить и кэшировать\n      const promise = fn(...args).then(value => {\n        this.store.set(key, { value, expires: Date.now() + ttl });\n        this.pending.delete(key);\n        return value;\n      }).catch(err => {\n        this.pending.delete(key);\n        throw err;\n      });\n\n      this.pending.set(key, promise);\n      return promise;\n    };\n  }\n\n  delete(key) { this.store.delete(key); }\n  clear() { this.store.clear(); }\n}\n\n// Тест\nconst cache = new AsyncCache();\nlet apiCalls = 0;\n\nconst fetchUser = cache.wrap(async (id) => {\n  apiCalls++;\n  await new Promise(r => setTimeout(r, 100));\n  return { id, name: `User ${id}` };\n}, 5000);\n\nconst [u1, u2, u3] = await Promise.all([\n  fetchUser(1), fetchUser(1), fetchUser(1) // 3 вызова, 1 запрос!\n]);\n\nconsole.log("API вызовов:", apiCalls); // 1\nconsole.log(u1 === u2);               // true (один объект)',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 7,
+      title: 'Параллельная обработка',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Функция processInBatches(items, batchSize, asyncFn): обрабатывает массив элементов батчами с ограниченным параллелизмом.',
+      requirements: [
+        'processInBatches(users, 10, sendEmail) — по 10 параллельно',
+        'Возвращает массив результатов в том же порядке что входной',
+        'Обработка ошибок: возвращать { success, result/error } для каждого',
+        'Прогресс: вызывать onProgress(completed, total)'
+      ],
+      solution: {
+        code: 'async function processInBatches(items, batchSize, asyncFn, onProgress) {\n  const results = new Array(items.length);\n  let completed = 0;\n\n  for (let i = 0; i < items.length; i += batchSize) {\n    const batch = items.slice(i, i + batchSize);\n    const batchResults = await Promise.all(\n      batch.map(async (item, idx) => {\n        try {\n          const result = await asyncFn(item);\n          return { success: true, result };\n        } catch (error) {\n          return { success: false, error: error.message };\n        }\n      })\n    );\n\n    batchResults.forEach((result, idx) => {\n      results[i + idx] = result;\n    });\n\n    completed += batch.length;\n    if (onProgress) onProgress(completed, items.length);\n    console.log(`Прогресс: ${completed}/${items.length}`);\n  }\n\n  return results;\n}\n\n// Тест\nconst emails = Array.from({ length: 25 }, (_, i) => `user${i}@test.com`);\n\nconst sendEmail = async (email) => {\n  await new Promise(r => setTimeout(r, 50));\n  if (Math.random() < 0.1) throw new Error("Ошибка отправки");\n  return `Отправлено: ${email}`;\n};\n\nconst results = await processInBatches(emails, 5, sendEmail,\n  (done, total) => console.log(`${done}/${total}`)\n);\n\nconst successful = results.filter(r => r.success).length;\nconsole.log(`Успешно: ${successful}/${emails.length}`);',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 8,
+      title: 'Event-driven архитектура',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Реализуйте простую event-driven систему для обработки заказов: создание -> валидация -> оплата -> уведомление через события.',
+      requirements: [
+        'OrderProcessor использует EventEmitter',
+        'process(order) -> последовательная обработка через события',
+        'Каждый шаг эмитирует событие о результате',
+        'Обработка ошибок: событие "error" с контекстом',
+        'Результат: Promise на завершение обработки'
+      ],
+      solution: {
+        code: 'const EventEmitter = require("events");\n\nclass OrderProcessor extends EventEmitter {\n  async process(order) {\n    return new Promise(async (resolve, reject) => {\n      try {\n        this.emit("processing:started", order);\n\n        // Валидация\n        this.emit("processing:validate", order);\n        await this.validate(order);\n        this.emit("processing:validated", order);\n\n        // Оплата\n        this.emit("processing:payment", order);\n        const payment = await this.processPayment(order);\n        this.emit("processing:paid", { order, payment });\n\n        // Уведомление\n        await this.sendNotification(order);\n        this.emit("processing:completed", { order, payment });\n\n        resolve({ order, payment, status: "completed" });\n      } catch (err) {\n        this.emit("processing:error", { order, error: err });\n        reject(err);\n      }\n    });\n  }\n\n  async validate(order) {\n    if (!order.items?.length) throw new Error("Нет товаров в заказе");\n    if (!order.customerId) throw new Error("Нет ID покупателя");\n  }\n\n  async processPayment(order) {\n    await new Promise(r => setTimeout(r, 100));\n    return { transactionId: `TXN-${Date.now()}`, amount: order.total };\n  }\n\n  async sendNotification(order) {\n    console.log(`Email уведомление для заказа #${order.id}`);\n  }\n}\n\n// Использование\nconst processor = new OrderProcessor();\nprocessor.on("processing:started", o => console.log("Начало:", o.id));\nprocessor.on("processing:paid", ({ payment }) => console.log("Оплачено:", payment.transactionId));\nprocessor.on("processing:completed", () => console.log("Заказ обработан!"));\nprocessor.on("processing:error", ({ error }) => console.error("Ошибка:", error.message));\n\nconst result = await processor.process({\n  id: "ORD-001",\n  customerId: 123,\n  items: [{ name: "Книга", price: 1500 }],\n  total: 1500\n});\nconsole.log(result);',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 9,
+      title: 'Polling с backoff',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Функция poll(fn, condition, options): опрашивает async функцию пока condition не вернёт true. С настраиваемым интервалом и таймаутом.',
+      requirements: [
+        'poll(getJobStatus, status => status === "done", { interval: 1000, timeout: 30000 })',
+        'Возвращает последний результат когда condition выполнено',
+        'Бросает TimeoutError если timeout истёк',
+        'Поддержка exponent: true для экспоненциального интервала'
+      ],
+      solution: {
+        code: 'function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }\n\nasync function poll(fn, condition, { interval = 1000, timeout = 30000, exponential = false } = {}) {\n  const startTime = Date.now();\n  let attempt = 0;\n\n  while (true) {\n    if (Date.now() - startTime > timeout) {\n      throw new Error(`Polling timeout после ${timeout}ms`);\n    }\n\n    const result = await fn();\n\n    if (condition(result)) return result;\n\n    const delay = exponential\n      ? Math.min(interval * Math.pow(2, attempt), timeout / 3)\n      : interval;\n\n    attempt++;\n    console.log(`Попытка ${attempt}, ждём ${delay}ms`);\n    await sleep(delay);\n  }\n}\n\n// Тест: симуляция долгой задачи\nlet jobAttempt = 0;\nconst getJobStatus = async () => {\n  jobAttempt++;\n  if (jobAttempt < 4) return { status: "processing", progress: jobAttempt * 25 };\n  return { status: "done", result: "Файл обработан" };\n};\n\nconst final = await poll(\n  getJobStatus,\n  res => res.status === "done",\n  { interval: 200, timeout: 10000 }\n);\n\nconsole.log("Готово:", final.result);',
+        language: 'javascript'
+      }
+    },
+    {
+      id: 10,
+      title: 'Async генератор пагинации',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Создайте async генератор paginate(fetchFn, options): итерирует по всем страницам API автоматически. Используйте for await...of.',
+      requirements: [
+        'async function* paginate(fetchPage) — генератор',
+        'Автоматически запрашивает следующую страницу',
+        'for await (const page of paginate(fn)) { ... }',
+        'Остановиться когда нет следующей страницы'
+      ],
+      solution: {
+        code: 'async function* paginate(fetchPage, startPage = 1) {\n  let page = startPage;\n  let hasNext = true;\n\n  while (hasNext) {\n    const response = await fetchPage(page);\n    yield response.data;\n\n    hasNext = response.hasNext || page < response.totalPages;\n    page++;\n  }\n}\n\n// Симуляция API\nasync function fetchUsers(page) {\n  await new Promise(r => setTimeout(r, 50));\n  const limit = 3;\n  const total = 10;\n  const start = (page - 1) * limit;\n  const data = Array.from({ length: Math.min(limit, total - start) }, (_, i) => ({\n    id: start + i + 1,\n    name: `User ${start + i + 1}`\n  }));\n  return {\n    data,\n    page,\n    totalPages: Math.ceil(total / limit),\n    hasNext: start + limit < total\n  };\n}\n\n// Использование\nconst allUsers = [];\nfor await (const pageData of paginate(fetchUsers)) {\n  console.log(`Страница: ${pageData.length} пользователей`);\n  allUsers.push(...pageData);\n}\nconsole.log("Всего:", allUsers.length); // 10',
+        language: 'javascript'
+      }
+    }
+  ]
+};
