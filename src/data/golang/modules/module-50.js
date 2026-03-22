@@ -1,0 +1,83 @@
+export default {
+  id: 50,
+  title: 'Роутинг (chi, gorilla/mux)',
+  description: 'Продвинутая маршрутизация HTTP запросов: ограничения стандартного ServeMux, библиотека chi, параметры URL, группы маршрутов, вложенные роутеры и сравнение подходов.',
+  lessons: [
+    {
+      id: 1,
+      title: 'Ограничения стандартного ServeMux',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Стандартный http.ServeMux прост и надёжен, но для REST API ему не хватает важных возможностей: параметров в URL, ограничения по HTTP методу и групп маршрутов.' },
+        { type: 'heading', value: 'Что не умеет ServeMux' },
+        { type: 'code', language: 'go', value: 'package main\n\nimport (\n    "fmt"\n    "net/http"\n    "strings"\n    "strconv"\n)\n\n// Стандартный ServeMux не умеет:\n// 1. Параметры в URL: /users/{id}\n// 2. Различать методы: GET /users vs POST /users\n// 3. Wildcards: /files/*path\n// 4. Регулярные выражения\n\n// Приходится вручную парсить URL:\nfunc usersHandler(w http.ResponseWriter, r *http.Request) {\n    // /users/ -> список\n    // /users/123 -> пользователь с ID 123\n    path := strings.TrimPrefix(r.URL.Path, "/users")\n    path = strings.TrimPrefix(path, "/")\n\n    if path == "" {\n        // Список пользователей\n        switch r.Method {\n        case http.MethodGet:\n            fmt.Fprintln(w, "Список пользователей")\n        case http.MethodPost:\n            fmt.Fprintln(w, "Создать пользователя")\n        default:\n            http.Error(w, "Метод не поддерживается", http.StatusMethodNotAllowed)\n        }\n        return\n    }\n\n    // Пытаемся распарсить ID\n    id, err := strconv.Atoi(path)\n    if err != nil {\n        http.NotFound(w, r)\n        return\n    }\n\n    switch r.Method {\n    case http.MethodGet:\n        fmt.Fprintf(w, "Пользователь %d\\n", id)\n    case http.MethodDelete:\n        fmt.Fprintf(w, "Удалён пользователь %d\\n", id)\n    }\n}\n\n// Это много ручной работы. Chi решает это элегантно.' },
+        { type: 'tip', value: 'Стандартный ServeMux подходит для простых приложений с небольшим количеством маршрутов. Для REST API с параметрами URL лучше использовать chi или аналоги.' }
+      ]
+    },
+    {
+      id: 2,
+      title: 'Библиотека chi — основы',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'chi — лёгкий, идиоматичный роутер для Go. Он полностью совместим со стандартным net/http, использует context для параметров и поддерживает middleware.' },
+        { type: 'heading', value: 'Установка и первый пример' },
+        { type: 'code', language: 'go', value: '// Установка:\n// go get github.com/go-chi/chi/v5\n\npackage main\n\nimport (\n    "fmt"\n    "net/http"\n\n    "github.com/go-chi/chi/v5"\n    "github.com/go-chi/chi/v5/middleware"\n)\n\nfunc main() {\n    r := chi.NewRouter()\n\n    // Встроенные middleware chi\n    r.Use(middleware.Logger)    // логирование\n    r.Use(middleware.Recoverer) // восстановление после паники\n    r.Use(middleware.RequestID) // уникальный ID запроса\n\n    // Простые маршруты\n    r.Get("/", func(w http.ResponseWriter, r *http.Request) {\n        fmt.Fprintln(w, "Главная страница")\n    })\n\n    r.Get("/about", func(w http.ResponseWriter, r *http.Request) {\n        fmt.Fprintln(w, "О нас")\n    })\n\n    r.Post("/login", func(w http.ResponseWriter, r *http.Request) {\n        fmt.Fprintln(w, "Войти")\n    })\n\n    fmt.Println("chi сервер на :8080")\n    http.ListenAndServe(":8080", r)\n}' },
+        { type: 'heading', value: 'Сравнение ServeMux и chi' },
+        { type: 'list', value: 'ServeMux: встроен в stdlib, нет зависимостей, нет параметров URL, нет разделения методов.\nchi: лёгкий (~1000 строк), полная совместимость с net/http, параметры URL, группы, middleware.\ngorilla/mux: богатый функционал, регулярные выражения, но тяжелее chi.\nГен: минималистичный стандартный роутер Go 1.22+ с базовыми параметрами.' }
+      ]
+    },
+    {
+      id: 3,
+      title: 'URL параметры в chi',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'chi позволяет объявлять параметры в пути URL через фигурные скобки: /users/{id}. Значения извлекаются через chi.URLParam().' },
+        { type: 'heading', value: 'Параметры пути' },
+        { type: 'code', language: 'go', value: 'package main\n\nimport (\n    "encoding/json"\n    "fmt"\n    "net/http"\n    "strconv"\n\n    "github.com/go-chi/chi/v5"\n    "github.com/go-chi/chi/v5/middleware"\n)\n\ntype User struct {\n    ID   int    `json:"id"`\n    Name string `json:"name"`\n}\n\nfunc main() {\n    r := chi.NewRouter()\n    r.Use(middleware.Logger)\n\n    // {id} — параметр пути\n    r.Get("/users/{id}", func(w http.ResponseWriter, r *http.Request) {\n        idStr := chi.URLParam(r, "id") // получить параметр\n        id, err := strconv.Atoi(idStr)\n        if err != nil {\n            http.Error(w, "Некорректный ID", http.StatusBadRequest)\n            return\n        }\n\n        user := User{ID: id, Name: fmt.Sprintf("Пользователь_%d", id)}\n        w.Header().Set("Content-Type", "application/json")\n        json.NewEncoder(w).Encode(user)\n    })\n\n    // Несколько параметров\n    r.Get("/orgs/{orgID}/repos/{repoName}", func(w http.ResponseWriter, r *http.Request) {\n        orgID := chi.URLParam(r, "orgID")\n        repoName := chi.URLParam(r, "repoName")\n        fmt.Fprintf(w, "Организация: %s, Репозиторий: %s\\n", orgID, repoName)\n    })\n\n    // Wildcard параметр\n    r.Get("/files/*", func(w http.ResponseWriter, r *http.Request) {\n        path := chi.URLParam(r, "*")\n        fmt.Fprintf(w, "Файл: %s\\n", path)\n    })\n\n    http.ListenAndServe(":8080", r)\n    // GET /users/42 -> {id:42, name:"Пользователь_42"}\n    // GET /files/docs/readme.md -> "Файл: docs/readme.md"\n}' },
+        { type: 'tip', value: 'chi.URLParam(r, "id") читает параметр из URL. Если параметр не существует — возвращает пустую строку. Параметр можно также ограничить регулярным выражением: {id:[0-9]+}.' }
+      ]
+    },
+    {
+      id: 4,
+      title: 'Группы маршрутов и вложенные роутеры',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'chi позволяет группировать маршруты с общим префиксом или middleware через r.Route() и r.Group(). Это основной инструмент структурирования большого API.' },
+        { type: 'heading', value: 'r.Route — группа с префиксом' },
+        { type: 'code', language: 'go', value: 'package main\n\nimport (\n    "encoding/json"\n    "fmt"\n    "net/http"\n\n    "github.com/go-chi/chi/v5"\n    "github.com/go-chi/chi/v5/middleware"\n)\n\nfunc authMiddleware(next http.Handler) http.Handler {\n    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n        if r.Header.Get("X-API-Key") == "" {\n            http.Error(w, "Требуется авторизация", http.StatusUnauthorized)\n            return\n        }\n        next.ServeHTTP(w, r)\n    })\n}\n\nfunc main() {\n    r := chi.NewRouter()\n    r.Use(middleware.Logger)\n    r.Use(middleware.Recoverer)\n\n    // Публичные маршруты\n    r.Get("/", func(w http.ResponseWriter, r *http.Request) {\n        fmt.Fprintln(w, "Добро пожаловать")\n    })\n\n    r.Post("/auth/login", func(w http.ResponseWriter, r *http.Request) {\n        json.NewEncoder(w).Encode(map[string]string{"token": "test-token"})\n    })\n\n    // Группа API v1 с префиксом /api/v1\n    r.Route("/api/v1", func(r chi.Router) {\n        // Middleware только для этой группы\n        r.Use(authMiddleware)\n\n        // Пользователи\n        r.Route("/users", func(r chi.Router) {\n            r.Get("/", func(w http.ResponseWriter, r *http.Request) {\n                json.NewEncoder(w).Encode([]string{"Нурдаулет", "Айгерим"})\n            })\n            r.Post("/", func(w http.ResponseWriter, r *http.Request) {\n                fmt.Fprintln(w, "Создать пользователя")\n            })\n            r.Get("/{id}", func(w http.ResponseWriter, r *http.Request) {\n                fmt.Fprintf(w, "Пользователь %s\\n", chi.URLParam(r, "id"))\n            })\n            r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {\n                w.WriteHeader(http.StatusNoContent)\n            })\n        })\n\n        // Продукты\n        r.Route("/products", func(r chi.Router) {\n            r.Get("/", func(w http.ResponseWriter, r *http.Request) {\n                fmt.Fprintln(w, "Список продуктов")\n            })\n        })\n    })\n\n    fmt.Println("API сервер на :8080")\n    // GET  /api/v1/users     -> список пользователей (требует X-API-Key)\n    // POST /api/v1/users     -> создать (требует X-API-Key)\n    // GET  /api/v1/users/42  -> пользователь 42 (требует X-API-Key)\n    http.ListenAndServe(":8080", r)\n}' }
+      ]
+    },
+    {
+      id: 5,
+      title: 'Вынос обработчиков в отдельные файлы',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'В реальных проектах маршруты и обработчики разносятся по файлам. chi поддерживает это через монтирование суброутеров.' },
+        { type: 'heading', value: 'Суброутеры для разных ресурсов' },
+        { type: 'code', language: 'go', value: 'package main\n\nimport (\n    "encoding/json"\n    "fmt"\n    "net/http"\n\n    "github.com/go-chi/chi/v5"\n    "github.com/go-chi/chi/v5/middleware"\n)\n\n// UserRouter — роутер для /users\nfunc UserRouter() chi.Router {\n    r := chi.NewRouter()\n\n    r.Get("/", listUsers)\n    r.Post("/", createUser)\n    r.Route("/{id}", func(r chi.Router) {\n        r.Get("/", getUser)\n        r.Put("/", updateUser)\n        r.Delete("/", deleteUser)\n    })\n\n    return r\n}\n\n// PostRouter — роутер для /posts\nfunc PostRouter() chi.Router {\n    r := chi.NewRouter()\n    r.Get("/", listPosts)\n    r.Post("/", createPost)\n    return r\n}\n\nfunc listUsers(w http.ResponseWriter, r *http.Request)  { json.NewEncoder(w).Encode([]string{"user1"}) }\nfunc createUser(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusCreated) }\nfunc getUser(w http.ResponseWriter, r *http.Request) {\n    fmt.Fprintf(w, "User: %s\\n", chi.URLParam(r, "id"))\n}\nfunc updateUser(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, "Updated") }\nfunc deleteUser(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) }\nfunc listPosts(w http.ResponseWriter, r *http.Request)  { json.NewEncoder(w).Encode([]string{"post1"}) }\nfunc createPost(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusCreated) }\n\nfunc main() {\n    r := chi.NewRouter()\n    r.Use(middleware.Logger)\n    r.Use(middleware.Recoverer)\n\n    // Монтирование суброутеров\n    r.Mount("/api/users", UserRouter())\n    r.Mount("/api/posts", PostRouter())\n\n    r.Get("/health", func(w http.ResponseWriter, r *http.Request) {\n        json.NewEncoder(w).Encode(map[string]string{"status": "ok"})\n    })\n\n    fmt.Println("Структурированный API на :8080")\n    http.ListenAndServe(":8080", r)\n}' },
+        { type: 'tip', value: 'r.Mount("/api/users", UserRouter()) монтирует суброутер. Маршруты внутри UserRouter доступны без префикса /api/users — chi добавляет его при монтировании. Это позволяет тестировать UserRouter независимо.' }
+      ]
+    },
+    {
+      id: 6,
+      title: 'Практика: полноценный API на chi',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Создай REST API для управления книгами на chi. API должен поддерживать CRUD, иметь middleware логирования и базовую авторизацию через API ключ.',
+      requirements: [
+        'Установи chi: go get github.com/go-chi/chi/v5',
+        'Структура Book: ID int, Title string, Author string, Year int',
+        'GET /api/books — список книг (публичный)',
+        'GET /api/books/{id} — книга по ID (публичный)',
+        'POST /api/books — создать (требует X-API-Key: secret)',
+        'DELETE /api/books/{id} — удалить (требует X-API-Key: secret)',
+        'Middleware: chi/middleware.Logger, собственный Auth для POST и DELETE',
+        'In-memory хранилище с 3 предзаполненными книгами'
+      ],
+      expectedOutput: 'GET /api/books -> 200 [{id:1,...},{id:2,...},{id:3,...}]\nGET /api/books/1 -> 200 {id:1, title:"Мастер и Маргарита"}\nPOST /api/books (без ключа) -> 401\nPOST /api/books (с X-API-Key: secret) -> 201\nDELETE /api/books/1 (с ключом) -> 204',
+      hint: 'Для in-memory хранилища используй sync.RWMutex + map[int]*Book. Для chi.URLParam - надо конвертировать строку в int через strconv.Atoi. Группу защищённых маршрутов создай через r.Group().',
+      solution: 'package main\n\nimport (\n    "encoding/json"\n    "fmt"\n    "net/http"\n    "strconv"\n    "sync"\n    "time"\n\n    "github.com/go-chi/chi/v5"\n    "github.com/go-chi/chi/v5/middleware"\n)\n\ntype Book struct {\n    ID     int    `json:"id"`\n    Title  string `json:"title"`\n    Author string `json:"author"`\n    Year   int    `json:"year"`\n}\n\ntype BookStore struct {\n    mu     sync.RWMutex\n    books  map[int]*Book\n    nextID int\n}\n\nfunc NewBookStore() *BookStore {\n    s := &BookStore{books: make(map[int]*Book), nextID: 1}\n    s.Create(Book{Title: "Мастер и Маргарита", Author: "Булгаков", Year: 1967})\n    s.Create(Book{Title: "Война и мир", Author: "Толстой", Year: 1869})\n    s.Create(Book{Title: "Преступление и наказание", Author: "Достоевский", Year: 1866})\n    return s\n}\n\nfunc (s *BookStore) Create(b Book) *Book {\n    s.mu.Lock()\n    defer s.mu.Unlock()\n    b.ID = s.nextID\n    s.books[s.nextID] = &b\n    s.nextID++\n    return &b\n}\n\nfunc (s *BookStore) GetAll() []*Book {\n    s.mu.RLock()\n    defer s.mu.RUnlock()\n    books := make([]*Book, 0, len(s.books))\n    for _, b := range s.books {\n        books = append(books, b)\n    }\n    return books\n}\n\nfunc (s *BookStore) GetByID(id int) (*Book, bool) {\n    s.mu.RLock()\n    defer s.mu.RUnlock()\n    b, ok := s.books[id]\n    return b, ok\n}\n\nfunc (s *BookStore) Delete(id int) bool {\n    s.mu.Lock()\n    defer s.mu.Unlock()\n    if _, ok := s.books[id]; !ok {\n        return false\n    }\n    delete(s.books, id)\n    return true\n}\n\nfunc AuthMW(next http.Handler) http.Handler {\n    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n        if r.Header.Get("X-API-Key") != "secret" {\n            http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)\n            return\n        }\n        next.ServeHTTP(w, r)\n    })\n}\n\nfunc main() {\n    store := NewBookStore()\n    r := chi.NewRouter()\n    r.Use(middleware.Logger)\n    r.Use(middleware.Recoverer)\n\n    r.Route("/api/books", func(r chi.Router) {\n        // Публичные\n        r.Get("/", func(w http.ResponseWriter, r *http.Request) {\n            w.Header().Set("Content-Type", "application/json")\n            json.NewEncoder(w).Encode(store.GetAll())\n        })\n        r.Get("/{id}", func(w http.ResponseWriter, r *http.Request) {\n            id, err := strconv.Atoi(chi.URLParam(r, "id"))\n            if err != nil {\n                http.Error(w, "bad id", 400)\n                return\n            }\n            b, ok := store.GetByID(id)\n            if !ok {\n                http.Error(w, "not found", 404)\n                return\n            }\n            w.Header().Set("Content-Type", "application/json")\n            json.NewEncoder(w).Encode(b)\n        })\n\n        // Защищённые\n        r.Group(func(r chi.Router) {\n            r.Use(AuthMW)\n            r.Post("/", func(w http.ResponseWriter, r *http.Request) {\n                var b Book\n                json.NewDecoder(r.Body).Decode(&b)\n                created := store.Create(b)\n                w.Header().Set("Content-Type", "application/json")\n                w.WriteHeader(http.StatusCreated)\n                json.NewEncoder(w).Encode(created)\n            })\n            r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {\n                id, _ := strconv.Atoi(chi.URLParam(r, "id"))\n                if !store.Delete(id) {\n                    http.Error(w, "not found", 404)\n                    return\n                }\n                w.WriteHeader(http.StatusNoContent)\n            })\n        })\n    })\n\n    fmt.Println("Книжный API на :8080")\n    _ = time.Now()\n    http.ListenAndServe(":8080", r)\n}',
+      explanation: 'chi.NewRouter() создаёт совместимый с http.Handler роутер. r.Route() группирует маршруты с общим префиксом. r.Group() создаёт группу без изменения префикса, но с дополнительными middleware — идеально для разделения публичных и защищённых маршрутов. chi.URLParam(r, "id") извлекает параметр, объявленный в пути /{id}. Структура Store с RWMutex обеспечивает потокобезопасный доступ из нескольких горутин.'
+    }
+  ]
+}
