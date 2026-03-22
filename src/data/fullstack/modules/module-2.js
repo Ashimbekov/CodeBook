@@ -4,7 +4,7 @@ export default {
   description: 'Создайте полноценную блог-платформу с системой аутентификации JWT, статьями, категориями, тегами и комментариями. Бэкенд на Django REST Framework, фронтенд на React с React Router, всё упаковано в Docker с nginx.',
   lessons: [
     {
-      id: 201,
+      id: 1,
       title: 'Шаг 1: Django проект (startproject + startapp)',
       type: 'practice',
       difficulty: 'easy',
@@ -24,7 +24,7 @@ export default {
       explanation: 'django-environ позволяет загружать конфигурацию из .env файла — секреты не попадают в git. env.db() парсит DATABASE_URL строку в словарь настроек Django. Разделение config (настройки) и blog (бизнес-логика) следует принципу single responsibility.'
     },
     {
-      id: 202,
+      id: 2,
       title: 'Шаг 2: Модели (Post, Category, Tag, Comment)',
       type: 'practice',
       difficulty: 'medium',
@@ -43,7 +43,7 @@ export default {
       explanation: 'Авто-генерация уникального slug с counter решает проблему дубликатов при одинаковых заголовках. ForeignKey с related_name="posts" позволяет обращаться category.posts.all() — reverse relation. Comment с FK на self (parent) реализует вложенные комментарии без дополнительных таблиц. ManyToManyField для тегов нормализует данные.'
     },
     {
-      id: 203,
+      id: 3,
       title: 'Шаг 3: DRF API (serializers, viewsets, routers)',
       type: 'practice',
       difficulty: 'medium',
@@ -63,7 +63,7 @@ export default {
       explanation: 'ViewSet объединяет list/create/retrieve/update/destroy в один класс — меньше кода, больше порядка. lookup_field="slug" делает URL читаемыми (/api/posts/django-basics/ вместо /api/posts/42/). SerializerMethodField для get_comments возвращает только top-level комментарии, а вложенные replies получаются рекурсивно. get_serializer_class() возвращает разные сериализаторы для list и detail — список постов не грузит полный контент.'
     },
     {
-      id: 204,
+      id: 4,
       title: 'Шаг 4: Аутентификация (JWT, register/login)',
       type: 'practice',
       difficulty: 'medium',
@@ -83,7 +83,7 @@ export default {
       explanation: 'JWT (JSON Web Token) — stateless аутентификация: сервер не хранит сессии, токен содержит всю информацию. Access token короткоживущий (15 мин) — если украден, быстро протухает. Refresh token долгоживущий (7 дней) — используется только для получения нового access. ROTATE_REFRESH_TOKENS=True выдаёт новый refresh при каждом обновлении — старый токен инвалидируется.'
     },
     {
-      id: 205,
+      id: 5,
       title: 'Шаг 5: React setup (Vite + React Router)',
       type: 'practice',
       difficulty: 'easy',
@@ -103,7 +103,7 @@ export default {
       explanation: 'AuthContext — глобальное состояние аутентификации через React Context, исключает prop drilling. axios interceptor автоматически добавляет JWT-токен к каждому запросу и обновляет его при истечении (401 → refresh → повторный запрос). Разделение token refresh logic в interceptor делает компоненты чище — они не знают об истечении токенов.'
     },
     {
-      id: 206,
+      id: 6,
       title: 'Шаг 6: Компоненты (PostList, PostDetail, CreatePost, Comments)',
       type: 'practice',
       difficulty: 'hard',
@@ -122,7 +122,7 @@ export default {
       explanation: 'dangerouslySetInnerHTML используется для рендера HTML-контента поста — в production нужна дополнительная санитизация (DOMPurify). PostCard отображает только preview данные (excerpt), полный контент загружается только на странице детального просмотра — оптимизация трафика. CommentSection использует локальный state для мгновенного добавления комментариев без перезагрузки страницы.'
     },
     {
-      id: 207,
+      id: 7,
       title: 'Шаг 7: Rich Text Editor (Markdown)',
       type: 'practice',
       difficulty: 'medium',
@@ -142,7 +142,7 @@ export default {
       explanation: 'Хранение сырого Markdown в БД — правильный подход: контент не зависит от рендерера, его легко редактировать и конвертировать. react-markdown рендерит Markdown безопасно (без XSS), в отличие от dangerouslySetInnerHTML. remark-gfm добавляет GitHub Flavored Markdown: таблицы, зачёркнутый текст, списки задач. MDEditor даёт split-view редактирование.'
     },
     {
-      id: 208,
+      id: 8,
       title: 'Шаг 8: Пагинация и поиск',
       type: 'practice',
       difficulty: 'medium',
@@ -162,7 +162,7 @@ export default {
       explanation: 'useSearchParams синхронизирует состояние страницы и поиска с URL — пользователь может поделиться ссылкой на конкретную страницу поиска. Debounce предотвращает лишние API-запросы при каждом нажатии клавиши. Серверная пагинация масштабируется — клиент получает только 10 постов, а не всю таблицу.'
     },
     {
-      id: 209,
+      id: 9,
       title: 'Шаг 9: Docker (multi-container с nginx)',
       type: 'practice',
       difficulty: 'hard',
@@ -182,7 +182,7 @@ export default {
       explanation: 'Gunicorn — production WSGI-сервер для Django (в отличие от development manage.py runserver). 4 workers обрабатывают запросы параллельно. Nginx как reverse proxy: TLS termination, gzip, кэширование статики — всё в одном месте. Shared volumes (static_volume, media_volume) позволяют nginx напрямую раздавать файлы без проксирования через Django.'
     },
     {
-      id: 210,
+      id: 10,
       title: 'Шаг 10: CI/CD (GitHub Actions: test + build + deploy)',
       type: 'practice',
       difficulty: 'hard',

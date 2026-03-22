@@ -4,7 +4,7 @@ export default {
   description: 'Полноценное веб-приложение для управления задачами. Вы создадите REST API на FastAPI, подключите PostgreSQL через SQLAlchemy, реализуете CRUD-операции и построите интерактивный интерфейс на React с фильтрацией задач. Итог — задеплоенное приложение в Docker.',
   lessons: [
     {
-      id: 101,
+      id: 1,
       title: 'Шаг 1: Инициализация проекта',
       type: 'practice',
       difficulty: 'easy',
@@ -24,7 +24,7 @@ export default {
       explanation: 'Мы разделили проект на два независимых сервиса: frontend (React/Vite) и backend (FastAPI). CORS middleware необходим, чтобы браузер разрешал запросы с порта 5173 на 8000. requirements.txt фиксирует версии зависимостей для воспроизводимой среды.'
     },
     {
-      id: 102,
+      id: 2,
       title: 'Шаг 2: Модели БД (SQLAlchemy + Alembic)',
       type: 'practice',
       difficulty: 'medium',
@@ -44,7 +44,7 @@ export default {
       explanation: 'SQLAlchemy ORM позволяет работать с БД через Python-классы вместо сырого SQL. get_db() — это dependency injection для FastAPI, который гарантирует закрытие сессии после каждого запроса. Alembic управляет версиями схемы БД, что критично при командной разработке и деплое.'
     },
     {
-      id: 103,
+      id: 3,
       title: 'Шаг 3: CRUD API (FastAPI endpoints)',
       type: 'practice',
       difficulty: 'medium',
@@ -64,7 +64,7 @@ export default {
       explanation: 'APIRouter позволяет разбить приложение на модули — каждый ресурс (tasks, users) живёт в своём файле. exclude_unset=True в PUT-запросе позволяет обновлять только переданные поля, а не перезаписывать всю запись. status_code=204 для DELETE означает "успешно, нет тела ответа".'
     },
     {
-      id: 104,
+      id: 4,
       title: 'Шаг 4: Pydantic schemas',
       type: 'practice',
       difficulty: 'easy',
@@ -83,7 +83,7 @@ export default {
       explanation: 'Pydantic-схемы — это контракт между клиентом и сервером. Разделение на Create/Update/Response — best practice: Create требует обязательные поля, Update делает все поля опциональными (PATCH-семантика), Response добавляет вычисляемые поля БД. from_attributes=True позволяет создавать схему из ORM-объекта напрямую.'
     },
     {
-      id: 105,
+      id: 5,
       title: 'Шаг 5: React компоненты',
       type: 'practice',
       difficulty: 'medium',
@@ -102,7 +102,7 @@ export default {
       explanation: 'Компонентная архитектура React: App — "умный" компонент (хранит state, содержит бизнес-логику), TodoList и TodoItem — "тупые" компоненты (только рендерят props). Callback-функции через props — стандартный паттерн "подъёма состояния" (lifting state up). На этом шаге API не используется, чтобы сначала убедиться в корректности UI.'
     },
     {
-      id: 106,
+      id: 6,
       title: 'Шаг 6: Подключение к API',
       type: 'practice',
       difficulty: 'medium',
@@ -122,7 +122,7 @@ export default {
       explanation: 'Паттерн оптимистичного обновления: сначала делаем запрос к API, и только при успехе обновляем state (а не наоборот). Это гарантирует консистентность данных. Выделение API-функций в отдельный файл (api/tasks.js) — separation of concerns: компоненты не знают о деталях HTTP.'
     },
     {
-      id: 107,
+      id: 7,
       title: 'Шаг 7: Стили (CSS Modules)',
       type: 'practice',
       difficulty: 'easy',
@@ -142,7 +142,7 @@ export default {
       explanation: 'CSS Modules автоматически создают уникальные имена классов (App_app__xK2aB), исключая конфликты стилей между компонентами. CSS-переменные (:root) создают единую цветовую систему — меняем один раз, применяется везде. Анимация fadeIn улучшает UX, показывая пользователю что задача добавлена.'
     },
     {
-      id: 108,
+      id: 8,
       title: 'Шаг 8: Фильтрация задач',
       type: 'practice',
       difficulty: 'medium',
@@ -161,7 +161,7 @@ export default {
       explanation: 'Фильтрация на фронтенде (useMemo) даёт мгновенный отклик без лишних запросов к серверу — данные уже загружены. useMemo пересчитывает filteredTasks только при изменении tasks или filter. Promise.all() позволяет параллельно отправить несколько DELETE-запросов, что быстрее чем последовательные запросы.'
     },
     {
-      id: 109,
+      id: 9,
       title: 'Шаг 9: Docker (Dockerfile + docker-compose)',
       type: 'practice',
       difficulty: 'hard',
@@ -181,7 +181,7 @@ export default {
       explanation: 'Multi-stage build для фронтенда уменьшает итоговый образ: тяжёлый node_modules не попадает в production-образ, только собранные статические файлы. nginx выступает и как веб-сервер для статики, и как reverse proxy для API — единая точка входа. healthcheck гарантирует, что backend стартует только после готовности PostgreSQL.'
     },
     {
-      id: 110,
+      id: 10,
       title: 'Шаг 10: Финальная сборка и тестирование',
       type: 'practice',
       difficulty: 'medium',

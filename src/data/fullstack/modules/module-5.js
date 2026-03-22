@@ -4,7 +4,7 @@ export default {
   description: 'Создайте сервис сокращения URL на языке Go с Redis-кешированием, статистикой кликов, rate limiting и полным CI/CD пайплайном через GitHub Actions. Минималистичный, высокопроизводительный микросервис.',
   lessons: [
     {
-      id: 501,
+      id: 1,
       title: 'Шаг 1: Go проект (chi router, структура)',
       type: 'practice',
       difficulty: 'easy',
@@ -24,7 +24,7 @@ export default {
       explanation: 'Chi — легковесный роутер без лишних зависимостей, стандартная библиотека http. Структура cmd/internal разделяет точку входа (cmd/) от бизнес-логики (internal/). godotenv.Load() не выдаёт ошибку если .env отсутствует — удобно для Docker (переменные через environment). middleware.Recoverer перехватывает панику и возвращает 500 вместо краша сервера.'
     },
     {
-      id: 502,
+      id: 2,
       title: 'Шаг 2: Модель и хранилище (PostgreSQL + Redis cache)',
       type: 'practice',
       difficulty: 'medium',
@@ -44,7 +44,7 @@ export default {
       explanation: 'Интерфейс Storage позволяет подменять реализацию: PostgreSQL в production, in-memory map в тестах. ErrNotFound — sentinel error, проверяется через errors.Is(). RETURNING id, created_at в INSERT возвращает сгенерированные поля за один запрос. Двухуровневый кеш: Redis для горячих URL (microsecundy), PostgreSQL как источник истины.'
     },
     {
-      id: 503,
+      id: 3,
       title: 'Шаг 3: API (POST /shorten, GET /:code → redirect)',
       type: 'practice',
       difficulty: 'medium',
@@ -64,7 +64,7 @@ export default {
       explanation: 'go h.storage.IncrementClicks(...) — горутина запускается параллельно с ответом, не блокируя редирект. context.Background() используется вместо r.Context() потому что r.Context() отменяется когда запрос завершается. 301 (Moved Permanently) кешируется браузером — быстрее для пользователя, но сложнее тестировать. 410 Gone — правильный статус для истёкших ссылок.'
     },
     {
-      id: 504,
+      id: 4,
       title: 'Шаг 4: Base62 encoding',
       type: 'practice',
       difficulty: 'medium',
@@ -84,7 +84,7 @@ export default {
       explanation: 'crypto/rand вместо math/rand для генерации кодов — cryptographically secure, невозможно предсказать следующий код. Base62 использует 62 символа (цифры + обе регистры) — компактнее hex (16), читаемее UUID. 6 символов дают 56 млрд комбинаций — для большинства сервисов достаточно. При коллизии (код уже существует) — генерировать новый код (обрабатывается через UNIQUE constraint в БД).'
     },
     {
-      id: 505,
+      id: 5,
       title: 'Шаг 5: Статистика кликов',
       type: 'practice',
       difficulty: 'medium',
@@ -104,7 +104,7 @@ export default {
       explanation: 'SHA256(IP + date) для "уникальности" без хранения сырых IP — соответствует GDPR: нельзя восстановить IP из хеша. Один хеш на пользователя в день (не в запрос). Горутина для RecordClick не блокирует редирект. Кеш статистики на 5 минут — небольшая задержка приемлема, но сервер не перегружается SQL-агрегациями на каждый запрос.'
     },
     {
-      id: 506,
+      id: 6,
       title: 'Шаг 6: Rate limiting',
       type: 'practice',
       difficulty: 'medium',
@@ -123,7 +123,7 @@ export default {
       explanation: 'r.With(middleware).Post() применяет middleware только к конкретному эндпоинту. httprate использует sliding window алгоритм — честнее фиксированного окна. Заголовки X-RateLimit-Remaining помогают клиентам адаптировать свои запросы. cleanup горутина предотвращает утечку памяти от накопления IP записей. В production используйте Redis для rate limiting — иначе не работает в multi-instance режиме.'
     },
     {
-      id: 507,
+      id: 7,
       title: 'Шаг 7: Docker (multi-stage build, compose)',
       type: 'practice',
       difficulty: 'medium',
@@ -144,7 +144,7 @@ export default {
       explanation: '-ldflags="-s -w" удаляет debug символы и DWARF info из бинарника — уменьшает размер ~30%. CGO_ENABLED=0 создаёт полностью статический бинарник — работает в scratch/alpine без libc. /docker-entrypoint-initdb.d/ — PostgreSQL автоматически выполняет SQL файлы из этой директории при первом запуске. Non-root user — best practice безопасности контейнеров.'
     },
     {
-      id: 508,
+      id: 8,
       title: 'Шаг 8: GitHub Actions CI/CD',
       type: 'practice',
       difficulty: 'hard',

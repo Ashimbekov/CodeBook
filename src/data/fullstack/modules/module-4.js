@@ -4,7 +4,7 @@ export default {
   description: 'Создайте мессенджер в реальном времени с комнатами, личными сообщениями, индикатором набора текста и отправкой файлов. Бэкенд на Express + Socket.io, хранилище на MongoDB, фронтенд на React.',
   lessons: [
     {
-      id: 401,
+      id: 1,
       title: 'Шаг 1: Express + Socket.io сервер',
       type: 'practice',
       difficulty: 'easy',
@@ -24,7 +24,7 @@ export default {
       explanation: 'Socket.io строится поверх обычного HTTP-сервера — это важно: один порт обслуживает и REST API (Express) и WebSocket (Socket.io). pingTimeout=60000 предотвращает преждевременный разрыв соединения при медленном интернете. Разделение io (глобальный объект) и socket (конкретное соединение) — ключевая архитектура Socket.io.'
     },
     {
-      id: 402,
+      id: 2,
       title: 'Шаг 2: MongoDB + Mongoose (User, Message, Room)',
       type: 'practice',
       difficulty: 'medium',
@@ -43,7 +43,7 @@ export default {
       explanation: 'Pre-save хук с isModified("password") предотвращает двойное хеширование: если сохраняем пользователя без изменения пароля — хук пропускается. toJSON transform скрывает пароль из всех сериализаций — дополнительный уровень защиты. Compound index на {room, createdAt} ускоряет самый частый запрос: "последние N сообщений в комнате X".'
     },
     {
-      id: 403,
+      id: 3,
       title: 'Шаг 3: Аутентификация (JWT)',
       type: 'practice',
       difficulty: 'medium',
@@ -63,7 +63,7 @@ export default {
       explanation: 'Socket.io middleware работает как Express middleware но для WebSocket соединений — проверка токена происходит при handshake, до установки соединения. socket.data — удобное хранилище для данных конкретного соединения, доступное во всех обработчиках этого сокета. $or оператор MongoDB проверяет оба поля одним запросом вместо двух.'
     },
     {
-      id: 404,
+      id: 4,
       title: 'Шаг 4: WebSocket события (join, message, typing, online)',
       type: 'practice',
       difficulty: 'hard',
@@ -83,7 +83,7 @@ export default {
       explanation: 'socket.join(roomId) добавляет сокет в Socket.io "комнату" — логическую группу. io.to(room).emit() рассылает всем в комнате включая отправителя, socket.to(room).emit() — всем кроме отправителя (выбирать по ситуации). $addToSet в MongoDB атомарно добавляет userId в readBy только если его там нет. Паттерн registerHandlers(io, socket) модуляризирует обработчики событий.'
     },
     {
-      id: 405,
+      id: 5,
       title: 'Шаг 5: React: список чатов',
       type: 'practice',
       difficulty: 'medium',
@@ -103,7 +103,7 @@ export default {
       explanation: 'useRef для сокета — не useState, потому что изменение сокета не должно вызывать ре-рендер. useEffect cleanup (socket.disconnect()) предотвращает утечку соединений при logout. socket.off("message:new") в cleanup эффекта удаляет обработчик при размонтировании — иначе накапливаются дубликаты. Set для onlineUsers даёт O(1) проверку наличия.'
     },
     {
-      id: 406,
+      id: 6,
       title: 'Шаг 6: React: окно сообщений (real-time)',
       type: 'practice',
       difficulty: 'hard',
@@ -123,7 +123,7 @@ export default {
       explanation: 'Cleanup effect (socket.off + room:leave) критичен: при переключении комнаты нужно отписаться от событий предыдущей комнаты, иначе накапливаются дубликаты обработчиков. scrollIntoView в отдельном useEffect с [messages] — scroll происходит после рендера новых сообщений в DOM. Пустой div с ref={bottomRef} — целевой элемент для scroll, всегда находится в конце списка.'
     },
     {
-      id: 407,
+      id: 7,
       title: 'Шаг 7: React: индикатор набора текста',
       type: 'practice',
       difficulty: 'medium',
@@ -142,7 +142,7 @@ export default {
       explanation: 'Дебаунс typing через clearTimeout+setTimeout предотвращает спам typing:start событиями на каждое нажатие. Map<userId, username> вместо массива позволяет O(1) добавление/удаление. Таймер на 3 секунды — fallback на случай потери typing:stop события (обрыв соединения). Анимация bounce через CSS animation-delay создаёт волновой эффект.'
     },
     {
-      id: 408,
+      id: 8,
       title: 'Шаг 8: Комнаты и группы',
       type: 'practice',
       difficulty: 'medium',
@@ -162,7 +162,7 @@ export default {
       explanation: 'new Set([...]) удаляет дубликаты при создании комнаты — создатель не может добавить себя дважды. Разделение участников на online/offline на фронтенде из Set onlineUsers — данные уже есть, дополнительного запроса не нужно. populate("members", "username avatar isOnline") — проекция MongoDB, возвращает только нужные поля.'
     },
     {
-      id: 409,
+      id: 9,
       title: 'Шаг 9: Отправка файлов',
       type: 'practice',
       difficulty: 'hard',
@@ -182,7 +182,7 @@ export default {
       explanation: 'multer diskStorage с timestamp+random именем файла предотвращает коллизии. fileFilter по mimetype — первый барьер (но не полная защита, mimetype можно подделать). В production проверять сигнатуру файла (magic bytes). URL.createObjectURL создаёт blob URL для мгновенного превью. Разные типы контента (text/image/file) в MessageBubble через условный рендер.'
     },
     {
-      id: 410,
+      id: 10,
       title: 'Шаг 10: Docker + деплой',
       type: 'practice',
       difficulty: 'hard',

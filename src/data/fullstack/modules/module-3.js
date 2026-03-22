@@ -4,7 +4,7 @@ export default {
   description: 'Создайте интернет-магазин с каталогом товаров, корзиной, оформлением заказов, JWT-аутентификацией и Redis-кешированием. Бэкенд на Spring Boot, фронтенд на React, кеш на Redis, всё в Docker.',
   lessons: [
     {
-      id: 301,
+      id: 1,
       title: 'Шаг 1: Spring Boot setup',
       type: 'practice',
       difficulty: 'easy',
@@ -23,7 +23,7 @@ export default {
       explanation: 'Spring Boot auto-configuration настраивает большую часть инфраструктуры автоматически — достаточно добавить зависимость в pom.xml. ${ENV_VAR:defaultValue} в application.properties позволяет переопределять настройки через переменные окружения без изменения кода. Lombok генерирует boilerplate (getters, setters, constructors) в compile-time.'
     },
     {
-      id: 302,
+      id: 2,
       title: 'Шаг 2: Модели (Product, Category, User, Order, OrderItem)',
       type: 'practice',
       difficulty: 'medium',
@@ -43,7 +43,7 @@ export default {
       explanation: 'BigDecimal вместо double для денег — критично, double теряет точность при десятичных вычислениях ($0.1 + $0.2 != $0.3). FetchType.LAZY загружает связанные объекты только при обращении — производительнее, чем EAGER. @JsonIgnore на password предотвращает утечку пароля в API-ответах. priceAtTime в OrderItem фиксирует цену на момент покупки, даже если цена товара изменится.'
     },
     {
-      id: 303,
+      id: 3,
       title: 'Шаг 3: REST API (ProductController, OrderController)',
       type: 'practice',
       difficulty: 'medium',
@@ -63,7 +63,7 @@ export default {
       explanation: '@Transactional на createOrder гарантирует: либо все операции (уменьшение stock, создание заказа) выполняются успешно, либо при ошибке всё откатывается. Паттерн Repository+Service+Controller разделяет ответственности: Repository работает с БД, Service содержит бизнес-логику, Controller обрабатывает HTTP. Page<Product> из Spring Data даёт пагинацию без лишнего кода.'
     },
     {
-      id: 304,
+      id: 4,
       title: 'Шаг 4: Spring Security + JWT',
       type: 'practice',
       difficulty: 'hard',
@@ -83,7 +83,7 @@ export default {
       explanation: 'OncePerRequestFilter гарантирует что фильтр выполнится ровно один раз на запрос. SecurityContextHolder.getContext().setAuthentication() регистрирует пользователя как аутентифицированного на время обработки запроса. @EnableMethodSecurity включает @PreAuthorize аннотации на уровне методов. BCrypt хеширует пароли с автоматической солью — безопасно даже при утечке БД.'
     },
     {
-      id: 305,
+      id: 5,
       title: 'Шаг 5: React: каталог товаров',
       type: 'practice',
       difficulty: 'medium',
@@ -103,7 +103,7 @@ export default {
       explanation: 'CSS Grid с auto-fill и minmax автоматически выбирает количество колонок в зависимости от ширины экрана — responsive без media queries. product.stock === 0 блокирует кнопку на уровне UI. Пагинация Spring (page от 0) отличается от Django (page от 1) — важно учитывать при построении UI.'
     },
     {
-      id: 306,
+      id: 6,
       title: 'Шаг 6: React: корзина (localStorage)',
       type: 'practice',
       difficulty: 'medium',
@@ -123,7 +123,7 @@ export default {
       explanation: 'Lazy initial state в useState(() => JSON.parse(...)) — функция выполняется только один раз при монтировании, не при каждом ре-рендере. Math.min(quantity + 1, product.stock) предотвращает добавление больше чем есть в наличии. toLocaleString("ru-RU") форматирует число как "1 500 ₽" по российским стандартам.'
     },
     {
-      id: 307,
+      id: 7,
       title: 'Шаг 7: React: оформление заказа',
       type: 'practice',
       difficulty: 'medium',
@@ -143,7 +143,7 @@ export default {
       explanation: 'Передача данных между страницами через navigate state (не URL параметры) — orderId не виден в URL, не кешируется, исчезает при refresh (что правильно для страницы успеха). err.response?.data?.message извлекает сообщение об ошибке из ответа Spring (ResponseStatusException message). disabled={loading} предотвращает двойную отправку формы.'
     },
     {
-      id: 308,
+      id: 8,
       title: 'Шаг 8: Redis кеширование (товары, сессии)',
       type: 'practice',
       difficulty: 'hard',
@@ -163,7 +163,7 @@ export default {
       explanation: '@Cacheable проверяет Redis перед выполнением метода — если ключ найден, метод не вызывается. @CacheEvict удаляет записи из кеша после мутирующих операций. allEntries=true при CacheEvict удаляет весь кеш "products" — проще чем точечная инвалидация по всем параметрам. TTL для категорий (1 час) больше чем для товаров (10 мин) — категории меняются реже.'
     },
     {
-      id: 309,
+      id: 9,
       title: 'Шаг 9: Загрузка изображений',
       type: 'practice',
       difficulty: 'medium',
@@ -183,7 +183,7 @@ export default {
       explanation: 'UUID для имён файлов предотвращает коллизии и скрывает оригинальные имена. URL.createObjectURL создаёт временный URL для превью без загрузки — быстро и не нагружает сервер. Files.createDirectories создаёт папку если её нет. В production изображения хранят в S3/MinIO, а не на диске сервера.'
     },
     {
-      id: 310,
+      id: 10,
       title: 'Шаг 10: Поиск и фильтрация',
       type: 'practice',
       difficulty: 'medium',
@@ -203,7 +203,7 @@ export default {
       explanation: 'JPA Specifications реализуют паттерн Specification — каждый критерий изолирован, комбинируются через .and()/.or(). Null-safe: если параметр null, Specification возвращает null и Spring Data игнорирует этот критерий. Синхронизация с URL (useSearchParams) — пользователь может поделиться ссылкой с применёнными фильтрами.'
     },
     {
-      id: 311,
+      id: 11,
       title: 'Шаг 11: Swagger документация',
       type: 'practice',
       difficulty: 'easy',
@@ -223,7 +223,7 @@ export default {
       explanation: 'Springdoc автоматически генерирует OpenAPI спецификацию из Spring MVC аннотаций — минимум дополнительного кода. SecurityScheme с Bearer JWT позволяет тестировать защищённые эндпоинты прямо в Swagger UI. @Schema примеры показывают разработчикам API что передавать — самодокументирующийся API.'
     },
     {
-      id: 312,
+      id: 12,
       title: 'Шаг 12: Docker + docker-compose',
       type: 'practice',
       difficulty: 'hard',
