@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Что такое Extended Thinking',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -32,6 +33,7 @@ export default {
     {
       id: 2,
       title: 'Включение thinking',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -55,6 +57,7 @@ export default {
     {
       id: 3,
       title: 'budget_tokens',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +81,7 @@ export default {
     {
       id: 4,
       title: 'Thinking блоки в ответе',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -102,6 +106,7 @@ export default {
     {
       id: 5,
       title: 'Когда использовать Thinking',
+      type: 'theory',
       content: [
         {
           type: 'heading',

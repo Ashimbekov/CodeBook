@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Типы ошибок API',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: '429: Rate Limit',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -56,6 +58,7 @@ export default {
     {
       id: 3,
       title: '529: Overloaded',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -79,6 +82,7 @@ export default {
     {
       id: 4,
       title: 'Exponential Backoff',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -102,6 +106,7 @@ export default {
     {
       id: 5,
       title: 'Паттерны обработки ошибок',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -121,6 +126,7 @@ export default {
     {
       id: 6,
       title: 'Мониторинг использования',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Что такое Batches API',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -32,6 +33,7 @@ export default {
     {
       id: 2,
       title: 'Создание батча',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -55,6 +57,7 @@ export default {
     {
       id: 3,
       title: 'Мониторинг статуса батча',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -79,6 +82,7 @@ export default {
     {
       id: 4,
       title: 'Получение результатов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -103,6 +107,7 @@ export default {
     {
       id: 5,
       title: 'Экономия и сценарии',
+      type: 'theory',
       content: [
         {
           type: 'heading',

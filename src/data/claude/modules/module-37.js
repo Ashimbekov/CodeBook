@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Концепция кеширования промптов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -32,6 +33,7 @@ export default {
     {
       id: 2,
       title: 'cache_control',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -55,6 +57,7 @@ export default {
     {
       id: 3,
       title: 'Ephemeral кеширование',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +77,7 @@ export default {
     {
       id: 4,
       title: 'Cache hits и misses',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +101,7 @@ export default {
     {
       id: 5,
       title: 'Экономия на кешировании',
+      type: 'theory',
       content: [
         {
           type: 'heading',

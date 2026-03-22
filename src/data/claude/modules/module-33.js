@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Зачем нужен стриминг',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -32,6 +33,7 @@ export default {
     {
       id: 2,
       title: 'stream=True в Python',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -60,6 +62,7 @@ export default {
     {
       id: 3,
       title: 'Обработка событий стрима',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -83,6 +86,7 @@ export default {
     {
       id: 4,
       title: 'Server-Sent Events',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -111,6 +115,7 @@ export default {
     {
       id: 5,
       title: 'Стриминг в веб-приложениях',
+      type: 'theory',
       content: [
         {
           type: 'heading',

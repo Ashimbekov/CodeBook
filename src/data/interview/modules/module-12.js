@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Умные вопросы о команде и технологиях',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +41,7 @@ export default {
     {
       id: 2,
       title: 'Вопросы о культуре и карьерном росте',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +76,7 @@ export default {
     {
       id: 3,
       title: 'Вопросы о конкретной роли',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +111,7 @@ export default {
     {
       id: 4,
       title: 'Красные флаги: вопросы, которые раскрывают проблемы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -142,6 +146,7 @@ export default {
     {
       id: 5,
       title: 'Как читать реакции интервьюера',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -184,6 +189,7 @@ export default {
     {
       id: 6,
       title: 'Вопросы для разных раундов интервью',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Что такое Tool Use',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -32,6 +33,7 @@ export default {
     {
       id: 2,
       title: 'Определение инструментов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -55,6 +57,7 @@ export default {
     {
       id: 3,
       title: 'tool_choice',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +81,7 @@ export default {
     {
       id: 4,
       title: 'Обработка tool_use ответа',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +101,7 @@ export default {
     {
       id: 5,
       title: 'Выполнение инструментов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -116,6 +121,7 @@ export default {
     {
       id: 6,
       title: 'Multi-turn Tool Use',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -135,6 +141,7 @@ export default {
     {
       id: 7,
       title: 'Параллельный Tool Use',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Вопрос: "Расскажите о проекте, которым вы руководили"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +41,7 @@ export default {
     {
       id: 2,
       title: 'Вопрос: "Расскажите, когда взяли инициативу без чьей-либо просьбы"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +76,7 @@ export default {
     {
       id: 3,
       title: 'Вопрос: "Как вы влияли на решения без формальных полномочий?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +111,7 @@ export default {
     {
       id: 4,
       title: 'Вопрос: "Как вы принимали сложное решение?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -142,6 +146,7 @@ export default {
     {
       id: 5,
       title: 'Вопрос: "Расскажите, как вы наставляли кого-то"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -176,6 +181,7 @@ export default {
     {
       id: 6,
       title: 'Вопрос: "Расскажите о случае, когда вы потерпели неудачу как лидер"',
+      type: 'theory',
       content: [
         {
           type: 'heading',

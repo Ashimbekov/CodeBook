@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Вопрос: "Расскажите о работе с трудным коллегой"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +41,7 @@ export default {
     {
       id: 2,
       title: 'Вопрос: "Как вы работали с командой из другого отдела?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +76,7 @@ export default {
     {
       id: 3,
       title: 'Вопрос: "Как вы справлялись с разногласием в команде?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +111,7 @@ export default {
     {
       id: 4,
       title: 'Вопрос: "Как вы помогали коллеге, который испытывал трудности?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -142,6 +146,7 @@ export default {
     {
       id: 5,
       title: 'Вопрос: "Расскажите о компромиссе в техническом решении"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -176,6 +181,7 @@ export default {
     {
       id: 6,
       title: 'Amazon Leadership Principles и командная работа',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Модель ценообразования',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Расчёт стоимости запросов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Стратегии снижения затрат',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -71,6 +74,7 @@ export default {
     {
       id: 4,
       title: 'Мониторинг расходов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -94,6 +98,7 @@ export default {
     {
       id: 5,
       title: 'Сравнение стоимости моделей',
+      type: 'theory',
       content: [
         {
           type: 'heading',

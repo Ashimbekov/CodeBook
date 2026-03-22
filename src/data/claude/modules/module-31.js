@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Получение API-ключа',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -37,6 +38,7 @@ export default {
     {
       id: 2,
       title: 'Консоль Anthropic',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +65,7 @@ export default {
     {
       id: 3,
       title: 'Установка SDK',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -91,6 +94,7 @@ export default {
     {
       id: 4,
       title: 'Первый API-запрос',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -118,6 +122,7 @@ export default {
     {
       id: 5,
       title: 'Структура ответа API',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -146,6 +151,7 @@ export default {
     {
       id: 6,
       title: 'API versioning',
+      type: 'theory',
       content: [
         {
           type: 'heading',

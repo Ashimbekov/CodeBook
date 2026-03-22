@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Вопрос: "Почему мы должны нанять именно вас?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +41,7 @@ export default {
     {
       id: 2,
       title: 'Вопрос: "Какая ваша слабая сторона?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +76,7 @@ export default {
     {
       id: 3,
       title: 'Ожидания по зарплате: как отвечать правильно',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +111,7 @@ export default {
     {
       id: 4,
       title: 'Вопрос: "Кем вы видите себя через 5 лет?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -142,6 +146,7 @@ export default {
     {
       id: 5,
       title: 'Вопрос: "Что будет, если вы не получите оффер?"',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -176,6 +181,7 @@ export default {
     {
       id: 6,
       title: 'Trick questions: ловушки интервьюера',
+      type: 'theory',
       content: [
         {
           type: 'heading',

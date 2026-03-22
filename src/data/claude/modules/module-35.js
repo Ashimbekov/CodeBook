@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Отправка изображений через base64',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Отправка изображений по URL',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -56,6 +58,7 @@ export default {
     {
       id: 3,
       title: 'Анализ изображений',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -79,6 +82,7 @@ export default {
     {
       id: 4,
       title: 'Извлечение данных из документов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -102,6 +106,7 @@ export default {
     {
       id: 5,
       title: 'Несколько изображений в запросе',
+      type: 'theory',
       content: [
         {
           type: 'heading',

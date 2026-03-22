@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'messages.create()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -33,6 +34,7 @@ export default {
     {
       id: 2,
       title: 'Роли: user и assistant',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -65,6 +67,7 @@ export default {
     {
       id: 3,
       title: 'Многоходовые диалоги',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -88,6 +91,7 @@ export default {
     {
       id: 4,
       title: 'Системный промпт',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -116,6 +120,7 @@ export default {
     {
       id: 5,
       title: 'max_tokens и temperature',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -144,6 +149,7 @@ export default {
     {
       id: 6,
       title: 'stop_sequences',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -172,6 +178,7 @@ export default {
     {
       id: 7,
       title: 'Выбор модели',
+      type: 'theory',
       content: [
         {
           type: 'heading',
