@@ -1,0 +1,32 @@
+export default {
+  id: 'fastapi',
+  title: 'FastAPI',
+  icon: '⚡',
+  description: 'Полный курс FastAPI: REST API на Python, валидация, ORM, аутентификация, WebSocket и деплой.',
+  color: '#009688',
+  modules: [
+    { id: 1, title: 'Введение в FastAPI', icon: '⚡', totalLessons: 7 },
+    { id: 2, title: 'Первое приложение', icon: '🚀', totalLessons: 7 },
+    { id: 3, title: 'Path и Query параметры', icon: '🔗', totalLessons: 7 },
+    { id: 4, title: 'Request Body и Pydantic', icon: '📥', totalLessons: 8 },
+    { id: 5, title: 'Response модели', icon: '📤', totalLessons: 6 },
+    { id: 6, title: 'Валидация данных', icon: '✅', totalLessons: 7 },
+    { id: 7, title: 'CRUD операции', icon: '🔧', totalLessons: 8 },
+    { id: 8, title: 'SQLAlchemy и базы данных', icon: '🗄️', totalLessons: 8 },
+    { id: 9, title: 'Alembic миграции', icon: '📦', totalLessons: 6 },
+    { id: 10, title: 'Аутентификация (OAuth2 + JWT)', icon: '🔐', totalLessons: 8 },
+    { id: 11, title: 'Middleware', icon: '🔗', totalLessons: 6 },
+    { id: 12, title: 'Зависимости (Depends)', icon: '💉', totalLessons: 7 },
+    { id: 13, title: 'Обработка ошибок', icon: '⚠️', totalLessons: 6 },
+    { id: 14, title: 'Фоновые задачи', icon: '⏳', totalLessons: 6 },
+    { id: 15, title: 'WebSocket', icon: '🔌', totalLessons: 6 },
+    { id: 16, title: 'Файлы и загрузка', icon: '📁', totalLessons: 6 },
+    { id: 17, title: 'Тестирование', icon: '🧪', totalLessons: 7 },
+    { id: 18, title: 'Swagger и документация', icon: '📄', totalLessons: 6 },
+    { id: 19, title: 'Docker и деплой', icon: '🐳', totalLessons: 7 },
+    { id: 20, title: 'Async и производительность', icon: '🚀', totalLessons: 7 },
+    { id: 21, title: 'Best Practices', icon: '✨', totalLessons: 7 },
+    { id: 22, title: 'Практикум: REST API', icon: '💪', totalLessons: 10 },
+    { id: 23, title: 'Практикум: Полное приложение', icon: '🚀', totalLessons: 8 }
+  ]
+}

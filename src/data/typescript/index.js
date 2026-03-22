@@ -1,0 +1,32 @@
+export default {
+  id: 'typescript',
+  title: 'TypeScript',
+  icon: '🔷',
+  description: 'Полный курс TypeScript: типизация, интерфейсы, generics, декораторы и интеграция с React.',
+  color: '#3178C6',
+  modules: [
+    { id: 1, title: 'Введение в TypeScript', icon: '🔷', totalLessons: 7 },
+    { id: 2, title: 'Установка и настройка', icon: '⚙️', totalLessons: 6 },
+    { id: 3, title: 'Базовые типы', icon: '📦', totalLessons: 8 },
+    { id: 4, title: 'Массивы и кортежи', icon: '📋', totalLessons: 6 },
+    { id: 5, title: 'Объекты и интерфейсы', icon: '🏗️', totalLessons: 8 },
+    { id: 6, title: 'Функции и типизация', icon: '⚡', totalLessons: 7 },
+    { id: 7, title: 'Union и Intersection типы', icon: '🔀', totalLessons: 7 },
+    { id: 8, title: 'Type Aliases и Literal Types', icon: '🏷️', totalLessons: 6 },
+    { id: 9, title: 'Enums', icon: '📋', totalLessons: 6 },
+    { id: 10, title: 'Классы', icon: '🏗️', totalLessons: 8 },
+    { id: 11, title: 'Generics', icon: '🧬', totalLessons: 8 },
+    { id: 12, title: 'Utility Types', icon: '🔧', totalLessons: 7 },
+    { id: 13, title: 'Type Guards и Narrowing', icon: '🛡️', totalLessons: 7 },
+    { id: 14, title: 'Декораторы', icon: '🎨', totalLessons: 6 },
+    { id: 15, title: 'Модули', icon: '📦', totalLessons: 6 },
+    { id: 16, title: 'tsconfig.json', icon: '⚙️', totalLessons: 6 },
+    { id: 17, title: 'TypeScript с React', icon: '⚛️', totalLessons: 8 },
+    { id: 18, title: 'TypeScript с Node.js', icon: '🟢', totalLessons: 7 },
+    { id: 19, title: 'Продвинутые типы', icon: '🧠', totalLessons: 7 },
+    { id: 20, title: 'Best Practices', icon: '✨', totalLessons: 7 },
+    { id: 21, title: 'Практикум: Основы', icon: '💪', totalLessons: 10 },
+    { id: 22, title: 'Практикум: Generics и типы', icon: '🧬', totalLessons: 10 },
+    { id: 23, title: 'Практикум: Проекты', icon: '🚀', totalLessons: 8 }
+  ]
+}

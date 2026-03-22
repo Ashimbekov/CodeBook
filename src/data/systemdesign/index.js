@@ -1,0 +1,31 @@
+export default {
+  id: 'systemdesign',
+  title: 'System Design',
+  icon: '🏛️',
+  description: 'Полный курс System Design: масштабирование, кеширование, очереди, CAP теорема и реальные системы.',
+  color: '#4A148C',
+  modules: [
+    { id: 1, title: 'Введение в System Design', icon: '🏛️', totalLessons: 7 },
+    { id: 2, title: 'Масштабирование', icon: '📈', totalLessons: 8 },
+    { id: 3, title: 'Балансировка нагрузки', icon: '⚖️', totalLessons: 7 },
+    { id: 4, title: 'Кеширование', icon: '💾', totalLessons: 8 },
+    { id: 5, title: 'Базы данных: SQL vs NoSQL', icon: '🗄️', totalLessons: 7 },
+    { id: 6, title: 'Шардирование и репликация', icon: '🔀', totalLessons: 7 },
+    { id: 7, title: 'CAP теорема', icon: '🔺', totalLessons: 6 },
+    { id: 8, title: 'Очереди сообщений', icon: '📨', totalLessons: 7 },
+    { id: 9, title: 'CDN и статика', icon: '🌐', totalLessons: 6 },
+    { id: 10, title: 'API Design', icon: '🔗', totalLessons: 7 },
+    { id: 11, title: 'Микросервисы vs Монолит', icon: '🏢', totalLessons: 7 },
+    { id: 12, title: 'Consensus алгоритмы', icon: '🤝', totalLessons: 6 },
+    { id: 13, title: 'Rate Limiting', icon: '🚦', totalLessons: 6 },
+    { id: 14, title: 'Мониторинг и алерты', icon: '📊', totalLessons: 6 },
+    { id: 15, title: 'Проектируем: URL Shortener', icon: '🔗', totalLessons: 7 },
+    { id: 16, title: 'Проектируем: Twitter/X', icon: '🐦', totalLessons: 8 },
+    { id: 17, title: 'Проектируем: YouTube', icon: '📺', totalLessons: 7 },
+    { id: 18, title: 'Проектируем: Chat (WhatsApp)', icon: '💬', totalLessons: 7 },
+    { id: 19, title: 'Проектируем: Instagram', icon: '📸', totalLessons: 7 },
+    { id: 20, title: 'Проектируем: Uber', icon: '🚗', totalLessons: 7 },
+    { id: 21, title: 'Подготовка к собеседованиям', icon: '🎯', totalLessons: 7 },
+    { id: 22, title: 'Практикум: Задачи SD', icon: '💪', totalLessons: 10 }
+  ]
+}
