@@ -185,7 +185,7 @@ def execute_tool(name: str, args: dict) -> str:
 def code_review(code: str) -> str:
     messages = [{
         "role": "user",
-        "content": f"Проведи code review этого кода. Используй все доступные инструменты.\\n\\n```python\\n{code}\\n```"
+        "content": f"Проведи code review этого кода. Используй все доступные инструменты.\\n\\n\`\`\`python\\n{code}\\n\`\`\`"
     }]
 
     for _ in range(10):
