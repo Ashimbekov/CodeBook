@@ -1,0 +1,146 @@
+export default {
+  id: 20,
+  title: 'Практикум: production кластер',
+  description: 'Финальный практикум по развёртыванию и управлению production-grade Kubernetes кластером',
+  lessons: [
+    {
+      id: 1,
+      title: 'Практика: Полная настройка namespace и RBAC',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Настройте production namespace с полной ролевой моделью: namespace, квоты, RBAC для команды.',
+      requirements: [
+        'Создать namespace production с labels',
+        'Настроить ResourceQuota и LimitRange',
+        'Создать ServiceAccount для CI/CD',
+        'Настроить RBAC роли для трёх уровней: readonly, developer, deployer',
+        'Проверить все права через kubectl auth can-i'
+      ],
+      hint: 'Создайте ClusterRole для readonly (view), developer (edit без delete namespace), deployer (deploy права). Свяжите через RoleBinding в конкретном namespace.',
+      solution: '# production-setup.yaml\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: production\n  labels:\n    env: production\n    team: platform\n  annotations:\n    contact: platform@company.com\n---\napiVersion: v1\nkind: ResourceQuota\nmetadata:\n  name: production-quota\n  namespace: production\nspec:\n  hard:\n    pods: "50"\n    services: "20"\n    requests.cpu: "10"\n    requests.memory: 20Gi\n    limits.cpu: "20"\n    limits.memory: 40Gi\n    persistentvolumeclaims: "20"\n    requests.storage: 100Gi\n---\napiVersion: v1\nkind: LimitRange\nmetadata:\n  name: production-limits\n  namespace: production\nspec:\n  limits:\n  - type: Container\n    default:\n      cpu: "500m"\n      memory: "256Mi"\n    defaultRequest:\n      cpu: "100m"\n      memory: "128Mi"\n    max:\n      cpu: "4"\n      memory: "4Gi"\n    min:\n      cpu: "50m"\n      memory: "64Mi"\n---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: cicd-deployer\n  namespace: production\n---\napiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  name: deployer-role\n  namespace: production\nrules:\n- apiGroups: ["apps"]\n  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]\n  verbs: ["get", "list", "create", "update", "patch", "watch"]\n- apiGroups: [""]\n  resources: ["pods", "pods/log", "services", "configmaps", "endpoints"]\n  verbs: ["get", "list", "watch"]\n- apiGroups: ["batch"]\n  resources: ["jobs"]\n  verbs: ["get", "list", "create"]\n---\napiVersion: rbac.authorization.k8s.io/v1\nkind: RoleBinding\nmetadata:\n  name: cicd-deployer-binding\n  namespace: production\nsubjects:\n- kind: ServiceAccount\n  name: cicd-deployer\n  namespace: production\nroleRef:\n  kind: Role\n  name: deployer-role\n  apiGroup: rbac.authorization.k8s.io\n\nkubectl apply -f production-setup.yaml\n\n# Проверить права CI/CD\nkubectl auth can-i create deployments -n production \\\n  --as system:serviceaccount:production:cicd-deployer\nkubectl auth can-i delete namespaces \\\n  --as system:serviceaccount:production:cicd-deployer\nkubectl auth can-i get secrets -n production \\\n  --as system:serviceaccount:production:cicd-deployer',
+      explanation: 'Production namespace требует жёстких квот, дефолтных лимитов и чёткой ролевой модели. CI/CD ServiceAccount имеет только права деплоя — не может удалять namespace или читать секреты. Принцип наименьших привилегий критичен для production безопасности.'
+    },
+    {
+      id: 2,
+      title: 'Практика: Production Deployment с полными best practices',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Создайте полностью production-ready Deployment для критичного сервиса.',
+      requirements: [
+        'Deployment с 3 репликами и всеми probes',
+        'Anti-affinity для распределения по узлам',
+        'PodDisruptionBudget minAvailable: 2',
+        'Horizontal Pod Autoscaler',
+        'NetworkPolicy ограничивающий входящий трафик',
+        'ServiceAccount без лишних прав'
+      ],
+      hint: 'NetworkPolicy: ingress только от Ingress Controller (namespace kube-ingress или label). Egress только к нужным сервисам.',
+      solution: '# production-app.yaml\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: web-app-sa\n  namespace: production\nautomountServiceAccountToken: false\n---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web-app\n  namespace: production\n  annotations:\n    kubernetes.io/change-cause: "Initial deployment v1.0.0"\nspec:\n  replicas: 3\n  revisionHistoryLimit: 5\n  selector:\n    matchLabels:\n      app: web-app\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxUnavailable: 1\n      maxSurge: 1\n  template:\n    metadata:\n      labels:\n        app: web-app\n        version: v1.0.0\n    spec:\n      serviceAccountName: web-app-sa\n      automountServiceAccountToken: false\n      terminationGracePeriodSeconds: 60\n      securityContext:\n        runAsNonRoot: true\n        runAsUser: 101\n        fsGroup: 101\n        seccompProfile:\n          type: RuntimeDefault\n      affinity:\n        podAntiAffinity:\n          preferredDuringSchedulingIgnoredDuringExecution:\n          - weight: 100\n            podAffinityTerm:\n              labelSelector:\n                matchExpressions:\n                - key: app\n                  operator: In\n                  values: [web-app]\n              topologyKey: kubernetes.io/hostname\n      containers:\n      - name: nginx\n        image: nginx:1.25.3\n        imagePullPolicy: IfNotPresent\n        ports:\n        - containerPort: 8080\n        securityContext:\n          allowPrivilegeEscalation: false\n          readOnlyRootFilesystem: false\n          capabilities:\n            drop: [ALL]\n        resources:\n          requests:\n            memory: "128Mi"\n            cpu: "100m"\n          limits:\n            memory: "256Mi"\n        startupProbe:\n          httpGet:\n            path: /healthz\n            port: 8080\n          failureThreshold: 30\n          periodSeconds: 5\n        livenessProbe:\n          httpGet:\n            path: /healthz\n            port: 8080\n          periodSeconds: 10\n          failureThreshold: 3\n          timeoutSeconds: 5\n        readinessProbe:\n          httpGet:\n            path: /ready\n            port: 8080\n          periodSeconds: 5\n          failureThreshold: 3\n        lifecycle:\n          preStop:\n            exec:\n              command: [\'/bin/sh\', \'-c\', \'sleep 15\']\n---\napiVersion: policy/v1\nkind: PodDisruptionBudget\nmetadata:\n  name: web-app-pdb\n  namespace: production\nspec:\n  minAvailable: 2\n  selector:\n    matchLabels:\n      app: web-app\n---\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: web-app-hpa\n  namespace: production\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: web-app\n  minReplicas: 3\n  maxReplicas: 10\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 70\n  - type: Resource\n    resource:\n      name: memory\n      target:\n        type: Utilization\n        averageUtilization: 80\n---\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: web-app-netpol\n  namespace: production\nspec:\n  podSelector:\n    matchLabels:\n      app: web-app\n  policyTypes:\n  - Ingress\n  - Egress\n  ingress:\n  - from:\n    - namespaceSelector:\n        matchLabels:\n          kubernetes.io/metadata.name: ingress-nginx\n    ports:\n    - protocol: TCP\n      port: 8080\n  egress:\n  - to:\n    - namespaceSelector: {}\n    ports:\n    - protocol: TCP\n      port: 53\n    - protocol: UDP\n      port: 53\n  - to:\n    - podSelector:\n        matchLabels:\n          app: backend-service\n    ports:\n    - protocol: TCP\n      port: 8080\n\nkubectl apply -f production-app.yaml\nkubectl get all -n production\nkubectl get pdb,hpa,netpol -n production',
+      explanation: 'Production Deployment включает все уровни защиты: ServiceAccount без лишних прав, securityContext для изоляции, PDB для защиты от disruption, HPA для автомасштабирования, NetworkPolicy для ограничения трафика. Это defense-in-depth подход к безопасности.'
+    },
+    {
+      id: 3,
+      title: 'Практика: Helm release для production',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Создайте Helm chart для production приложения с разными values для сред и хуками миграции.',
+      requirements: [
+        'Создать Helm chart с поддержкой multi-env values',
+        'Добавить pre-install/pre-upgrade hook для миграции',
+        'Настроить разные values для dev и production',
+        'Установить в dev namespace',
+        'Обновить версию с сохранением истории'
+      ],
+      hint: 'Создайте values-dev.yaml и values-prod.yaml. Hook Job с helm.sh/hook: pre-upgrade,pre-install должен иметь restartPolicy: OnFailure.',
+      solution: '# Создать chart\nhelm create production-app\ncd production-app\n\n# values.yaml (базовые)\ncat > values.yaml << \'EOF\'\nreplicaCount: 1\nimage:\n  repository: nginx\n  tag: "1.25.3"\n  pullPolicy: IfNotPresent\nservice:\n  type: ClusterIP\n  port: 80\ningress:\n  enabled: false\nresources:\n  requests:\n    cpu: 100m\n    memory: 128Mi\n  limits:\n    memory: 256Mi\nautoscaling:\n  enabled: false\n  minReplicas: 1\n  maxReplicas: 5\n  targetCPUUtilizationPercentage: 70\npdb:\n  enabled: false\n  minAvailable: 1\nmigration:\n  enabled: true\nEOF\n\n# values-prod.yaml (production override)\ncat > values-prod.yaml << \'EOF\'\nreplicaCount: 3\ningress:\n  enabled: true\n  host: myapp.production.example.com\nautoscaling:\n  enabled: true\n  minReplicas: 3\n  maxReplicas: 10\npdb:\n  enabled: true\n  minAvailable: 2\nEOF\n\n# templates/migration-job.yaml\ncat > templates/migration-job.yaml << \'EOF\'\n{{- if .Values.migration.enabled }}\napiVersion: batch/v1\nkind: Job\nmetadata:\n  name: {{ include "production-app.fullname" . }}-migration\n  annotations:\n    "helm.sh/hook": pre-install,pre-upgrade\n    "helm.sh/hook-weight": "-10"\n    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded\nspec:\n  ttlSecondsAfterFinished: 300\n  template:\n    spec:\n      restartPolicy: OnFailure\n      containers:\n      - name: migration\n        image: busybox\n        command: [\'sh\', \'-c\', \'echo "Running DB migrations..."; sleep 3; echo "Done"\']\n{{- end }}\nEOF\n\n# Установить в dev\nhelm install dev-app . --namespace dev --create-namespace\n\n# Установить в production\nhelm install prod-app . -f values-prod.yaml --namespace production\n\n# Список releases\nhelm list -A\n\n# Обновить версию\nhelm upgrade dev-app . --set image.tag=1.25.3 --namespace dev\n\n# Проверить историю\nhelm history dev-app -n dev\n\n# Откат\nhelm rollback dev-app 1 -n dev',
+      explanation: 'Helm chart с multi-environment values позволяет одним чартом управлять всеми средами. Pre-install hooks запускают миграции до обновления. values-prod.yaml переопределяет только production-специфичные параметры. helm history + rollback обеспечивают безопасность обновлений.'
+    },
+    {
+      id: 4,
+      title: 'Практика: Настройка мониторинга production',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Настройте полный мониторинг production кластера: метрики, алерты, дашборды.',
+      requirements: [
+        'Создать ServiceMonitor для production приложения',
+        'Создать PrometheusRule с критичными алертами',
+        'Настроить дашборд в Grafana',
+        'Проверить что алерты срабатывают корректно',
+        'Настроить Alertmanager для email уведомлений'
+      ],
+      hint: 'PrometheusRule должен иметь label release: monitoring (совпадает с Helm release именем kube-prometheus-stack). Для Alertmanager создайте Secret с конфигурацией.',
+      solution: '# monitoring-production.yaml\napiVersion: monitoring.coreos.com/v1\nkind: ServiceMonitor\nmetadata:\n  name: production-apps\n  namespace: monitoring\n  labels:\n    release: monitoring\nspec:\n  selector:\n    matchLabels:\n      monitored: "true"\n  namespaceSelector:\n    matchNames:\n    - production\n  endpoints:\n  - port: metrics\n    interval: 30s\n    scrapeTimeout: 10s\n    path: /metrics\n---\napiVersion: monitoring.coreos.com/v1\nkind: PrometheusRule\nmetadata:\n  name: production-slos\n  namespace: monitoring\n  labels:\n    release: monitoring\nspec:\n  groups:\n  - name: production.slos\n    interval: 30s\n    rules:\n    - alert: ServiceDown\n      expr: up{namespace="production"} == 0\n      for: 1m\n      labels:\n        severity: critical\n        namespace: production\n      annotations:\n        summary: "Service {{ $labels.job }} is DOWN"\n        description: "Service has been down for 1 minute"\n    - alert: HighCPUUsage\n      expr: |\n        sum(rate(container_cpu_usage_seconds_total{namespace="production",container!=""}[5m]))\n        by (pod) > 0.8\n      for: 10m\n      labels:\n        severity: warning\n      annotations:\n        summary: "High CPU: {{ $labels.pod }}"\n    - alert: PodRestartingTooOften\n      expr: |\n        rate(kube_pod_container_status_restarts_total{namespace="production"}[1h]) > 0.1\n      for: 5m\n      labels:\n        severity: warning\n      annotations:\n        summary: "Pod {{ $labels.pod }} restarting too often"\n    - alert: DeploymentReplicasMismatch\n      expr: |\n        kube_deployment_spec_replicas{namespace="production"}\n        != kube_deployment_status_available_replicas{namespace="production"}\n      for: 5m\n      labels:\n        severity: critical\n      annotations:\n        summary: "Deployment {{ $labels.deployment }} has unavailable replicas"\n\nkubectl apply -f monitoring-production.yaml\n\n# Проверить правила загрузились\nkubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring &\n# Prometheus UI -> Status -> Rules -> искать production.slos\n\n# Сохранить дашборд из Grafana как ConfigMap\n# Grafana -> Dashboard -> Manage -> Export -> Save to file\n# kubectl create configmap prod-dashboard -n monitoring \\\n#   --from-file=prod-dashboard.json\n# kubectl label configmap prod-dashboard grafana_dashboard=1 -n monitoring\n\n# Проверить алерты в Alertmanager\nkubectl port-forward svc/monitoring-kube-prometheus-alertmanager 9093:9093 -n monitoring &\necho "Alertmanager: http://localhost:9093"',
+      explanation: 'Production мониторинг должен покрывать: доступность сервисов (ServiceDown), производительность (HighCPU), стабильность (PodRestarting), корректность деплоя (ReplicasMismatch). ServiceMonitor автодискавери позволяет добавлять новые сервисы простым добавлением label monitored: true.'
+    },
+    {
+      id: 5,
+      title: 'Практика: Резервное копирование и восстановление',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Настройте резервное копирование Kubernetes ресурсов и данных PVC с Velero.',
+      requirements: [
+        'Установить Velero для резервного копирования',
+        'Создать Backup всего namespace',
+        'Симулировать потерю данных',
+        'Выполнить восстановление из резервной копии',
+        'Настроить расписание автоматического бэкапа'
+      ],
+      hint: 'Для локального тестирования Velero используйте minio как S3-совместимое хранилище. Velero backup создаёт снимок всех K8s ресурсов и (при наличии плагина) данных PVC.',
+      solution: '# Установить MinIO для хранения бэкапов\nkubectl create namespace velero\n\nkubectl apply -f https://raw.githubusercontent.com/vmware-tanzu/velero/main/examples/minio/00-minio-deployment.yaml\n\n# Дождаться MinIO\nkubectl wait --for=condition=available deployment/minio -n velero --timeout=120s\n\n# Создать credentials файл для MinIO\ncat > /tmp/credentials-velero << EOF\n[default]\naws_access_key_id = minio\naws_secret_access_key = minio123\nEOF\n\n# Установить Velero CLI\ncurl -L https://github.com/vmware-tanzu/velero/releases/download/v1.12.0/velero-v1.12.0-linux-amd64.tar.gz | tar xzv\nsudo mv velero-v1.12.0-linux-amd64/velero /usr/local/bin/\n\n# Установить Velero в кластер\nvelero install \\\n  --provider aws \\\n  --plugins velero/velero-plugin-for-aws:v1.8.0 \\\n  --bucket velero \\\n  --secret-file /tmp/credentials-velero \\\n  --use-volume-snapshots=false \\\n  --backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://minio.velero.svc:9000\n\n# Создать тестовые данные в production\nkubectl run test-data --image=nginx -n production\nkubectl create configmap test-config --from-literal=key=value -n production\n\n# Создать backup\nvelero backup create production-backup \\\n  --include-namespaces production \\\n  --wait\n\n# Проверить backup\nvelero backup get\nvelero backup describe production-backup --details\n\n# Симулировать катастрофу\nkubectl delete namespace production\n\n# Восстановить из backup\nvelero restore create --from-backup production-backup --wait\n\n# Проверить восстановление\nkubectl get all -n production\n\n# Настроить расписание\nvelero schedule create daily-backup \\\n  --schedule="0 2 * * *" \\\n  --include-namespaces production,staging \\\n  --ttl 168h0m0s  # хранить 7 дней',
+      explanation: 'Velero создаёт backup всех K8s объектов (Deployment, Service, ConfigMap, Secret) и опционально данных PVC через CSI snapshots или Restic. Восстановление воссоздаёт всё пространство namespace. Регулярные backup критичны для production DR (Disaster Recovery).'
+    },
+    {
+      id: 6,
+      title: 'Практика: GitOps pipeline с ArgoCD',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Настройте полный GitOps workflow: код -> CI -> образ -> ArgoCD -> production.',
+      requirements: [
+        'Настроить структуру GitOps репозитория',
+        'Создать ArgoCD Application для production',
+        'Настроить автосинхронизацию',
+        'Протестировать деплой через изменение в Git',
+        'Проверить откат через git revert'
+      ],
+      hint: 'GitOps репозиторий структурируется: environments/production/, environments/staging/. ArgoCD следит за ветками. Каждый commit в main -> автодеплой в production.',
+      solution: '# Структура GitOps репозитория (создаём локально для демонстрации)\nmkdir -p gitops-repo/environments/{production,staging}\ncd gitops-repo\ngit init\n\n# environments/production/deployment.yaml\ncat > environments/production/deployment.yaml << \'EOF\'\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: production-app\n  namespace: production\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: production-app\n  template:\n    metadata:\n      labels:\n        app: production-app\n        version: v1.0.0\n    spec:\n      containers:\n      - name: app\n        image: nginx:1.25.3\n        ports:\n        - containerPort: 80\n        resources:\n          requests:\n            cpu: 100m\n            memory: 128Mi\nEOF\n\ngit add . && git commit -m "Initial production deployment v1.0.0"\n\n# Создать ArgoCD Application\ncat <<EOF | kubectl apply -f -\napiVersion: argoproj.io/v1alpha1\nkind: Application\nmetadata:\n  name: production\n  namespace: argocd\nspec:\n  project: default\n  source:\n    repoURL: https://github.com/argoproj/argocd-example-apps.git\n    targetRevision: HEAD\n    path: guestbook\n  destination:\n    server: https://kubernetes.default.svc\n    namespace: production\n  syncPolicy:\n    automated:\n      prune: true\n      selfHeal: true\n    syncOptions:\n    - CreateNamespace=true\n    retry:\n      limit: 5\n      backoff:\n        duration: 5s\n        factor: 2\n        maxDuration: 3m\nEOF\n\n# Синхронизировать\nargocd app sync production\n\n# Следить за статусом\nwatch argocd app get production\n\n# Симулировать ручное изменение в кластере\nkubectl scale deployment guestbook-ui --replicas=5 -n production\n\n# ArgoCD обнаружит расхождение и исправит (selfHeal)\nsleep 30\nkubectl get deployment guestbook-ui -n production\n# Реплики вернулись к значению из Git!',
+      explanation: 'GitOps workflow: Git является единственным источником истины. selfHeal гарантирует что ручные изменения в кластере отменяются. prune удаляет ресурсы которых нет в Git. Для продакшена используйте реальный Git репозиторий с PR процессом — только через Pull Request можно изменить production.'
+    },
+    {
+      id: 7,
+      title: 'Практика: Disaster Recovery и аварийное реагирование',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Отработайте сценарии аварийного реагирования: отказ узла, OOM, сетевые проблемы.',
+      requirements: [
+        'Симулировать отказ узла (cordon + drain)',
+        'Симулировать OOM и найти проблемный Pod',
+        'Использовать kubectl debug для отладки',
+        'Проверить работу PDB при drain',
+        'Восстановить кластер и сервисы'
+      ],
+      hint: 'kubectl cordon помечает узел как неплановый (unschedulable). kubectl drain выселяет Pod. kubectl debug создаёт ephemeral контейнер для отладки.',
+      solution: '# Симуляция отказа узла\n# Посмотреть узлы\nkubectl get nodes\n\n# Cordon - запрещает планирование новых Pod на узел\nkubectl cordon minikube\nkubectl get nodes  # STATUS: SchedulingDisabled\n\n# Drain - выселяет Pod с узла\nkubectl drain minikube \\\n  --ignore-daemonsets \\\n  --delete-emptydir-data \\\n  --force \\\n  --dry-run=client  # сначала проверяем\n\n# Реальный drain\n# kubectl drain minikube --ignore-daemonsets --delete-emptydir-data\n\n# Восстановить узел\nkubectl uncordon minikube\nkubectl get nodes  # STATUS: Ready\n\n# Симуляция OOM\ncat <<EOF | kubectl apply -f -\napiVersion: v1\nkind: Pod\nmetadata:\n  name: oom-test\nspec:\n  containers:\n  - name: memory-eater\n    image: polinux/stress\n    command: [\'stress\']\n    args: [\'--vm\', \'1\', \'--vm-bytes\', \'150M\', \'--vm-hang\', \'1\']\n    resources:\n      requests:\n        memory: 50Mi\n      limits:\n        memory: 100Mi\nEOF\n\n# Pod должен получить OOMKilled\nkubectl get pod oom-test -w\nkubectl describe pod oom-test | grep -A 5 "Last State:"\n\n# kubectl debug - ephemeral container для отладки\nkubectl debug -it oom-test \\\n  --image=busybox \\\n  --target=memory-eater\n\n# Или создать debug Pod на узле\nkubectl debug node/minikube \\\n  -it \\\n  --image=ubuntu \\\n  -- chroot /host bash\n\n# Просмотр events всего кластера\nkubectl get events --sort-by=\'.lastTimestamp\' -A | tail -20\n\n# Метрики использования ресурсов\nkubectl top nodes\nkubectl top pods -A --sort-by=memory | head -20\n\n# Очистить\nkubectl delete pod oom-test',
+      explanation: 'Аварийное реагирование: kubectl cordon/uncordon управляет планированием на узел. kubectl drain безопасно перемещает рабочие нагрузки. OOMKilled означает превышение memory limit. kubectl debug позволяет исследовать работающий Pod без остановки. kubectl top показывает текущее потребление ресурсов.'
+    },
+    {
+      id: 8,
+      title: 'Практика: Финальный проект — полный стек',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Финальный проект: разверните полноценное приложение с БД, мониторингом, логированием, RBAC и GitOps.',
+      requirements: [
+        'Создать namespace production с полной конфигурацией',
+        'Развернуть PostgreSQL StatefulSet с PVC',
+        'Развернуть API с подключением к PostgreSQL',
+        'Настроить Ingress с TLS',
+        'Создать ServiceMonitor для метрик',
+        'Настроить ArgoCD Application',
+        'Задокументировать архитектуру'
+      ],
+      hint: 'Это финальный интегрирующий проект. Используйте все знания из курса. Структурируйте манифесты по директориям: namespace/, database/, api/, ingress/, monitoring/.',
+      solution: '# Финальный проект: Full Stack Kubernetes Application\n\n# 1. Структура проекта\nmkdir -p k8s-project/{namespace,database,api,ingress,monitoring,rbac}\n\n# 2. Namespace + QuotaNamespace\ncat > k8s-project/namespace/namespace.yaml << \'EOF\'\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: production\n  labels:\n    env: production\n---\napiVersion: v1\nkind: ResourceQuota\nmetadata:\n  name: production-quota\n  namespace: production\nspec:\n  hard:\n    pods: "30"\n    requests.cpu: "8"\n    requests.memory: 16Gi\n    limits.cpu: "16"\n    limits.memory: 32Gi\nEOF\n\n# 3. Database\ncat > k8s-project/database/postgres.yaml << \'EOF\'\napiVersion: v1\nkind: Secret\nmetadata:\n  name: postgres-secret\n  namespace: production\ntype: Opaque\nstringData:\n  POSTGRES_PASSWORD: "productionPassword123"\n  POSTGRES_DB: "appdb"\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: postgres-service\n  namespace: production\nspec:\n  selector:\n    app: postgres\n  ports:\n  - port: 5432\n---\napiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: postgres\n  namespace: production\nspec:\n  serviceName: postgres-service\n  replicas: 1\n  selector:\n    matchLabels:\n      app: postgres\n  template:\n    metadata:\n      labels:\n        app: postgres\n    spec:\n      containers:\n      - name: postgres\n        image: postgres:15\n        envFrom:\n        - secretRef:\n            name: postgres-secret\n        ports:\n        - containerPort: 5432\n        volumeMounts:\n        - name: pgdata\n          mountPath: /var/lib/postgresql/data\n        resources:\n          requests:\n            cpu: 250m\n            memory: 256Mi\n          limits:\n            memory: 512Mi\n        readinessProbe:\n          exec:\n            command: [\'pg_isready\', \'-U\', \'postgres\']\n          initialDelaySeconds: 15\n          periodSeconds: 10\n  volumeClaimTemplates:\n  - metadata:\n      name: pgdata\n    spec:\n      accessModes: [ReadWriteOnce]\n      resources:\n        requests:\n          storage: 10Gi\nEOF\n\n# 4. API Deployment\ncat > k8s-project/api/api.yaml << \'EOF\'\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: api-config\n  namespace: production\ndata:\n  DB_HOST: postgres-service\n  DB_PORT: "5432"\n  LOG_LEVEL: warn\n  APP_PORT: "8080"\n---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\n  namespace: production\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n        monitored: "true"\n    spec:\n      containers:\n      - name: api\n        image: hashicorp/http-echo\n        args: [\'-text=API v1.0 connected to PostgreSQL\']\n        ports:\n        - containerPort: 5678\n          name: http\n        envFrom:\n        - configMapRef:\n            name: api-config\n        resources:\n          requests:\n            cpu: 100m\n            memory: 128Mi\n          limits:\n            memory: 256Mi\n        readinessProbe:\n          httpGet:\n            path: /\n            port: 5678\n          periodSeconds: 5\n        livenessProbe:\n          httpGet:\n            path: /\n            port: 5678\n          periodSeconds: 10\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: api-service\n  namespace: production\nspec:\n  selector:\n    app: api\n  ports:\n  - port: 80\n    targetPort: 5678\n---\napiVersion: policy/v1\nkind: PodDisruptionBudget\nmetadata:\n  name: api-pdb\n  namespace: production\nspec:\n  minAvailable: 2\n  selector:\n    matchLabels:\n      app: api\nEOF\n\n# Применить всё\nkubectl apply -f k8s-project/namespace/\nkubectl apply -f k8s-project/database/\nkubectl apply -f k8s-project/api/\n\n# Ждать готовности\nkubectl wait --for=condition=ready pod -l app=postgres -n production --timeout=120s\nkubectl wait --for=condition=ready pod -l app=api -n production --timeout=60s\n\n# Финальная проверка\nkubectl get all -n production\nkubectl get pvc,pdb -n production\necho "Project deployed successfully!"',
+      explanation: 'Финальный проект объединяет все концепции курса: StatefulSet с PVC для персистентности, Deployment с probes и ресурсами, Secrets для чувствительных данных, ConfigMap для конфигурации, PDB для защиты от disruption, ServiceMonitor для мониторинга. Это базовый шаблон production-ready приложения в Kubernetes.'
+    }
+  ]
+}
