@@ -1,0 +1,71 @@
+export default {
+  id: 13,
+  title: 'Django Admin',
+  description: 'Административная панель Django: ModelAdmin, list_display, search_fields, list_filter, actions и кастомизация интерфейса',
+  lessons: [
+    {
+      id: 1,
+      title: 'Регистрация моделей в Admin',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Django Admin — мощная административная панель из коробки. Регистрируй модели в admin.py для управления данными через веб-интерфейс.' },
+        { type: 'code', language: 'python', value: '# blog/admin.py\nfrom django.contrib import admin\nfrom .models import Article, Category, Tag\n\n# Простая регистрация\nadmin.site.register(Category)\nadmin.site.register(Tag)\n\n# Регистрация с кастомизацией\n@admin.register(Article)  # декоратор вместо admin.site.register()\nclass ArticleAdmin(admin.ModelAdmin):\n    # Колонки в списке объектов\n    list_display = ["title", "author", "category", "is_published", "created_at"]\n\n    # Поля для поиска\n    search_fields = ["title", "content", "author__username"]\n\n    # Фильтры справа\n    list_filter = ["is_published", "category", "created_at"]\n\n    # Поля для редактирования прямо в списке\n    list_editable = ["is_published"]\n\n    # Пагинация в списке\n    list_per_page = 25\n\n    # Ссылка на детали (по умолчанию первое поле)\n    list_display_links = ["title"]\n\n    # Сортировка по умолчанию\n    ordering = ["-created_at"]' }
+      ]
+    },
+    {
+      id: 2,
+      title: 'Настройка формы редактирования',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'ModelAdmin позволяет настроить форму редактирования: группировку полей, виджеты, readonly поля и prepopulated_fields.' },
+        { type: 'code', language: 'python', value: 'from django.contrib import admin\nfrom .models import Article\n\n@admin.register(Article)\nclass ArticleAdmin(admin.ModelAdmin):\n    list_display = ["title", "author", "is_published"]\n\n    # Автозаполнение slug из title\n    prepopulated_fields = {"slug": ("title",)}\n\n    # Только для чтения (показывает, но не редактирует)\n    readonly_fields = ["created_at", "updated_at", "views_count"]\n\n    # Группировка полей в форме\n    fieldsets = [\n        (\n            "Основное",\n            {"fields": ["title", "slug", "content", "author"]}\n        ),\n        (\n            "Категоризация",\n            {"fields": ["category", "tags"]}\n        ),\n        (\n            "Публикация",\n            {"fields": ["is_published", "publish_date"],\n             "classes": ["collapse"]}  # сворачиваемый раздел\n        ),\n        (\n            "Статистика",\n            {"fields": ["views_count", "created_at", "updated_at"],\n             "classes": ["collapse"]}\n        ),\n    ]\n\n    # Виджет для M2M (горизонтальный вместо вертикального)\n    filter_horizontal = ["tags"]\n    # или:\n    # filter_vertical = ["tags"]' }
+      ]
+    },
+    {
+      id: 3,
+      title: 'list_display: кастомные колонки',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'list_display может содержать не только поля модели, но и методы, возвращающие HTML или вычисляемые значения.' },
+        { type: 'code', language: 'python', value: 'from django.contrib import admin\nfrom django.utils.html import format_html\nfrom django.db.models import Count\nfrom .models import Product\n\n@admin.register(Product)\nclass ProductAdmin(admin.ModelAdmin):\n    list_display = [\n        "name", "price_display", "stock_status",\n        "image_preview", "is_active"\n    ]\n\n    def price_display(self, obj):\n        """Цена с форматированием"""\n        return f"{obj.price:,.0f} руб."\n    price_display.short_description = "Цена"  # заголовок колонки\n    price_display.admin_order_field = "price"  # сортировка по этому полю\n\n    def stock_status(self, obj):\n        """Цветовой индикатор остатков"""\n        if obj.stock == 0:\n            color = "red"\n            text = "Нет"\n        elif obj.stock <= obj.min_stock:\n            color = "orange"\n            text = f"Мало: {obj.stock}"\n        else:\n            color = "green"\n            text = f"В наличии: {obj.stock}"\n        return format_html(\n            \'<span style="color: {};">{}</span>\',\n            color, text\n        )\n    stock_status.short_description = "Остаток"\n\n    def image_preview(self, obj):\n        if obj.image:\n            return format_html(\'<img src="{}" height="50">\', obj.image.url)\n        return "Нет"\n    image_preview.short_description = "Фото"' }
+      ]
+    },
+    {
+      id: 4,
+      title: 'Действия (Actions)',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Admin actions позволяют применять операции к нескольким объектам сразу через чекбоксы. По умолчанию есть "Удалить выбранное".' },
+        { type: 'code', language: 'python', value: 'from django.contrib import admin\nfrom django.utils.translation import gettext_lazy as _\nfrom .models import Article\n\n@admin.register(Article)\nclass ArticleAdmin(admin.ModelAdmin):\n    list_display = ["title", "is_published"]\n    actions = ["publish_articles", "unpublish_articles", "make_featured"]\n\n    @admin.action(description="Опубликовать выбранные статьи")\n    def publish_articles(self, request, queryset):\n        count = queryset.update(is_published=True)\n        self.message_user(request, f"Опубликовано {count} статей")\n\n    @admin.action(description="Снять с публикации")\n    def unpublish_articles(self, request, queryset):\n        count = queryset.update(is_published=False)\n        self.message_user(\n            request,\n            f"Снято с публикации {count} статей",\n            level="warning"\n        )\n\n    @admin.action(description="Сделать рекомендуемыми")\n    def make_featured(self, request, queryset):\n        count = queryset.update(is_featured=True)\n        self.message_user(request, f"Помечено как рекомендуемые: {count}")' }
+      ]
+    },
+    {
+      id: 5,
+      title: 'Inline модели',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Inline позволяет редактировать связанные объекты прямо внутри родительской записи. Например, комментарии внутри формы статьи.' },
+        { type: 'code', language: 'python', value: 'from django.contrib import admin\nfrom .models import Article, Comment, OrderItem, Order\n\nclass CommentInline(admin.TabularInline):  # или StackedInline\n    model = Comment\n    fields = ["author", "text", "created_at"]\n    readonly_fields = ["created_at"]\n    extra = 0  # не показывать пустые формы для добавления\n    can_delete = True\n    show_change_link = True  # ссылка на полное редактирование\n\nclass OrderItemInline(admin.TabularInline):\n    model = OrderItem\n    fields = ["product", "quantity", "price"]\n    readonly_fields = ["price"]\n    extra = 1  # одна пустая форма для добавления\n\n@admin.register(Article)\nclass ArticleAdmin(admin.ModelAdmin):\n    list_display = ["title", "author"]\n    inlines = [CommentInline]\n\n@admin.register(Order)\nclass OrderAdmin(admin.ModelAdmin):\n    list_display = ["id", "user", "total_price", "status", "created_at"]\n    readonly_fields = ["total_price", "created_at"]\n    inlines = [OrderItemInline]\n\n# TabularInline — компактная таблица (одна строка на объект)\n# StackedInline — развёрнутая форма (каждое поле на новой строке)' }
+      ]
+    },
+    {
+      id: 6,
+      title: 'Практика: Admin панель магазина',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Настрой admin-панель для интернет-магазина с кастомными колонками и действиями.',
+      requirements: [
+        'ProductAdmin: list_display с кастомной колонкой price_display (форматирует цену), stock_indicator (красный/зелёный)',
+        'search_fields по name и sku, list_filter по category и is_active',
+        'prepopulated_fields {"slug": ("name",)}, filter_horizontal для tags',
+        'Action activate_products — устанавливает is_active=True',
+        'OrderAdmin с OrderItemInline (TabularInline)',
+        'OrderAdmin list_display: id, user__username, total_price, status, created_at'
+      ],
+      expectedOutput: 'Admin /admin/shop/product/ -> список с цветовым индикатором остатка\nAction "Активировать" -> выбранные товары становятся активными\nAdmin /admin/shop/order/1/ -> заказ с позициями внутри',
+      hint: 'format_html() для безопасного HTML в admin. @admin.action(description="...") для actions. TabularInline с extra=0 не показывает пустые строки. readonly_fields=["created_at"] для автоматических полей.',
+      solution: '# shop/admin.py\nfrom django.contrib import admin\nfrom django.utils.html import format_html\nfrom .models import Product, Category, Order, OrderItem\n\n@admin.register(Category)\nclass CategoryAdmin(admin.ModelAdmin):\n    list_display = ["name", "slug"]\n    prepopulated_fields = {"slug": ("name",)}\n\nclass OrderItemInline(admin.TabularInline):\n    model = OrderItem\n    fields = ["product", "quantity", "price"]\n    readonly_fields = ["price"]\n    extra = 0\n\n@admin.register(Product)\nclass ProductAdmin(admin.ModelAdmin):\n    list_display = ["name", "sku", "price_display", "stock_indicator", "is_active"]\n    list_filter = ["category", "is_active"]\n    search_fields = ["name", "sku"]\n    list_editable = ["is_active"]\n    prepopulated_fields = {"slug": ("name",)}\n    actions = ["activate_products", "deactivate_products"]\n\n    def price_display(self, obj):\n        return f"{obj.price:,.0f} руб."\n    price_display.short_description = "Цена"\n    price_display.admin_order_field = "price"\n\n    def stock_indicator(self, obj):\n        if obj.stock == 0:\n            return format_html(\'<b style="color:red">Нет</b>\')\n        elif obj.stock <= 5:\n            return format_html(\'<b style="color:orange">{}</b>\', obj.stock)\n        return format_html(\'<b style="color:green">{}</b>\', obj.stock)\n    stock_indicator.short_description = "Остаток"\n\n    @admin.action(description="Активировать товары")\n    def activate_products(self, request, queryset):\n        count = queryset.update(is_active=True)\n        self.message_user(request, f"Активировано: {count} товаров")\n\n    @admin.action(description="Деактивировать товары")\n    def deactivate_products(self, request, queryset):\n        count = queryset.update(is_active=False)\n        self.message_user(request, f"Деактивировано: {count} товаров", "warning")\n\n@admin.register(Order)\nclass OrderAdmin(admin.ModelAdmin):\n    list_display = ["id", "get_username", "total_price", "status", "created_at"]\n    list_filter = ["status"]\n    readonly_fields = ["total_price", "created_at"]\n    inlines = [OrderItemInline]\n\n    def get_username(self, obj):\n        return obj.user.username\n    get_username.short_description = "Пользователь"\n    get_username.admin_order_field = "user__username"',
+      explanation: 'format_html() экранирует переменные и создаёт безопасный HTML. admin_order_field позволяет кликать на заголовок колонки для сортировки. list_editable позволяет редактировать поле прямо в списке. actions — список методов или глобальных функций. TabularInline с extra=0 не показывает пустых строк — список только существующих позиций.'
+    }
+  ]
+}
