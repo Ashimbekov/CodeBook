@@ -1,0 +1,124 @@
+export default {
+  id: 10,
+  title: 'API Design',
+  description: 'Проектирование API: REST, GraphQL, gRPC. Версионирование, пагинация, аутентификация. Best practices и типичные ошибки.',
+  lessons: [
+    {
+      id: 1,
+      title: 'REST API: принципы и best practices',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'REST (Representational State Transfer) — архитектурный стиль для создания веб-API. Основан на ресурсах, HTTP методах и статус-кодах.' },
+        { type: 'heading', value: 'Принципы REST' },
+        { type: 'list', value: [
+          'Ресурсы: существительные (не глаголы): /users, /orders, /products',
+          'HTTP методы: GET (читать), POST (создать), PUT (заменить), PATCH (обновить), DELETE (удалить)',
+          'Stateless: каждый запрос содержит всё необходимое (токен, данные)',
+          'Единый интерфейс: предсказуемая структура URL',
+          'Коды ответа: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 500 Internal Error'
+        ]},
+        { type: 'heading', value: 'Хорошие и плохие URL' },
+        { type: 'text', value: 'Плохо (глаголы в URL):\n  GET /getUser?id=123\n  POST /createOrder\n  DELETE /deleteProduct?id=5\n\nХорошо (ресурсы + HTTP методы):\n  GET /users/123\n  POST /orders\n  DELETE /products/5\n  GET /users/123/orders          → заказы пользователя\n  GET /users/123/orders/456      → конкретный заказ' },
+        { type: 'heading', value: 'HTTP статус-коды: важные' },
+        { type: 'text', value: '200 OK: успешный GET/PUT/PATCH\n201 Created: успешный POST (создание)\n204 No Content: успешный DELETE\n400 Bad Request: невалидные данные от клиента\n401 Unauthorized: не аутентифицирован\n403 Forbidden: нет прав\n404 Not Found: ресурс не найден\n409 Conflict: конфликт (дублирование)\n429 Too Many Requests: rate limit\n500 Internal Server Error: ошибка сервера' },
+        { type: 'tip', value: 'Используйте 401 когда пользователь не залогинен, 403 когда залогинен, но нет прав. Это разные ситуации и клиент должен их различать.' }
+      ]
+    },
+    {
+      id: 2,
+      title: 'GraphQL: гибкие запросы данных',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'GraphQL — язык запросов для API, где клиент сам указывает, какие данные ему нужны. Разработан в Facebook.' },
+        { type: 'heading', value: 'Проблема REST, которую решает GraphQL' },
+        { type: 'text', value: 'Over-fetching: REST возвращает все поля объекта, даже если нужны 2 из 20.\n  GET /users/123 → возвращает {id, name, email, phone, address, avatar, bio, created_at, ...}\n  Клиент использует только name и avatar\n\nUnder-fetching: нужно несколько запросов для получения связанных данных.\n  GET /users/123 → получить user\n  GET /users/123/posts → получить посты\n  GET /posts/1/comments → получить комментарии\n  3 запроса вместо 1!' },
+        { type: 'heading', value: 'GraphQL: один запрос — нужные данные' },
+        { type: 'text', value: 'Запрос (клиент указывает что хочет):\n  query {\n    user(id: "123") {\n      name\n      avatar\n      posts(limit: 5) {\n        title\n        comments(limit: 3) {\n          text\n          author { name }\n        }\n      }\n    }\n  }\n\nОдин запрос → получаем ровно то, что нужно, без лишних полей.' },
+        { type: 'heading', value: 'REST vs GraphQL: когда что' },
+        { type: 'text', value: 'REST лучше когда:\n- Простые CRUD операции\n- Публичное API (легче документировать)\n- Файловые операции (GraphQL плохо работает с бинарными данными)\n- Кеширование на CDN-уровне (GraphQL запросы — POST)\n\nGraphQL лучше когда:\n- Мобильные клиенты (важна экономия трафика)\n- Сложные вложенные данные\n- Несколько клиентов с разными потребностями\n- BFF (Backend for Frontend) паттерн' }
+      ]
+    },
+    {
+      id: 3,
+      title: 'gRPC: высокопроизводительный RPC',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'gRPC — RPC фреймворк от Google. Использует Protocol Buffers для сериализации и HTTP/2 для транспорта. Идеален для внутреннего inter-service взаимодействия.' },
+        { type: 'heading', value: 'Как работает gRPC' },
+        { type: 'text', value: '1. Определяем интерфейс в .proto файле:\n  service UserService {\n    rpc GetUser (GetUserRequest) returns (User)\n    rpc ListUsers (ListUsersRequest) returns (stream User)  // streaming\n  }\n  message User { string id = 1; string name = 2; }\n\n2. Генерируем код для нужного языка (Java, Go, Python, ...)\n3. Сервер реализует интерфейс\n4. Клиент вызывает методы как обычные функции' },
+        { type: 'heading', value: 'Почему gRPC быстрее REST/JSON' },
+        { type: 'list', value: [
+          'Protocol Buffers: бинарный формат, в 3–10 раз компактнее JSON',
+          'HTTP/2: мультиплексирование, server push, сжатие заголовков',
+          'Streaming: server/client/bidirectional streaming из коробки',
+          'Строгая типизация: ошибки типов на уровне генерации кода'
+        ]},
+        { type: 'heading', value: 'REST vs GraphQL vs gRPC' },
+        { type: 'text', value: 'REST: публичное API, простота, браузеры, CDN кеш\nGraphQL: гибкие запросы, мобильные клиенты, BFF\ngRPC: внутренние микросервисы, высокий throughput, low latency, streaming\n\nТипичная архитектура:\n  [Браузер/Мобилка] → REST/GraphQL → [API Gateway] → gRPC → [Microservices]' },
+        { type: 'note', value: 'gRPC плохо работает в браузерах (нет поддержки HTTP/2 trailers). Для браузеров используют gRPC-Web или grpc-gateway (конвертирует REST → gRPC). Это нормально: браузер → REST → API Gateway → gRPC → сервисы.' }
+      ]
+    },
+    {
+      id: 4,
+      title: 'Версионирование API',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'API живёт долго. Клиенты не обновляются мгновенно. Нужно поддерживать обратную совместимость и версионирование.' },
+        { type: 'heading', value: 'Стратегии версионирования' },
+        { type: 'text', value: 'URL версионирование (наиболее популярное):\n  /api/v1/users\n  /api/v2/users\n  Плюс: явно, просто для понимания\n  Минус: URL меняется, нужно поддерживать несколько версий\n\nHeader версионирование:\n  GET /api/users\n  Accept: application/vnd.myapp.v2+json\n  Плюс: URL чистый\n  Минус: сложнее тестировать, не видно в браузере\n\nQuery Parameter:\n  GET /api/users?version=2\n  Плюс: просто\n  Минус: сложнее кешировать (CDN кешируется по URL)' },
+        { type: 'heading', value: 'Когда делать новую версию' },
+        { type: 'list', value: [
+          'Удаление поля из ответа (breaking change)',
+          'Изменение типа поля (string → int)',
+          'Изменение семантики поля',
+          'Удаление endpoint'
+        ]},
+        { type: 'text', value: 'НЕ breaking changes (можно без новой версии):\n- Добавление нового необязательного поля в ответ\n- Добавление нового необязательного параметра запроса\n- Добавление нового endpoint' },
+        { type: 'tip', value: 'Sunsettig (устаревание): при выпуске v2 объявите v1 deprecated. Добавьте заголовок Deprecation: "2025-06-01" и Sunset: "2026-01-01". Дайте клиентам 6–12 месяцев на миграцию, затем отключайте.' }
+      ]
+    },
+    {
+      id: 5,
+      title: 'Пагинация: cursor, offset, keyset',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Когда данных много (миллионы записей), отдавать всё сразу нельзя. Пагинация — разбивка на страницы.' },
+        { type: 'heading', value: 'Offset/Limit пагинация' },
+        { type: 'text', value: 'GET /posts?offset=0&limit=20    → записи 1–20\nGET /posts?offset=20&limit=20   → записи 21–40\nGET /posts?offset=40&limit=20   → записи 41–60\n\nПлюсы: просто, можно перейти на любую страницу\nМинусы:\n- При большом offset медленно: БД должна отсчитать N строк\n- Race condition: если пока пользователь читал страницы была вставлена запись — сдвиг, дубликаты' },
+        { type: 'heading', value: 'Cursor-based пагинация (рекомендуется)' },
+        { type: 'text', value: 'Вместо номера страницы — cursor (указатель на последний элемент).\n\nПервый запрос:\n  GET /posts?limit=20\n  Ответ: { data: [...], next_cursor: "eyJpZCI6MTAwfQ" }\n\nСледующий запрос:\n  GET /posts?limit=20&cursor=eyJpZCI6MTAwfQ\n  Ответ: { data: [...], next_cursor: "eyJpZCI6MTIwfQ" }\n\nCursor = base64({"id": 100, "created_at": "2024-01-15"})\n\nSQL: SELECT * FROM posts WHERE id > 100 ORDER BY id LIMIT 20\n\nПлюсы: быстро даже на больших данных, нет race condition\nМинусы: нельзя перейти на произвольную страницу' },
+        { type: 'note', value: 'Twitter, Instagram, Facebook используют cursor-based пагинацию для лент. Это единственный практичный вариант для бесконечного скролла с миллиардами записей.' }
+      ]
+    },
+    {
+      id: 6,
+      title: 'Аутентификация и авторизация API',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Безопасность API: аутентификация (кто ты?) и авторизация (что тебе разрешено?).' },
+        { type: 'heading', value: 'JWT (JSON Web Token)' },
+        { type: 'text', value: 'JWT = Header.Payload.Signature\n\nHeader: {"alg": "HS256", "typ": "JWT"}\nPayload: {"user_id": "123", "role": "admin", "exp": 1700000000}\nSignature: HMAC-SHA256(header + payload, secret)\n\nПроверка токена:\n1. Декодировать Payload (base64)\n2. Проверить Signature (не подделан ли?)\n3. Проверить exp (не истёк ли?)\n4. Проверить role/permissions\n\nПлюс: stateless (не нужна БД для проверки)\nМинус: нельзя "отозвать" до истечения (нужен blacklist в Redis)' },
+        { type: 'heading', value: 'OAuth 2.0 и OIDC' },
+        { type: 'text', value: 'OAuth 2.0: "Войти через Google/GitHub". Пользователь даёт доступ к своим данным стороннему приложению без передачи пароля.\n\nFlows:\n- Authorization Code (для web apps): самый безопасный\n- PKCE (для mobile/SPA): без client secret\n- Client Credentials (для server-to-server): service accounts' },
+        { type: 'tip', value: 'Для публичного API (внешние разработчики): API Keys проще чем OAuth. Ключ = рандомная строка в заголовке Authorization: Bearer <api_key>. Rate limiting по ключу, отзыв мгновенный.' }
+      ]
+    },
+    {
+      id: 7,
+      title: 'Практика: спроектируй API для Twitter',
+      type: 'practice',
+      content: [
+        { type: 'text', value: 'Спроектируем ключевые REST API эндпоинты для Twitter-подобного сервиса.' },
+        { type: 'heading', value: 'Tweets (Твиты)' },
+        { type: 'text', value: 'Создать твит:\n  POST /tweets\n  Body: { "text": "Hello World!", "media_ids": ["img123"] }\n  Response 201: { "id": "tweet_001", "text": "...", "author": {...}, "created_at": "..." }\n\nПолучить твит:\n  GET /tweets/{tweet_id}\n  Response 200: { "id": "...", "text": "...", "author": {...}, "likes": 42, ... }\n\nУдалить твит:\n  DELETE /tweets/{tweet_id}\n  Response 204: (пусто)\n\nЛента:\n  GET /timeline/home?limit=20&cursor={cursor}\n  Response: { "tweets": [...], "next_cursor": "..." }' },
+        { type: 'heading', value: 'Users (Пользователи)' },
+        { type: 'text', value: 'Профиль:\n  GET /users/{username}\n  Response: { "id": "...", "name": "...", "bio": "...", "followers_count": 1000 }\n\nПодписаться:\n  POST /users/{username}/follow\n  Response 201: { "following": true }\n\nОтписаться:\n  DELETE /users/{username}/follow\n  Response 204\n\nСписок подписчиков:\n  GET /users/{username}/followers?limit=20&cursor={cursor}' },
+        { type: 'heading', value: 'Likes (Лайки)' },
+        { type: 'text', value: 'Лайкнуть:\n  POST /tweets/{tweet_id}/likes\n  Response 201: { "liked": true }\n\nУбрать лайк:\n  DELETE /tweets/{tweet_id}/likes\n  Response 204\n\nСписок тех, кто лайкнул:\n  GET /tweets/{tweet_id}/likes?limit=20&cursor={cursor}' },
+        { type: 'heading', value: 'Поиск' },
+        { type: 'text', value: 'Поиск твитов:\n  GET /search/tweets?q=хабр&limit=20&cursor={cursor}\n  Response: { "tweets": [...], "next_cursor": "..." }' },
+        { type: 'note', value: 'На интервью не нужно описывать все эндпоинты детально. Достаточно показать: понимание RESTful дизайна, правильные HTTP методы, понимание пагинации и статус-кодов.' }
+      ]
+    }
+  ]
+}
