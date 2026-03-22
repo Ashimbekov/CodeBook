@@ -64,6 +64,26 @@ export default {
     { id: 57, title: 'Практикум: Задачи уровня Easy', icon: '🟢', totalLessons: 10 },
     { id: 58, title: 'Практикум: Задачи уровня Medium', icon: '🟡', totalLessons: 10 },
     { id: 59, title: 'Практикум: Задачи уровня Hard', icon: '🔴', totalLessons: 10 },
-    { id: 60, title: 'Практикум: Мини-проекты', icon: '🚀', totalLessons: 8 }
+    { id: 60, title: 'Практикум: Мини-проекты', icon: '🚀', totalLessons: 8 },
+    { id: 61, title: 'Практикум: Обработка исключений', icon: '⚠️', totalLessons: 10 },
+    { id: 62, title: 'Практикум: Работа с файлами', icon: '📁', totalLessons: 10 },
+    { id: 63, title: 'Практикум: Многопоточность', icon: '🧵', totalLessons: 10 },
+    { id: 64, title: 'Практикум: Регулярные выражения', icon: '🔍', totalLessons: 10 },
+    { id: 65, title: 'Практикум: Рекурсия', icon: '🪞', totalLessons: 10 },
+    { id: 66, title: 'Практикум: Матрицы', icon: '🧮', totalLessons: 10 },
+    { id: 67, title: 'Практикум: Даты и время', icon: '📅', totalLessons: 10 },
+    { id: 68, title: 'Практикум: Комбинированные задачи', icon: '🎲', totalLessons: 10 },
+    { id: 69, title: 'Практикум: Реальные задачи', icon: '💼', totalLessons: 10 },
+    { id: 70, title: 'Практикум: Паттерны проектирования', icon: '🏗️', totalLessons: 10 },
+    { id: 71, title: 'Best Practices: Clean Code', icon: '✨', totalLessons: 8 },
+    { id: 72, title: 'Best Practices: Именование и форматирование', icon: '🏷️', totalLessons: 7 },
+    { id: 73, title: 'Best Practices: SOLID принципы', icon: '💎', totalLessons: 8 },
+    { id: 74, title: 'Best Practices: Обработка ошибок', icon: '🛡️', totalLessons: 7 },
+    { id: 75, title: 'Best Practices: Тестирование (JUnit)', icon: '🧪', totalLessons: 8 },
+    { id: 76, title: 'Best Practices: Работа с Git', icon: '📝', totalLessons: 7 },
+    { id: 77, title: 'Best Practices: Code Review', icon: '👀', totalLessons: 7 },
+    { id: 78, title: 'Best Practices: Производительность', icon: '⚡', totalLessons: 7 },
+    { id: 79, title: 'Best Practices: Безопасность кода', icon: '🔐', totalLessons: 7 },
+    { id: 80, title: 'Best Practices: Архитектура приложений', icon: '🏛️', totalLessons: 8 }
   ]
 }
