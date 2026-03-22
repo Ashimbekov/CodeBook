@@ -19,7 +19,8 @@ const courseImports = {
   typescript: () => import('../data/typescript/index.js'),
   react: () => import('../data/react/index.js'),
   python: () => import('../data/python/index.js'),
-  javascript: () => import('../data/javascript/index.js')
+  javascript: () => import('../data/javascript/index.js'),
+  interview: () => import('../data/interview/index.js')
 }
 
 const moduleImports = {
@@ -40,7 +41,8 @@ const moduleImports = {
   typescript: (moduleId) => import(`../data/typescript/modules/module-${moduleId}.js`),
   react: (moduleId) => import(`../data/react/modules/module-${moduleId}.js`),
   python: (moduleId) => import(`../data/python/modules/module-${moduleId}.js`),
-  javascript: (moduleId) => import(`../data/javascript/modules/module-${moduleId}.js`)
+  javascript: (moduleId) => import(`../data/javascript/modules/module-${moduleId}.js`),
+  interview: (moduleId) => import(`../data/interview/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {
