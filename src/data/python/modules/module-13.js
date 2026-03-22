@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Открытие и закрытие файлов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Контекстный менеджер with',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Методы чтения файлов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Запись файлов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Бинарные файлы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +102,7 @@ export default {
     {
       id: 6,
       title: 'pathlib — современная работа с путями',
+      type: 'theory',
       content: [
         {
           type: 'heading',

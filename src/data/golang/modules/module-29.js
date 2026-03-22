@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'regexp.Compile и базовые методы',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'FindString и FindAllString',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -40,6 +42,7 @@ export default {
     {
       id: 3,
       title: 'ReplaceAll и ReplaceAllFunc',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -55,6 +58,7 @@ export default {
     {
       id: 4,
       title: 'Подгруппы (submatches)',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -74,6 +78,7 @@ export default {
     {
       id: 5,
       title: 'Флаги и синтаксис RE2',
+      type: 'theory',
       content: [
         {
           type: 'text',

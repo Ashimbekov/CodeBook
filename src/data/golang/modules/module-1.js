@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'История создания Go',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -36,6 +37,7 @@ export default {
     {
       id: 2,
       title: 'Почему Google создал Go?',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +88,7 @@ export default {
     {
       id: 3,
       title: 'Go vs другие языки',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -136,6 +139,7 @@ export default {
     {
       id: 4,
       title: 'Философия Go: простота и читаемость',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -188,6 +192,7 @@ export default {
     {
       id: 5,
       title: 'Где применяется Go?',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -247,6 +252,7 @@ export default {
     {
       id: 6,
       title: 'Компиляция в Go',
+      type: 'theory',
       content: [
         {
           type: 'heading',

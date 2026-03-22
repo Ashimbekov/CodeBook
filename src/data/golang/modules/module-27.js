@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Глаголы форматирования %d %s %f %v',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -21,6 +22,7 @@ export default {
     {
       id: 2,
       title: 'Глаголы %v, %+v, %#v, %T',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -40,6 +42,7 @@ export default {
     {
       id: 3,
       title: 'Sprintf — форматирование в строку',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -55,6 +58,7 @@ export default {
     {
       id: 4,
       title: 'Fprintf — вывод в io.Writer',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -70,6 +74,7 @@ export default {
     {
       id: 5,
       title: 'fmt.Stringer — пользовательское форматирование',
+      type: 'theory',
       content: [
         {
           type: 'text',

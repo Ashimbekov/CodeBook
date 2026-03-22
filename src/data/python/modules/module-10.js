@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание множеств',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Методы add, discard, remove, pop',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +42,7 @@ export default {
     {
       id: 3,
       title: 'Операции над множествами',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -59,6 +62,7 @@ export default {
     {
       id: 4,
       title: 'Frozenset — неизменяемое множество',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Set comprehension и практические применения',
+      type: 'theory',
       content: [
         {
           type: 'heading',

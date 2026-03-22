@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Установка Go',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -50,6 +51,7 @@ export default {
     {
       id: 2,
       title: 'GOPATH и GOROOT',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -94,6 +96,7 @@ export default {
     {
       id: 3,
       title: 'Go модули: go mod init',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -142,6 +145,7 @@ export default {
     {
       id: 4,
       title: 'Hello World',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -190,6 +194,7 @@ export default {
     {
       id: 5,
       title: 'go run и go build',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -242,6 +247,7 @@ export default {
     {
       id: 6,
       title: 'Настройка IDE',
+      type: 'theory',
       content: [
         {
           type: 'heading',

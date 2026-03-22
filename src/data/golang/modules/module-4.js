@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Ключевое слово const',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -38,6 +39,7 @@ export default {
     {
       id: 2,
       title: 'Нетипизированные константы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -70,6 +72,7 @@ export default {
     {
       id: 3,
       title: 'iota — генератор констант',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -102,6 +105,7 @@ export default {
     {
       id: 4,
       title: 'Битовые флаги с iota',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -138,6 +142,7 @@ export default {
     {
       id: 5,
       title: 'Практические паттерны с iota',
+      type: 'theory',
       content: [
         {
           type: 'heading',

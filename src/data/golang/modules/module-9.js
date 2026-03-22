@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Объявление массивов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Инициализация массивов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -52,6 +54,7 @@ export default {
     {
       id: 3,
       title: 'Доступ к элементам',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -84,6 +87,7 @@ export default {
     {
       id: 4,
       title: 'Итерация по массиву',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +112,7 @@ export default {
     {
       id: 5,
       title: 'Сравнение массивов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -136,6 +141,7 @@ export default {
     {
       id: 6,
       title: 'Массивы как типы-значения',
+      type: 'theory',
       content: [
         {
           type: 'heading',

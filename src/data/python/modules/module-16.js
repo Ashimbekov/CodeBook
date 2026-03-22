@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание класса',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'self — ссылка на экземпляр',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Атрибуты класса и экземпляра',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: 'Специальные методы __str__ и __repr__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +90,7 @@ export default {
     {
       id: 5,
       title: 'Инкапсуляция и приватные атрибуты',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -105,6 +110,7 @@ export default {
     {
       id: 6,
       title: 'Методы класса и статические методы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -124,6 +130,7 @@ export default {
     {
       id: 7,
       title: '__del__ и управление ресурсами',
+      type: 'theory',
       content: [
         {
           type: 'heading',

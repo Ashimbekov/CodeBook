@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'json.Marshal — Go в JSON',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'json.Unmarshal — JSON в Go',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -40,6 +42,7 @@ export default {
     {
       id: 3,
       title: 'Struct tags — теги структур',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -59,6 +62,7 @@ export default {
     {
       id: 4,
       title: 'Вложенный JSON',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -74,6 +78,7 @@ export default {
     {
       id: 5,
       title: 'json.Encoder и json.Decoder — потоковая обработка',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -89,6 +94,7 @@ export default {
     {
       id: 6,
       title: 'Кастомный маршалинг',
+      type: 'theory',
       content: [
         {
           type: 'text',

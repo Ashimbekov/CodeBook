@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Базовый switch',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -33,6 +34,7 @@ export default {
     {
       id: 2,
       title: 'Switch без условия',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -61,6 +63,7 @@ export default {
     {
       id: 3,
       title: 'Несколько значений в case',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -89,6 +92,7 @@ export default {
     {
       id: 4,
       title: 'fallthrough',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -121,6 +125,7 @@ export default {
     {
       id: 5,
       title: 'Type switch',
+      type: 'theory',
       content: [
         {
           type: 'heading',

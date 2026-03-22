@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Что такое Python?',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -33,6 +34,7 @@ export default {
     {
       id: 2,
       title: 'Установка Python и первый запуск',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -60,6 +62,7 @@ export default {
     {
       id: 3,
       title: 'Интерактивный интерпретатор (REPL)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -83,6 +86,7 @@ export default {
     {
       id: 4,
       title: 'Структура программы на Python',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -106,6 +110,7 @@ export default {
     {
       id: 5,
       title: 'Функция print() и вывод данных',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -130,6 +135,7 @@ export default {
     {
       id: 6,
       title: 'Комментарии и документация',
+      type: 'theory',
       content: [
         {
           type: 'heading',

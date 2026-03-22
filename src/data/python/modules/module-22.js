@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Итераторы и протокол итерации',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Генераторы с yield',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Генераторные выражения',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'yield from',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -82,6 +86,7 @@ export default {
     {
       id: 5,
       title: 'Метод send() — двунаправленные генераторы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -101,6 +106,7 @@ export default {
     {
       id: 6,
       title: 'Бесконечные генераторы',
+      type: 'theory',
       content: [
         {
           type: 'heading',

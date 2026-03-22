@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'import и from...import',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Часто используемые стандартные модули',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Создание собственных модулей',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Переменная __name__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -82,6 +86,7 @@ export default {
     {
       id: 5,
       title: 'Пакеты — организация модулей',
+      type: 'theory',
       content: [
         {
           type: 'heading',

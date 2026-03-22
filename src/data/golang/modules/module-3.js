@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Объявление переменных: var',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -38,6 +39,7 @@ export default {
     {
       id: 2,
       title: 'Краткое объявление :=',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +76,7 @@ export default {
     {
       id: 3,
       title: 'Числовые типы: int и float64',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -106,6 +109,7 @@ export default {
     {
       id: 4,
       title: 'Строки и булевы значения',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -143,6 +147,7 @@ export default {
     {
       id: 5,
       title: 'Нулевые значения',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -179,6 +184,7 @@ export default {
     {
       id: 6,
       title: 'Преобразование типов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -215,6 +221,7 @@ export default {
     {
       id: 7,
       title: 'Вывод типа (type inference)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -247,6 +254,7 @@ export default {
     {
       id: 8,
       title: 'Форматирование вывода: fmt.Printf',
+      type: 'theory',
       content: [
         {
           type: 'heading',

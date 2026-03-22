@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание и базовые операции',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Метод get() и безопасный доступ',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Методы keys(), values(), items()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Методы update, pop, merge',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Dict comprehension',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +102,7 @@ export default {
     {
       id: 6,
       title: 'Вложенные словари',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -116,6 +122,7 @@ export default {
     {
       id: 7,
       title: 'defaultdict и Counter',
+      type: 'theory',
       content: [
         {
           type: 'heading',

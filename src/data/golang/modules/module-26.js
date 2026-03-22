@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Основные функции пакета strings',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -21,6 +22,7 @@ export default {
     {
       id: 2,
       title: 'Split, Join, Replace',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -45,6 +47,7 @@ export default {
     {
       id: 3,
       title: 'strings.Builder — эффективная конкатенация',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -64,6 +67,7 @@ export default {
     {
       id: 4,
       title: 'strconv — конвертация типов',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -84,6 +88,7 @@ export default {
     {
       id: 5,
       title: 'strings.Reader и strings.Map',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -99,6 +104,7 @@ export default {
     {
       id: 6,
       title: 'Паттерны работы со строками',
+      type: 'theory',
       content: [
         {
           type: 'text',

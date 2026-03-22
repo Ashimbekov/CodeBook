@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Что такое декоратор?',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'functools.wraps',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Декораторы с аргументами',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Стекирование декораторов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Декораторы классов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -93,6 +98,7 @@ export default {
     {
       id: 6,
       title: 'Встроенные декораторы: @classmethod, @staticmethod',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -108,6 +114,7 @@ export default {
     {
       id: 7,
       title: 'Декораторы из functools',
+      type: 'theory',
       content: [
         {
           type: 'heading',

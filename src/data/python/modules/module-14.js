@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'try / except',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'else и finally',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Оператор raise',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Иерархия исключений',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -82,6 +86,7 @@ export default {
     {
       id: 5,
       title: 'Пользовательские исключения',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -101,6 +106,7 @@ export default {
     {
       id: 6,
       title: 'Контекстные менеджеры и __exit__',
+      type: 'theory',
       content: [
         {
           type: 'heading',

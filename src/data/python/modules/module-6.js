@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Срезы строк',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'f-строки (форматированные строки)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Основные методы строк',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: 'Проверка содержимого строки',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +90,7 @@ export default {
     {
       id: 5,
       title: 'Многострочные строки и спецсимволы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -105,6 +110,7 @@ export default {
     {
       id: 6,
       title: 'Старые способы форматирования',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -128,6 +134,7 @@ export default {
     {
       id: 7,
       title: 'Строки и Unicode',
+      type: 'theory',
       content: [
         {
           type: 'heading',

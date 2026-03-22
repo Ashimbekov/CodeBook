@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Зачем нужен property?',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Декоратор @property (геттер)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -40,6 +42,7 @@ export default {
     {
       id: 3,
       title: 'Сеттер @property.setter',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -59,6 +62,7 @@ export default {
     {
       id: 4,
       title: 'Делетер @property.deleter',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -74,6 +78,7 @@ export default {
     {
       id: 5,
       title: 'Property для кэширования',
+      type: 'theory',
       content: [
         {
           type: 'heading',

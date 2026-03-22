@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: '__str__ и __repr__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: '__eq__, __ne__, __hash__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Операторы сравнения __lt__, __le__, __gt__, __ge__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Арифметические операторы __add__, __mul__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: '__len__, __getitem__, __contains__',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +102,7 @@ export default {
     {
       id: 6,
       title: '__call__ и контекстный менеджер',
+      type: 'theory',
       content: [
         {
           type: 'heading',

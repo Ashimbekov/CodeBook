@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание собственных типов ошибок',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Ошибки с контекстом',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Ошибки с несколькими полями',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Иерархия ошибок',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Ошибки валидации',
+      type: 'theory',
       content: [
         {
           type: 'text',

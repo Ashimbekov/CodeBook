@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Определение функций: def и return',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Позиционные и именованные аргументы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: '*args — переменное число аргументов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: '**kwargs — именованные аргументы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +90,7 @@ export default {
     {
       id: 5,
       title: 'Только позиционные и только именованные',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -105,6 +110,7 @@ export default {
     {
       id: 6,
       title: 'Рекурсия',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -124,6 +130,7 @@ export default {
     {
       id: 7,
       title: 'Lambda-функции',
+      type: 'theory',
       content: [
         {
           type: 'heading',

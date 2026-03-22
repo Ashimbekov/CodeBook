@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Базовое наследование',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Функция super()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'issubclass() и isinstance()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -59,6 +62,7 @@ export default {
     {
       id: 4,
       title: 'MRO — Method Resolution Order',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Множественное наследование и миксины',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +102,7 @@ export default {
     {
       id: 6,
       title: 'Переопределение операторов',
+      type: 'theory',
       content: [
         {
           type: 'heading',

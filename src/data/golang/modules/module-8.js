@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Базовый for',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -34,6 +35,7 @@ export default {
     {
       id: 2,
       title: 'While-стиль for',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -62,6 +64,7 @@ export default {
     {
       id: 3,
       title: 'Бесконечный цикл',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -90,6 +93,7 @@ export default {
     {
       id: 4,
       title: 'for range',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -118,6 +122,7 @@ export default {
     {
       id: 5,
       title: 'break и continue',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -150,6 +155,7 @@ export default {
     {
       id: 6,
       title: 'Вложенные циклы',
+      type: 'theory',
       content: [
         {
           type: 'heading',

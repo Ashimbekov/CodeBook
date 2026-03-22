@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Интерфейс error',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -38,6 +39,7 @@ export default {
     {
       id: 2,
       title: 'errors.New и базовое создание ошибок',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -62,6 +64,7 @@ export default {
     {
       id: 3,
       title: 'fmt.Errorf с %w — оборачивание ошибок',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -90,6 +93,7 @@ export default {
     {
       id: 4,
       title: 'errors.Is и errors.As',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -122,6 +126,7 @@ export default {
     {
       id: 5,
       title: 'Сентинельные ошибки (sentinel errors)',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -150,6 +155,7 @@ export default {
     {
       id: 6,
       title: 'Оборачивание ошибок (error wrapping)',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -174,6 +180,7 @@ export default {
     {
       id: 7,
       title: 'Паттерны обработки ошибок',
+      type: 'theory',
       content: [
         {
           type: 'text',

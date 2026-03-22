@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание и базовые операции',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Методы append, insert, extend',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Методы remove, pop, del, clear',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: 'Сортировка: sort() и sorted()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +90,7 @@ export default {
     {
       id: 5,
       title: 'Другие полезные методы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -105,6 +110,7 @@ export default {
     {
       id: 6,
       title: 'Генераторы списков (list comprehension)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -124,6 +130,7 @@ export default {
     {
       id: 7,
       title: 'zip() и распаковка',
+      type: 'theory',
       content: [
         {
           type: 'heading',

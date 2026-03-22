@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Цикл for',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Функция range()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Функция enumerate()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: 'Цикл while',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -90,6 +94,7 @@ export default {
     {
       id: 5,
       title: 'break, continue, else',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -109,6 +114,7 @@ export default {
     {
       id: 6,
       title: 'Вложенные циклы',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'time.Now и time.Date — создание времени',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -21,6 +22,7 @@ export default {
     {
       id: 2,
       title: 'Форматирование и парсинг — уникальная система Layout',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Duration — временные интервалы',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -59,6 +62,7 @@ export default {
     {
       id: 4,
       title: 'Сравнение и проверка времени',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -74,6 +78,7 @@ export default {
     {
       id: 5,
       title: 'time.After, time.Sleep, time.Tick',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -93,6 +98,7 @@ export default {
     {
       id: 6,
       title: 'Часовые пояса',
+      type: 'theory',
       content: [
         {
           type: 'text',

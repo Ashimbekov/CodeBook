@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'os.Open и os.Create — открытие файлов',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -34,6 +35,7 @@ export default {
     {
       id: 2,
       title: 'Чтение файлов — bufio.Scanner и io.ReadAll',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -58,6 +60,7 @@ export default {
     {
       id: 3,
       title: 'Запись в файлы',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -77,6 +80,7 @@ export default {
     {
       id: 4,
       title: 'Информация о файле — os.Stat',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -96,6 +100,7 @@ export default {
     {
       id: 5,
       title: 'Обход директорий',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -120,6 +125,7 @@ export default {
     {
       id: 6,
       title: 'Пакет filepath — работа с путями',
+      type: 'theory',
       content: [
         {
           type: 'text',

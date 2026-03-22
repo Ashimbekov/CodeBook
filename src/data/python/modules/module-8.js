@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Создание кортежей',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Неизменяемость (immutability)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -48,6 +50,7 @@ export default {
     {
       id: 3,
       title: 'Распаковка кортежей',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -67,6 +70,7 @@ export default {
     {
       id: 4,
       title: 'Именованные кортежи (namedtuple)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -86,6 +90,7 @@ export default {
     {
       id: 5,
       title: 'Кортеж vs Список: когда что использовать',
+      type: 'theory',
       content: [
         {
           type: 'heading',

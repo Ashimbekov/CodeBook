@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Полиморфизм',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -25,6 +26,7 @@ export default {
     {
       id: 2,
       title: 'Duck Typing',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -44,6 +46,7 @@ export default {
     {
       id: 3,
       title: 'Абстрактные классы (ABC)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -63,6 +66,7 @@ export default {
     {
       id: 4,
       title: 'Абстрактные свойства',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -78,6 +82,7 @@ export default {
     {
       id: 5,
       title: 'Принцип подстановки Лисков',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -97,6 +102,7 @@ export default {
     {
       id: 6,
       title: 'Протоколы (Structural Subtyping)',
+      type: 'theory',
       content: [
         {
           type: 'heading',

@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Переменные и присваивание',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Целые числа (int)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -52,6 +54,7 @@ export default {
     {
       id: 3,
       title: 'Числа с плавающей точкой (float)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -75,6 +78,7 @@ export default {
     {
       id: 4,
       title: 'Строки (str)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -94,6 +98,7 @@ export default {
     {
       id: 5,
       title: 'Логический тип (bool)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -117,6 +122,7 @@ export default {
     {
       id: 6,
       title: 'Функция type() и проверка типов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -136,6 +142,7 @@ export default {
     {
       id: 7,
       title: 'Преобразование типов',
+      type: 'theory',
       content: [
         {
           type: 'heading',

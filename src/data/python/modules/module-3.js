@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Арифметические операторы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -29,6 +30,7 @@ export default {
     {
       id: 2,
       title: 'Операторы сравнения',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -52,6 +54,7 @@ export default {
     {
       id: 3,
       title: 'Логические операторы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -71,6 +74,7 @@ export default {
     {
       id: 4,
       title: 'Операторы присваивания',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -94,6 +98,7 @@ export default {
     {
       id: 5,
       title: 'Побитовые операторы',
+      type: 'theory',
       content: [
         {
           type: 'heading',

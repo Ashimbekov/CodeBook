@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Базовый if',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -38,6 +39,7 @@ export default {
     {
       id: 2,
       title: 'if-else',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -70,6 +72,7 @@ export default {
     {
       id: 3,
       title: 'if с инициализирующим выражением',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -102,6 +105,7 @@ export default {
     {
       id: 4,
       title: 'Цепочка if-else if',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -134,6 +138,7 @@ export default {
     {
       id: 5,
       title: 'Вложенные условия',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -157,6 +162,7 @@ export default {
     {
       id: 6,
       title: 'Комбинирование условий',
+      type: 'theory',
       content: [
         {
           type: 'heading',

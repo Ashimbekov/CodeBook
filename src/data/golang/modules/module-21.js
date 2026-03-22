@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Почему Go выбрал композицию',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -37,6 +38,7 @@ export default {
     {
       id: 2,
       title: 'Встраивание структур (embedding)',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -69,6 +71,7 @@ export default {
     {
       id: 3,
       title: 'Продвинутые методы (promoted methods)',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -97,6 +100,7 @@ export default {
     {
       id: 4,
       title: 'Паттерны композиции',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -129,6 +133,7 @@ export default {
     {
       id: 5,
       title: 'Композиция с интерфейсами',
+      type: 'theory',
       content: [
         {
           type: 'text',

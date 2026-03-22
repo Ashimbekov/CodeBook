@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Объявление пакетов',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -34,6 +35,7 @@ export default {
     {
       id: 2,
       title: 'Импорт пакетов',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -62,6 +64,7 @@ export default {
     {
       id: 3,
       title: 'Экспортируемые и неэкспортируемые имена',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -86,6 +89,7 @@ export default {
     {
       id: 4,
       title: 'go.mod и go.sum — управление зависимостями',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -115,6 +119,7 @@ export default {
     {
       id: 5,
       title: 'Добавление и использование зависимостей',
+      type: 'theory',
       content: [
         {
           type: 'text',
@@ -139,6 +144,7 @@ export default {
     {
       id: 6,
       title: 'Создание собственного пакета',
+      type: 'theory',
       content: [
         {
           type: 'text',

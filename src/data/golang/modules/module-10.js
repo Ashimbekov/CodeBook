@@ -6,6 +6,7 @@ export default {
     {
       id: 1,
       title: 'Срез vs Массив',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -33,6 +34,7 @@ export default {
     {
       id: 2,
       title: 'Создание срезов: make()',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -56,6 +58,7 @@ export default {
     {
       id: 3,
       title: 'append — добавление элементов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -84,6 +87,7 @@ export default {
     {
       id: 4,
       title: 'Срезание (slicing)',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -112,6 +116,7 @@ export default {
     {
       id: 5,
       title: 'len и cap',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -140,6 +145,7 @@ export default {
     {
       id: 6,
       title: 'copy — копирование срезов',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -172,6 +178,7 @@ export default {
     {
       id: 7,
       title: 'Nil-срезы',
+      type: 'theory',
       content: [
         {
           type: 'heading',
@@ -200,6 +207,7 @@ export default {
     {
       id: 8,
       title: 'Внутреннее устройство среза',
+      type: 'theory',
       content: [
         {
           type: 'heading',
