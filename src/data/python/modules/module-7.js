@@ -79,7 +79,7 @@ export default {
         {
           type: 'code',
           language: 'python',
-          value: 'nums = [3, 1, 4, 1, 5, 9, 2, 6]\n\n# sort() — изменяет список\nnums.sort()\nprint(nums)  # [1, 1, 2, 3, 4, 5, 6, 9]\n\nnums.sort(reverse=True)\nprint(nums)  # [9, 6, 5, 4, 3, 2, 1, 1]\n\n# sorted() — создаёт новый список\norig = [3, 1, 4, 1, 5]\nnew = sorted(orig)\nprint(orig)  # [3, 1, 4, 1, 5] — не изменился!\nprint(new)   # [1, 1, 3, 4, 5]\n\n# Сортировка строк\nwords = ["банан", "яблоко", "Абрикос", "вишня"]\nwords.sort()\nprint(words)  # Абрикос первый (заглавные раньше строчных)\n\n# Сортировка без учёта регистра\nwords.sort(key=str.lower)\nprint(words)  # ['Абрикос', 'банан', 'вишня', 'яблоко']\n\n# Сортировка по ключу\npeople = [("Иван", 30), ("Алиса", 25), ("Боб", 35)]\npeople.sort(key=lambda p: p[1])  # по возрасту\nprint(people)  # [("Алиса", 25), ("Иван", 30), ("Боб", 35)]'
+          value: 'nums = [3, 1, 4, 1, 5, 9, 2, 6]\n\n# sort() — изменяет список\nnums.sort()\nprint(nums)  # [1, 1, 2, 3, 4, 5, 6, 9]\n\nnums.sort(reverse=True)\nprint(nums)  # [9, 6, 5, 4, 3, 2, 1, 1]\n\n# sorted() — создаёт новый список\norig = [3, 1, 4, 1, 5]\nnew = sorted(orig)\nprint(orig)  # [3, 1, 4, 1, 5] — не изменился!\nprint(new)   # [1, 1, 3, 4, 5]\n\n# Сортировка строк\nwords = ["банан", "яблоко", "Абрикос", "вишня"]\nwords.sort()\nprint(words)  # Абрикос первый (заглавные раньше строчных)\n\n# Сортировка без учёта регистра\nwords.sort(key=str.lower)\nprint(words)  # [\'Абрикос\', \'банан\', \'вишня\', \'яблоко\']\n\n# Сортировка по ключу\npeople = [("Иван", 30), ("Алиса", 25), ("Боб", 35)]\npeople.sort(key=lambda p: p[1])  # по возрасту\nprint(people)  # [("Алиса", 25), ("Иван", 30), ("Боб", 35)]'
         }
       ]
     },
