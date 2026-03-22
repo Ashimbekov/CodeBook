@@ -54,6 +54,16 @@ export default {
     { id: 47, title: 'JDBC: работа с базами данных', icon: '🗄️', totalLessons: 8 },
     { id: 48, title: 'Основы Maven и Gradle', icon: '📦', totalLessons: 6 },
     { id: 49, title: 'Основы Spring Boot', icon: '🌱', totalLessons: 8 },
-    { id: 50, title: 'REST API на Spring Boot', icon: '🌐', totalLessons: 8 }
+    { id: 50, title: 'REST API на Spring Boot', icon: '🌐', totalLessons: 8 },
+    { id: 51, title: 'Практикум: Основы Java', icon: '💪', totalLessons: 10 },
+    { id: 52, title: 'Практикум: Циклы и массивы', icon: '🏋️', totalLessons: 10 },
+    { id: 53, title: 'Практикум: Строки и методы', icon: '🎯', totalLessons: 10 },
+    { id: 54, title: 'Практикум: ООП', icon: '🧱', totalLessons: 10 },
+    { id: 55, title: 'Практикум: Коллекции', icon: '📚', totalLessons: 10 },
+    { id: 56, title: 'Практикум: Stream API и лямбды', icon: '🌊', totalLessons: 10 },
+    { id: 57, title: 'Практикум: Задачи уровня Easy', icon: '🟢', totalLessons: 10 },
+    { id: 58, title: 'Практикум: Задачи уровня Medium', icon: '🟡', totalLessons: 10 },
+    { id: 59, title: 'Практикум: Задачи уровня Hard', icon: '🔴', totalLessons: 10 },
+    { id: 60, title: 'Практикум: Мини-проекты', icon: '🚀', totalLessons: 8 }
   ]
 }
