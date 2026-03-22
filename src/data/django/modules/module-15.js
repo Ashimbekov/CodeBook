@@ -29,7 +29,7 @@ export default {
       content: [
         { type: 'text', value: 'APIView — базовый класс для создания представлений в DRF. Он похож на Django View, но добавляет поддержку контент-переговоров, аутентификации и разрешений.' },
         { type: 'heading', value: 'Создаём простой APIView' },
-        { type: 'code', language: 'python', value: 'from rest_framework.views import APIView\nfrom rest_framework.response import Response\nfrom rest_framework import status\n\nclass HelloView(APIView):\n    def get(self, request):\n        data = {"message": "Привет от DRF!"}\n        return Response(data)\n\n    def post(self, request):\n        name = request.data.get("name", "Мир")\n        return Response({"message": f"Привет, {name}!"},' ),
+        { type: 'code', language: 'python', value: 'from rest_framework.views import APIView\nfrom rest_framework.response import Response\nfrom rest_framework import status\n\nclass HelloView(APIView):\n    def get(self, request):\n        data = {"message": "Привет от DRF!"}\n        return Response(data)\n\n    def post(self, request):\n        name = request.data.get("name", "Мир")\n        return Response({"message": f"Привет, {name}!"},' },
         { type: 'code', language: 'python', value: '# urls.py\nfrom django.urls import path\nfrom .views import HelloView\n\nurlpatterns = [\n    path("hello/", HelloView.as_view(), name="hello"),\n]' },
         { type: 'tip', value: 'В DRF request.data содержит распарсенные данные запроса (JSON, form data). Это аналог request.POST в Django, но работает с любым форматом.' }
       ]
