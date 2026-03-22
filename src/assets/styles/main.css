@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import './responsive.css';
 
 :root {
   --bg-page: #f8f9fb;
@@ -60,5 +61,3 @@ code {
 .main-content {
   flex: 1;
 }
-
-@import './responsive.css';
