@@ -17,7 +17,9 @@ const courseImports = {
   systemdesign: () => import('../data/systemdesign/index.js'),
   kubernetes: () => import('../data/kubernetes/index.js'),
   typescript: () => import('../data/typescript/index.js'),
-  react: () => import('../data/react/index.js')
+  react: () => import('../data/react/index.js'),
+  python: () => import('../data/python/index.js'),
+  javascript: () => import('../data/javascript/index.js')
 }
 
 const moduleImports = {
@@ -36,7 +38,9 @@ const moduleImports = {
   systemdesign: (moduleId) => import(`../data/systemdesign/modules/module-${moduleId}.js`),
   kubernetes: (moduleId) => import(`../data/kubernetes/modules/module-${moduleId}.js`),
   typescript: (moduleId) => import(`../data/typescript/modules/module-${moduleId}.js`),
-  react: (moduleId) => import(`../data/react/modules/module-${moduleId}.js`)
+  react: (moduleId) => import(`../data/react/modules/module-${moduleId}.js`),
+  python: (moduleId) => import(`../data/python/modules/module-${moduleId}.js`),
+  javascript: (moduleId) => import(`../data/javascript/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {
