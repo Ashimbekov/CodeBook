@@ -1,0 +1,93 @@
+export default {
+  id: 14,
+  title: 'Транзакции: ACID, COMMIT, ROLLBACK',
+  description: 'Транзакции — основа надёжности баз данных. Свойства ACID, управление транзакциями через COMMIT/ROLLBACK, уровни изоляции и SAVEPOINT. Блокировки и deadlock.',
+  lessons: [
+    {
+      id: 1,
+      title: 'Что такое транзакция и зачем она нужна',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Транзакция — группа SQL-операций, которые выполняются как единое целое: либо все успешно, либо ни одна. Классический пример: перевод денег между счетами. Без транзакций деньги могут "пропасть" при сбое между списанием и зачислением.' },
+        { type: 'code', language: 'sql', value: '-- Проблема без транзакции:\n-- Шаг 1: списать 1000 тг с счёта А\nUPDATE accounts SET balance = balance - 1000 WHERE id = 1;\n-- !!! Сервер упал здесь !!!\n-- Шаг 2: зачислить 1000 тг на счёт Б  <- не выполнился!\nUPDATE accounts SET balance = balance + 1000 WHERE id = 2;\n-- Итог: 1000 тг пропало!\n\n-- Решение с транзакцией:\nBEGIN;  -- Начало транзакции\n\nUPDATE accounts SET balance = balance - 1000 WHERE id = 1;\nUPDATE accounts SET balance = balance + 1000 WHERE id = 2;\n\nCOMMIT;  -- Зафиксировать оба изменения\n-- Если что-то пошло не так между BEGIN и COMMIT:\n-- PostgreSQL автоматически откатит ВСЕ изменения\n\n-- Явный откат:\nBEGIN;\nUPDATE accounts SET balance = balance - 1000 WHERE id = 1;\n-- Обнаружили проблему:\nROLLBACK;  -- Откатить все изменения транзакции\n-- Счёт 1 остался без изменений!' },
+        { type: 'tip', value: 'В PostgreSQL каждый одиночный SQL-запрос автоматически заворачивается в транзакцию (autocommit). Явный BEGIN нужен только для группировки нескольких операций. START TRANSACTION — синоним BEGIN.' }
+      ]
+    },
+    {
+      id: 2,
+      title: 'ACID: четыре свойства транзакций',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'ACID — аббревиатура четырёх фундаментальных свойств, гарантирующих надёжность транзакций. PostgreSQL полностью соответствует ACID.' },
+        { type: 'heading', value: 'Atomicity (Атомарность)' },
+        { type: 'text', value: 'Транзакция неделима: либо все операции выполняются, либо ни одна. Нет промежуточных состояний.' },
+        { type: 'heading', value: 'Consistency (Согласованность)' },
+        { type: 'text', value: 'Транзакция переводит БД из одного корректного состояния в другое. Все ограничения (CHECK, FK, UNIQUE) выполняются.' },
+        { type: 'heading', value: 'Isolation (Изолированность)' },
+        { type: 'text', value: 'Параллельные транзакции не видят незафиксированные изменения друг друга (в зависимости от уровня изоляции).' },
+        { type: 'heading', value: 'Durability (Долговечность)' },
+        { type: 'text', value: 'После COMMIT данные сохранены даже при сбое сервера. PostgreSQL использует WAL (Write-Ahead Log) для этого.' },
+        { type: 'code', language: 'sql', value: '-- Демонстрация Atomicity: все или ничего\nBEGIN;\n    UPDATE accounts SET balance = balance - 500 WHERE id = 1;\n    -- Если эта строка вызовет ошибку (например, CHECK balance >= 0):\n    UPDATE accounts SET balance = balance + 500 WHERE id = 99;  -- id не существует\n    -- Вся транзакция будет в состоянии ошибки (aborted)\n    -- Любая следующая команда вернёт: ERROR: current transaction is aborted\nROLLBACK;  -- Первый UPDATE тоже откатится!\n\n-- Демонстрация Consistency: ограничения проверяются при COMMIT\nBEGIN;\n    INSERT INTO orders (customer_id, total) VALUES (999, 100);\n    -- customer_id = 999 не существует -> FK нарушен\nCOMMIT;  -- ОШИБКА: FOREIGN KEY violation -> автоматический ROLLBACK\n\n-- Демонстрация Durability: после COMMIT данные сохранены\nBEGIN;\n    INSERT INTO audit_log (action, user_id, ts) VALUES (\'LOGIN\', 42, NOW());\nCOMMIT;\n-- Теперь даже при отключении питания эта строка в БД' },
+        { type: 'note', value: 'В PostgreSQL при ошибке внутри транзакции она переходит в состояние "aborted" и любые дальнейшие команды игнорируются до ROLLBACK. Это безопасное поведение: нельзя продолжить "грязную" транзакцию.' }
+      ]
+    },
+    {
+      id: 3,
+      title: 'Уровни изоляции транзакций',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Уровень изоляции определяет, насколько транзакция защищена от параллельных изменений. Чем выше изоляция — тем больше блокировок и ниже параллелизм. PostgreSQL поддерживает три уровня.' },
+        { type: 'code', language: 'sql', value: '-- Уровень 1: READ COMMITTED (по умолчанию в PostgreSQL)\n-- Видит только зафиксированные данные.\n-- Проблема: Non-repeatable read (два одинаковых SELECT могут вернуть разное)\nSET TRANSACTION ISOLATION LEVEL READ COMMITTED;\n\nBEGIN;\n    SELECT balance FROM accounts WHERE id = 1;  -- Видит: 1000\n    -- В это время другая транзакция: UPDATE... SET balance=500... COMMIT\n    SELECT balance FROM accounts WHERE id = 1;  -- Видит: 500 (!)\nCOMMIT;\n\n-- Уровень 2: REPEATABLE READ\n-- В рамках одной транзакции одинаковые SELECT всегда возвращают одно и то же.\n-- Проблема: Phantom read (новые строки могут появиться от других транзакций)\nBEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;\n    SELECT balance FROM accounts WHERE id = 1;  -- Видит: 1000\n    -- Другая транзакция изменила и зафиксировала\n    SELECT balance FROM accounts WHERE id = 1;  -- Всё равно: 1000\n    -- НО: новые строки от других транзакций ВИДНЫ!\nCOMMIT;\n\n-- Уровень 3: SERIALIZABLE (строжайший)\n-- Транзакции выполняются так, как будто они последовательные.\n-- Нет проблем: dirty read, non-repeatable read, phantom read\n-- PostgreSQL использует SSI (Serializable Snapshot Isolation) - без блокировок!\nBEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;\n    SELECT SUM(balance) FROM accounts;  -- Все счета: 100000\n    -- Если другая транзакция изменила данные -> сериализационный конфликт\n    -- При COMMIT: ERROR: could not serialize access due to concurrent update\n    -- Нужно повторить транзакцию!\nCOMMIT;\n\n-- Таблица проблем:\n-- Уровень             | Dirty Read | Non-Repeatable | Phantom\n-- READ COMMITTED       | Нет        | Да             | Да\n-- REPEATABLE READ      | Нет        | Нет            | Нет (в PostgreSQL)\n-- SERIALIZABLE         | Нет        | Нет            | Нет' },
+        { type: 'tip', value: 'READ COMMITTED подходит для большинства случаев. REPEATABLE READ используй для отчётов (консистентный снапшот данных). SERIALIZABLE — для финансовых операций где важна строгая последовательность.' }
+      ]
+    },
+    {
+      id: 4,
+      title: 'SAVEPOINT: точки сохранения',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'SAVEPOINT позволяет создать "точку сохранения" внутри транзакции. Можно откатиться к savepoint не отменяя всю транзакцию. Аналог вложенных транзакций.' },
+        { type: 'code', language: 'sql', value: '-- Пример: импорт данных с частичным откатом при ошибках\nBEGIN;\n\n-- Вставляем клиентов\nINSERT INTO customers (name, email) VALUES (\'Алия\', \'aliya@mail.ru\');\nSAVEPOINT after_customers;  -- Создаём точку сохранения\n\n-- Пробуем вставить заказы\nINSERT INTO orders (customer_id, total) VALUES (1, 5000);\nSAVEPOINT after_first_order;\n\n-- Ошибочная вставка\nINSERT INTO orders (customer_id, total) VALUES (-1, 999);  -- Неверный customer_id\n-- Ошибка! Откатываемся к последней точке сохранения\nROLLBACK TO SAVEPOINT after_first_order;\n-- Клиент и первый заказ сохранены, ошибочный INSERT отменён\n\n-- Продолжаем\nINSERT INTO orders (customer_id, total) VALUES (1, 3000);\n\n-- Освобождаем точку сохранения (опционально, экономит ресурсы)\nRELEASE SAVEPOINT after_customers;\n\nCOMMIT;  -- Клиент + два корректных заказа\n\n-- SAVEPOINT в обработке ошибок (PL/pgSQL):\n-- BEGIN\n--   SAVEPOINT my_sp;\n--   EXECUTE some_risky_operation;\n-- EXCEPTION WHEN OTHERS THEN\n--   ROLLBACK TO SAVEPOINT my_sp;\n--   RAISE NOTICE \'Операция пропущена: %\', SQLERRM;\n-- END;\n\n-- Вложенные savepoints (не то же самое что вложенные транзакции!):\nBEGIN;\n    SAVEPOINT sp1;\n    INSERT INTO t VALUES (1);\n    SAVEPOINT sp2;\n    INSERT INTO t VALUES (2);\n    ROLLBACK TO sp1;  -- Откатывает оба INSERT (sp2 тоже удаляется)\n    INSERT INTO t VALUES (3);\nCOMMIT;  -- Только значение 3 в таблице' },
+        { type: 'note', value: 'PostgreSQL не поддерживает "настоящие" вложенные транзакции (nested transactions) в духе BEGIN внутри BEGIN. SAVEPOINT — это аналог для частичного отката. В PL/pgSQL EXCEPTION автоматически создаёт неявный savepoint.' }
+      ]
+    },
+    {
+      id: 5,
+      title: 'Блокировки и DEADLOCK',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Для обеспечения изоляции PostgreSQL использует блокировки. Неправильный порядок блокировок в разных транзакциях приводит к deadlock (взаимной блокировке). PostgreSQL автоматически обнаруживает и разрешает deadlock.' },
+        { type: 'code', language: 'sql', value: '-- DEADLOCK: классический пример\n-- Транзакция 1 (Т1):\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;  -- Блокирует строку id=1\n-- ... ждёт немного ...\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;  -- Ждёт Т2!\n\n-- Транзакция 2 (Т2) - параллельно:\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 2;  -- Блокирует строку id=2\n-- ... ждёт немного ...\nUPDATE accounts SET balance = balance + 100 WHERE id = 1;  -- Ждёт Т1!\n-- DEADLOCK! PostgreSQL обнаружит и откатит одну транзакцию:\n-- ERROR: deadlock detected\n-- DETAIL: Process 1234 waits for ShareLock on transaction 5678;\n--         Process 5678 waits for ShareLock on transaction 1234.\n-- HINT: See server log for query details.\n\n-- Решение: всегда блокировать строки в одном порядке!\n-- Т1 и Т2: сначала min(id), потом max(id)\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = LEAST(1, 2);\nUPDATE accounts SET balance = balance + 100 WHERE id = GREATEST(1, 2);\nCOMMIT;\n\n-- Явные блокировки: SELECT FOR UPDATE\nBEGIN;\nSELECT * FROM accounts WHERE id = 1 FOR UPDATE;  -- Блокирует строку для обновления\n-- Другие транзакции будут ждать до COMMIT/ROLLBACK\nUPDATE accounts SET balance = balance - 500 WHERE id = 1;\nCOMMIT;\n\n-- FOR UPDATE NOWAIT: не ждать, сразу вернуть ошибку\nSELECT * FROM accounts WHERE id = 1 FOR UPDATE NOWAIT;\n-- ERROR: could not obtain lock on row in relation "accounts"\n\n-- FOR UPDATE SKIP LOCKED: пропустить заблокированные строки (очереди задач!)\nSELECT * FROM jobs WHERE status = \'pending\'\nORDER BY created_at\nFOR UPDATE SKIP LOCKED LIMIT 1;\n-- Идеально для воркеров: каждый воркер берёт незаблокированное задание' },
+        { type: 'warning', value: 'Для предотвращения deadlock: 1) всегда блокируй строки в одном порядке (по id), 2) держи транзакции короткими, 3) не выполняй внешние запросы (HTTP/Redis) внутри транзакции. FOR UPDATE SKIP LOCKED — стандартный паттерн для очередей задач.' }
+      ]
+    },
+    {
+      id: 6,
+      title: 'Автокоммит и управление транзакциями в приложениях',
+      type: 'theory',
+      content: [
+        { type: 'text', value: 'Понимание autocommit критично при работе с библиотеками. В psycopg2 (Python) autocommit выключен по умолчанию — каждый запрос в неявной транзакции. В других библиотеках поведение разное.' },
+        { type: 'code', language: 'sql', value: '-- PostgreSQL: autocommit включён для psql\n-- Каждая команда в psql сразу фиксируется\nINSERT INTO test VALUES (1);  -- Сразу COMMIT\nINSERT INTO test VALUES (2);  -- Сразу COMMIT\n\n-- BEGIN отключает autocommit для этого блока:\nBEGIN;\nINSERT INTO test VALUES (3);\nINSERT INTO test VALUES (4);\nCOMMIT;  -- Оба вместе\n\n-- Параметры транзакции:\nBEGIN;\nSET TRANSACTION ISOLATION LEVEL SERIALIZABLE;\nSET TRANSACTION READ ONLY;  -- Запретить INSERT/UPDATE/DELETE\n-- Полезно для снапшот-отчётов\nSELECT SUM(total) FROM orders WHERE created_at >= \'2024-01-01\';\nCOMMIT;\n\n-- Или всё сразу:\nBEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\n\n-- Пример транзакции перевода денег (production-ready):\nBEGIN;\n\n-- 1. Проверить баланс с блокировкой\nSELECT balance INTO STRICT v_balance\nFROM accounts WHERE id = 1 FOR UPDATE;\n\n-- 2. Проверить достаточность средств\nIF v_balance < 1000 THEN\n    ROLLBACK;\n    RAISE EXCEPTION \'Недостаточно средств\';\nEND IF;\n\n-- 3. Списать\nUPDATE accounts SET balance = balance - 1000 WHERE id = 1;\n\n-- 4. Зачислить\nUPDATE accounts SET balance = balance + 1000 WHERE id = 2;\n\n-- 5. Записать в журнал\nINSERT INTO transfers (from_id, to_id, amount, ts)\nVALUES (1, 2, 1000, NOW());\n\nCOMMIT;' },
+        { type: 'tip', value: 'Правила коротких транзакций: 1) не выполняй в транзакции то, что можно сделать вне её, 2) не жди пользовательского ввода внутри транзакции, 3) не делай HTTP-запросы внутри транзакции, 4) избегай транзакций длиннее нескольких секунд.' }
+      ]
+    },
+    {
+      id: 7,
+      title: 'Практика: Транзакционные сценарии',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Реализуй несколько транзакционных сценариев для банковской системы.',
+      requirements: [
+        'Создай таблицы: accounts (id, owner_name, balance CHECK >= 0, currency), transfers (id, from_id, to_id, amount, status, created_at)',
+        'Транзакция перевода: проверить баланс FOR UPDATE, списать, зачислить, записать в transfers — всё атомарно',
+        'Обработка ошибки: перевод с недостаточным балансом должен ROLLBACK и записать failed-статус в transfers',
+        'SAVEPOINT: импорт 5 записей счетов — при ошибке одной пропустить через ROLLBACK TO SAVEPOINT и продолжить',
+        'READ ONLY транзакция: SELECT суммы всех балансов и количество счетов (изолированный снапшот)',
+        'Найди deadlock: напиши два конкурирующих UPDATE в правильном (безопасном) порядке'
+      ],
+      hint: 'SELECT ... FOR UPDATE блокирует строки до конца транзакции. Порядок блокировки: всегда min(from_id, to_id) первым. CHECK (balance >= 0) автоматически проверяет корректность после UPDATE.',
+      solution: '-- 1. Создание таблиц\nCREATE TABLE accounts (\n    id         SERIAL PRIMARY KEY,\n    owner_name VARCHAR(200) NOT NULL,\n    balance    DECIMAL(15, 2) NOT NULL DEFAULT 0\n               CONSTRAINT positive_balance CHECK (balance >= 0),\n    currency   CHAR(3) NOT NULL DEFAULT \'KZT\'\n);\n\nCREATE TABLE transfers (\n    id        BIGSERIAL PRIMARY KEY,\n    from_id   INTEGER NOT NULL REFERENCES accounts(id),\n    to_id     INTEGER NOT NULL REFERENCES accounts(id),\n    amount    DECIMAL(15, 2) NOT NULL CHECK (amount > 0),\n    status    VARCHAR(20) NOT NULL DEFAULT \'pending\'\n              CHECK (status IN (\'pending\', \'completed\', \'failed\')),\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()\n);\n\n-- Тестовые данные\nINSERT INTO accounts (owner_name, balance) VALUES\n    (\'Алия Джакупова\',  50000.00),\n    (\'Нурлан Сейтов\',  30000.00),\n    (\'Фарида Бекова\',   5000.00);\n\n-- 2. Безопасный перевод\nDO $$\nDECLARE\n    v_from_id   INTEGER := 1;\n    v_to_id     INTEGER := 2;\n    v_amount    DECIMAL := 10000;\n    v_transfer_id BIGINT;\nBEGIN\n    BEGIN\n        -- Блокируем в порядке min -> max для предотвращения deadlock\n        IF v_from_id < v_to_id THEN\n            PERFORM * FROM accounts WHERE id = v_from_id FOR UPDATE;\n            PERFORM * FROM accounts WHERE id = v_to_id   FOR UPDATE;\n        ELSE\n            PERFORM * FROM accounts WHERE id = v_to_id   FOR UPDATE;\n            PERFORM * FROM accounts WHERE id = v_from_id FOR UPDATE;\n        END IF;\n\n        -- Создаём запись перевода\n        INSERT INTO transfers (from_id, to_id, amount, status)\n        VALUES (v_from_id, v_to_id, v_amount, \'pending\')\n        RETURNING id INTO v_transfer_id;\n\n        -- Списание (CHECK balance >= 0 сработает если недостаточно)\n        UPDATE accounts SET balance = balance - v_amount WHERE id = v_from_id;\n        -- Зачисление\n        UPDATE accounts SET balance = balance + v_amount WHERE id = v_to_id;\n\n        -- Успех\n        UPDATE transfers SET status = \'completed\' WHERE id = v_transfer_id;\n        RAISE NOTICE \'Перевод % успешен\', v_transfer_id;\n    EXCEPTION WHEN OTHERS THEN\n        UPDATE transfers SET status = \'failed\' WHERE id = v_transfer_id;\n        RAISE NOTICE \'Ошибка перевода: %\', SQLERRM;\n    END;\nEND;\n$$;\n\n-- 3. SAVEPOINT при импорте\nBEGIN;\nDO $$\nDECLARE\n    accounts_data TEXT[][] := ARRAY[\n        ARRAY[\'Клиент1\', \'10000\'],\n        ARRAY[\'Клиент2\', \'-500\'],   -- Ошибка: отрицательный баланс\n        ARRAY[\'Клиент3\', \'25000\'],\n        ARRAY[\'Клиент4\', \'abc\'],    -- Ошибка: не число\n        ARRAY[\'Клиент5\', \'8000\']\n    ];\n    rec TEXT[];\nBEGIN\n    FOREACH rec SLICE 1 IN ARRAY accounts_data LOOP\n        BEGIN\n            SAVEPOINT import_sp;\n            INSERT INTO accounts (owner_name, balance)\n            VALUES (rec[1], rec[2]::DECIMAL);\n            RELEASE SAVEPOINT import_sp;\n            RAISE NOTICE \'Добавлен: %\', rec[1];\n        EXCEPTION WHEN OTHERS THEN\n            ROLLBACK TO SAVEPOINT import_sp;\n            RAISE NOTICE \'Пропущен % из-за ошибки: %\', rec[1], SQLERRM;\n        END;\n    END LOOP;\nEND;\n$$;\nCOMMIT;\n\n-- 4. READ ONLY снапшот\nBEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;\nSELECT\n    COUNT(*)     AS total_accounts,\n    SUM(balance) AS total_balance,\n    AVG(balance) AS avg_balance,\n    currency\nFROM accounts\nGROUP BY currency;\nCOMMIT;\n\n-- 5. Безопасный порядок блокировок (без deadlock)\n-- Транзакция 1: от счёта 1 к счёту 2\nBEGIN;\nSELECT * FROM accounts WHERE id IN (1, 2) ORDER BY id FOR UPDATE;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n-- Транзакция 2: от счёта 2 к счёту 1 - тот же порядок блокировки!\nBEGIN;\nSELECT * FROM accounts WHERE id IN (1, 2) ORDER BY id FOR UPDATE;\nUPDATE accounts SET balance = balance - 50 WHERE id = 2;\nUPDATE accounts SET balance = balance + 50 WHERE id = 1;\nCOMMIT;',
+      explanation: 'Транзакции гарантируют атомарность банковских операций. Ключевые паттерны: SELECT FOR UPDATE для оптимистичной блокировки, порядок блокировки по min(id) для предотвращения deadlock, SAVEPOINT для частичного отката в пакетных операциях, READ ONLY для консистентных отчётов.'
+    }
+  ]
+}

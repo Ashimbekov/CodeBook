@@ -1,0 +1,178 @@
+export default {
+  id: 23,
+  title: 'Практикум: SELECT запросы',
+  description: 'Интенсивный практикум по SELECT запросам всех уровней сложности. Фильтрация, агрегации, подзапросы, оконные функции, форматирование результатов. Только практика на реальных сценариях.',
+  lessons: [
+    {
+      id: 1,
+      title: 'Базовый SELECT и фильтрация',
+      type: 'practice',
+      difficulty: 'easy',
+      description: 'Напиши запросы для получения данных о сотрудниках компании.',
+      requirements: [
+        'Все сотрудники с зарплатой > 100000, отсортированные по зарплате по убыванию',
+        'Уникальные должности (position) из таблицы employees',
+        'Сотрудники из отдела IT или Sales (используй IN)',
+        'Сотрудники чьё имя начинается на "А" (ILIKE)',
+        'Сотрудники принятые на работу в 2023 году (BETWEEN по дате)',
+        'Топ-5 самых высокооплачиваемых сотрудников'
+      ],
+      hint: 'ILIKE нечувствителен к регистру. Для года используй EXTRACT(YEAR FROM hire_date) = 2023 или hire_date BETWEEN \'2023-01-01\' AND \'2023-12-31\'.',
+      solution: '-- Сотрудники с высокой зарплатой\nSELECT id, name, position, salary\nFROM employees\nWHERE salary > 100000\nORDER BY salary DESC;\n\n-- Уникальные должности\nSELECT DISTINCT position\nFROM employees\nORDER BY position;\n\n-- IT или Sales\nSELECT name, department, salary\nFROM employees\nWHERE department IN (\'IT\', \'Sales\')\nORDER BY department, salary DESC;\n\n-- Имя начинается на А\nSELECT name, email\nFROM employees\nWHERE name ILIKE \'А%\'\nORDER BY name;\n\n-- Принятые в 2023\nSELECT name, hire_date, position\nFROM employees\nWHERE hire_date >= \'2023-01-01\' AND hire_date < \'2024-01-01\'\nORDER BY hire_date;\n\n-- Топ-5 по зарплате\nSELECT name, position, salary\nFROM employees\nORDER BY salary DESC\nLIMIT 5;',
+      explanation: 'Базовые операторы: WHERE для фильтрации, ORDER BY для сортировки, LIMIT для ограничения. ILIKE вместо LIKE для регистронезависимого поиска. Диапазоны дат: лучше >= AND < чем BETWEEN (BETWEEN включает обе границы).'
+    },
+    {
+      id: 2,
+      title: 'Агрегатные функции и GROUP BY',
+      type: 'practice',
+      difficulty: 'easy',
+      description: 'Напиши агрегирующие запросы для анализа данных продаж.',
+      requirements: [
+        'Количество заказов, общая сумма и средний чек по каждому статусу',
+        'Клиенты с более чем 5 заказами (используй HAVING)',
+        'Максимальная, минимальная и средняя зарплата по каждому отделу',
+        'Количество уникальных клиентов сделавших заказ в каждом месяце 2024 года',
+        'Суммарный доход по каждому городу клиента, только города с доходом > 1 000 000'
+      ],
+      hint: 'COUNT(DISTINCT customer_id) считает уникальных. DATE_TRUNC(\'month\', created_at) группирует по месяцу. HAVING применяется после GROUP BY.',
+      solution: '-- 1. Статистика по статусам заказов\nSELECT\n    status,\n    COUNT(*)              AS orders_count,\n    SUM(total)            AS total_revenue,\n    ROUND(AVG(total), 2)  AS avg_order_value\nFROM orders\nGROUP BY status\nORDER BY total_revenue DESC;\n\n-- 2. Клиенты с 5+ заказами\nSELECT\n    customer_id,\n    COUNT(*) AS orders_count,\n    SUM(total) AS total_spent\nFROM orders\nGROUP BY customer_id\nHAVING COUNT(*) > 5\nORDER BY orders_count DESC;\n\n-- 3. Зарплаты по отделам\nSELECT\n    department,\n    COUNT(*)             AS headcount,\n    MAX(salary)          AS max_salary,\n    MIN(salary)          AS min_salary,\n    ROUND(AVG(salary), 2) AS avg_salary\nFROM employees\nGROUP BY department\nORDER BY avg_salary DESC;\n\n-- 4. Уникальные клиенты по месяцам\nSELECT\n    DATE_TRUNC(\'month\', created_at)::DATE AS month,\n    COUNT(DISTINCT customer_id)           AS unique_customers,\n    COUNT(*)                              AS total_orders\nFROM orders\nWHERE created_at >= \'2024-01-01\' AND created_at < \'2025-01-01\'\nGROUP BY DATE_TRUNC(\'month\', created_at)\nORDER BY month;\n\n-- 5. Доход по городам (только > 1M)\nSELECT\n    c.city,\n    COUNT(DISTINCT o.customer_id)  AS customers,\n    COUNT(o.id)                    AS orders_count,\n    SUM(o.total)                   AS total_revenue\nFROM orders o\nJOIN customers c ON o.customer_id = c.id\nGROUP BY c.city\nHAVING SUM(o.total) > 1000000\nORDER BY total_revenue DESC;',
+      explanation: 'GROUP BY + агрегатные функции = основа аналитических запросов. HAVING фильтрует группы (не строки). COUNT(DISTINCT x) считает уникальные значения. DATE_TRUNC группирует по временным периодам.'
+    },
+    {
+      id: 3,
+      title: 'Подзапросы: WHERE и FROM',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Используй подзапросы для решения задач которые нельзя решить одним SELECT.',
+      requirements: [
+        'Клиенты у которых НЕТ ни одного заказа (коррелированный подзапрос с NOT EXISTS)',
+        'Товары с ценой выше средней цены по своей категории',
+        'Самый дорогой товар в каждой категории (подзапрос в FROM или WHERE)',
+        'Клиенты потратившие больше чем средний клиент (подзапрос в HAVING)',
+        'Заказы сделанные в тот же день что и первый заказ клиента'
+      ],
+      hint: 'NOT EXISTS быстрее NOT IN если подзапрос может вернуть NULL. Для "выше средней по категории" нужен коррелированный подзапрос или JOIN с агрегатом.',
+      solution: '-- 1. Клиенты без заказов (NOT EXISTS)\nSELECT c.id, c.name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o WHERE o.customer_id = c.id\n)\nORDER BY c.name;\n\n-- 2. Товары дороже средней цены категории\nSELECT\n    p.name,\n    p.price,\n    cat.name AS category,\n    cat_avg.avg_price\nFROM products p\nJOIN categories cat ON p.category_id = cat.id\nJOIN (\n    SELECT category_id, AVG(price) AS avg_price\n    FROM products\n    GROUP BY category_id\n) cat_avg ON p.category_id = cat_avg.category_id\nWHERE p.price > cat_avg.avg_price\nORDER BY cat.name, p.price DESC;\n\n-- 3. Самый дорогой товар в категории\nSELECT p.name, p.price, c.name AS category\nFROM products p\nJOIN categories c ON p.category_id = c.id\nWHERE p.price = (\n    SELECT MAX(p2.price)\n    FROM products p2\n    WHERE p2.category_id = p.category_id  -- Коррелированный!\n)\nORDER BY c.name;\n\n-- 4. Клиенты тратящие больше среднего\nSELECT customer_id, SUM(total) AS total_spent\nFROM orders\nGROUP BY customer_id\nHAVING SUM(total) > (\n    SELECT AVG(customer_total)\n    FROM (\n        SELECT SUM(total) AS customer_total\n        FROM orders\n        GROUP BY customer_id\n    ) sub\n);\n\n-- 5. Заказы в день первого заказа клиента\nSELECT o.id, o.customer_id, o.total, o.created_at\nFROM orders o\nWHERE DATE(o.created_at) = (\n    SELECT DATE(MIN(o2.created_at))\n    FROM orders o2\n    WHERE o2.customer_id = o.customer_id\n)\nORDER BY o.customer_id, o.created_at;',
+      explanation: 'Подзапросы в WHERE для фильтрации по результату. NOT EXISTS эффективнее LEFT JOIN IS NULL для большинства СУБД. Коррелированный подзапрос ссылается на внешний запрос — выполняется для каждой строки. При частом использовании замени на JOIN для производительности.'
+    },
+    {
+      id: 4,
+      title: 'Условные выражения: CASE, COALESCE, NULLIF',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Используй CASE и функции работы с NULL для создания вычисляемых столбцов.',
+      requirements: [
+        'Категоризируй клиентов по сумме заказов: Bronze (<10K), Silver (10K-50K), Gold (50K-200K), Platinum (>200K)',
+        'Вычисли скидку на товар: 20% если stock > 100, 10% если stock > 50, 5% если stock > 10, иначе 0%',
+        'Замени NULL в поле phone на "Не указан", в поле city на "Неизвестный город" через COALESCE',
+        'NULLIF: верни NULL если скидка равна базовой цене (деление на ноль защита)',
+        'Транспонирование: подсчитай количество заказов по статусам в виде отдельных столбцов'
+      ],
+      hint: 'CASE WHEN ... THEN ... WHEN ... THEN ... ELSE ... END. Транспонирование: SELECT SUM(CASE WHEN status = \'paid\' THEN 1 ELSE 0 END) AS paid_count. NULLIF(x, 0) вернёт NULL если x=0.',
+      solution: '-- 1. Сегментация клиентов\nSELECT\n    c.id,\n    c.name,\n    SUM(o.total) AS total_spent,\n    CASE\n        WHEN SUM(o.total) >= 200000 THEN \'Platinum\'\n        WHEN SUM(o.total) >= 50000  THEN \'Gold\'\n        WHEN SUM(o.total) >= 10000  THEN \'Silver\'\n        ELSE \'Bronze\'\n    END AS segment\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\nGROUP BY c.id, c.name\nORDER BY total_spent DESC NULLS LAST;\n\n-- 2. Скидки по остатку\nSELECT\n    name,\n    price,\n    stock_quantity,\n    CASE\n        WHEN stock_quantity > 100 THEN 0.20\n        WHEN stock_quantity > 50  THEN 0.10\n        WHEN stock_quantity > 10  THEN 0.05\n        ELSE 0\n    END AS discount_rate,\n    ROUND(\n        price * (1 - CASE\n            WHEN stock_quantity > 100 THEN 0.20\n            WHEN stock_quantity > 50  THEN 0.10\n            WHEN stock_quantity > 10  THEN 0.05\n            ELSE 0\n        END)\n    , 2) AS discounted_price\nFROM products\nORDER BY discount_rate DESC;\n\n-- 3. COALESCE для NULL значений\nSELECT\n    name,\n    COALESCE(phone, \'Не указан\') AS phone,\n    COALESCE(city, \'Неизвестный город\') AS city,\n    COALESCE(email, name || \'@unknown.com\') AS email\nFROM customers;\n\n-- 4. NULLIF для защиты от деления\nSELECT\n    product_id,\n    revenue,\n    orders_count,\n    revenue / NULLIF(orders_count, 0) AS avg_revenue_per_order\n    -- NULLIF(orders_count, 0): если 0 -> NULL, деления на 0 нет!\nFROM product_stats;\n\n-- 5. Транспонирование (pivot)\nSELECT\n    DATE_TRUNC(\'month\', created_at)::DATE AS month,\n    COUNT(*) AS total_orders,\n    SUM(CASE WHEN status = \'pending\'   THEN 1 ELSE 0 END) AS pending,\n    SUM(CASE WHEN status = \'paid\'      THEN 1 ELSE 0 END) AS paid,\n    SUM(CASE WHEN status = \'shipped\'   THEN 1 ELSE 0 END) AS shipped,\n    SUM(CASE WHEN status = \'completed\' THEN 1 ELSE 0 END) AS completed,\n    SUM(CASE WHEN status = \'cancelled\' THEN 1 ELSE 0 END) AS cancelled\nFROM orders\nGROUP BY DATE_TRUNC(\'month\', created_at)\nORDER BY month;',
+      explanation: 'CASE — мощный инструмент для условной логики прямо в SELECT. Транспонирование через CASE + SUM — стандартный паттерн для pivot-отчётов без специальных операторов. NULLIF(x, 0) защищает от деления на ноль возвращая NULL вместо ошибки.'
+    },
+    {
+      id: 5,
+      title: 'Строковые и датовые функции',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Практика с функциями обработки строк и дат.',
+      requirements: [
+        'Извлеки домен из email адреса клиента (часть после @)',
+        'Сформируй ФИО в формате "Фамилия И.О." из отдельных полей',
+        'Вычисли возраст сотрудника в годах из birth_date',
+        'Найди заказы сделанные в течение последних 7 дней включая сегодня',
+        'Форматируй сумму заказа с разделителями тысяч и 2 знаками после запятой: "1 500 000.00"',
+        'Сгруппируй заказы по дню недели (понедельник-воскресенье) и покажи статистику'
+      ],
+      hint: 'SUBSTRING(email FROM POSITION(\'@\' IN email) + 1) извлекает домен. AGE(NOW(), birth_date) возвращает интервал. TO_CHAR(amount, \'FM999 999 999.00\') форматирует число. EXTRACT(DOW FROM created_at) возвращает день недели (0=воскресенье).',
+      solution: '-- 1. Домен из email\nSELECT\n    email,\n    SUBSTRING(email FROM POSITION(\'@\' IN email) + 1) AS domain\nFROM customers\nORDER BY domain;\n\n-- 2. ФИО в формате Фамилия И.О.\nSELECT\n    last_name || \' \' ||\n    LEFT(first_name, 1) || \'.\' ||\n    COALESCE(LEFT(middle_name, 1) || \'.\', \'\')\n    AS short_name\nFROM employees\nORDER BY last_name;\n\n-- 3. Возраст сотрудника\nSELECT\n    name,\n    birth_date,\n    EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::INTEGER AS age_years,\n    AGE(CURRENT_DATE, birth_date) AS exact_age\nFROM employees\nORDER BY birth_date;\n\n-- 4. Заказы за последние 7 дней\nSELECT id, customer_id, total, created_at\nFROM orders\nWHERE created_at >= CURRENT_DATE - INTERVAL \'6 days\'  -- Включая сегодня\n  AND created_at < CURRENT_DATE + INTERVAL \'1 day\'\nORDER BY created_at DESC;\n\n-- 5. Форматированная сумма\nSELECT\n    id,\n    TO_CHAR(total, \'FM999 999 999.00\') AS formatted_total,\n    TO_CHAR(created_at, \'DD.MM.YYYY HH24:MI\') AS formatted_date\nFROM orders\nORDER BY total DESC\nLIMIT 20;\n\n-- 6. По дню недели\nSELECT\n    CASE EXTRACT(DOW FROM created_at)::INTEGER\n        WHEN 0 THEN \'Воскресенье\'\n        WHEN 1 THEN \'Понедельник\'\n        WHEN 2 THEN \'Вторник\'\n        WHEN 3 THEN \'Среда\'\n        WHEN 4 THEN \'Четверг\'\n        WHEN 5 THEN \'Пятница\'\n        WHEN 6 THEN \'Суббота\'\n    END AS day_of_week,\n    EXTRACT(DOW FROM created_at)::INTEGER AS dow_num,\n    COUNT(*)            AS orders_count,\n    ROUND(AVG(total), 2) AS avg_order\nFROM orders\nGROUP BY EXTRACT(DOW FROM created_at)\nORDER BY dow_num;',
+      explanation: 'PostgreSQL богат строковыми и датовыми функциями. SUBSTRING + POSITION для парсинга строк. AGE() возвращает INTERVAL между датами. EXTRACT(DOW) для дня недели. TO_CHAR() — универсальное форматирование. CURRENT_DATE — сегодняшняя дата без времени.'
+    },
+    {
+      id: 6,
+      title: 'Оконные функции в аналитике',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Используй оконные функции для решения аналитических задач.',
+      requirements: [
+        'Для каждого заказа вычисли: порядковый номер заказа этого клиента и накопленную сумму',
+        'Найди месяц с максимальной выручкой используя RANK() OVER',
+        'Вычисли процент каждого заказа от общей суммы заказов клиента',
+        'LAG: покажи разницу в сумме между текущим и предыдущим заказом клиента',
+        'Найди клиентов у которых каждый следующий заказ больше предыдущего (рост)'
+      ],
+      hint: 'SUM(total) OVER (PARTITION BY customer_id ORDER BY created_at) = накопленная сумма. Для % от общей суммы: total / SUM(total) OVER (PARTITION BY customer_id) * 100.',
+      solution: '-- 1. Порядковый номер и накопленная сумма\nSELECT\n    id AS order_id,\n    customer_id,\n    total,\n    created_at,\n    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at) AS order_num,\n    SUM(total) OVER (\n        PARTITION BY customer_id\n        ORDER BY created_at\n    ) AS cumulative_total\nFROM orders\nORDER BY customer_id, created_at;\n\n-- 2. Месяц с максимальной выручкой\nSELECT month, revenue, rank\nFROM (\n    SELECT\n        DATE_TRUNC(\'month\', created_at)::DATE AS month,\n        SUM(total) AS revenue,\n        RANK() OVER (ORDER BY SUM(total) DESC) AS rank\n    FROM orders\n    GROUP BY DATE_TRUNC(\'month\', created_at)\n) t\nWHERE rank = 1;\n\n-- 3. Процент от суммы клиента\nSELECT\n    id,\n    customer_id,\n    total,\n    SUM(total) OVER (PARTITION BY customer_id) AS customer_total,\n    ROUND(\n        total / SUM(total) OVER (PARTITION BY customer_id) * 100\n    , 1) AS pct_of_customer_total\nFROM orders\nORDER BY customer_id, total DESC;\n\n-- 4. Разница с предыдущим заказом\nSELECT\n    id,\n    customer_id,\n    total,\n    LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at) AS prev_order,\n    total - LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at)\n        AS diff_from_prev,\n    CASE\n        WHEN total > LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at)\n        THEN \'рост\'\n        WHEN total < LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at)\n        THEN \'снижение\'\n        ELSE \'без изменений\'\n    END AS trend\nFROM orders\nORDER BY customer_id, created_at;\n\n-- 5. Клиенты с постоянным ростом\nWITH order_trends AS (\n    SELECT\n        customer_id,\n        total,\n        LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at) AS prev_total,\n        COUNT(*) OVER (PARTITION BY customer_id) AS total_orders\n    FROM orders\n)\nSELECT DISTINCT customer_id\nFROM order_trends\nWHERE total_orders >= 3  -- Минимум 3 заказа\nGROUP BY customer_id\nHAVING BOOL_AND(\n    CASE WHEN prev_total IS NULL THEN TRUE\n         ELSE total > prev_total\n    END\n);',
+      explanation: 'Оконные функции заменяют сложные самосоединения. PARTITION BY customer_id = "для каждого клиента отдельно". ORDER BY внутри OVER = порядок для накопления и LAG. BOOL_AND агрегирует булевы значения через AND — TRUE только если все TRUE.'
+    },
+    {
+      id: 7,
+      title: 'CTE и сложные запросы',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Реши сложные аналитические задачи используя CTE для структурирования запросов.',
+      requirements: [
+        'CTE: найди топ-3 товара по выручке в каждой категории',
+        'CTE pipeline: raw_orders -> enriched (с данными клиента) -> categorized (с сегментом) -> финальный отчёт',
+        'Рекурсивный CTE: вычисли нарастающий итог по дням без пропусков (заполни пустые дни нулями)',
+        'CTE с DML: перенеси завершённые заказы старше года в архивную таблицу и верни количество',
+        'Найди клиентов которые покупали в каждом из последних 3 месяцев'
+      ],
+      hint: 'Для заполнения пустых дней: сгенерируй серию дат через generate_series(), затем LEFT JOIN с данными. Для "каждый из 3 месяцев": HAVING COUNT(DISTINCT DATE_TRUNC(\'month\', ...)) = 3.',
+      solution: '-- 1. Топ-3 товара по категориям\nWITH product_revenue AS (\n    SELECT\n        p.id,\n        p.name,\n        c.name AS category,\n        SUM(oi.quantity * oi.unit_price) AS revenue,\n        RANK() OVER (\n            PARTITION BY c.id\n            ORDER BY SUM(oi.quantity * oi.unit_price) DESC\n        ) AS category_rank\n    FROM products p\n    JOIN categories c     ON p.category_id = c.id\n    JOIN order_items oi   ON p.id = oi.product_id\n    GROUP BY p.id, p.name, c.id, c.name\n)\nSELECT category, name, revenue, category_rank\nFROM product_revenue\nWHERE category_rank <= 3\nORDER BY category, category_rank;\n\n-- 2. Pipeline CTE\nWITH\nraw_orders AS (\n    SELECT o.*, c.name AS customer_name, c.city, c.country\n    FROM orders o\n    JOIN customers c ON o.customer_id = c.id\n    WHERE o.created_at >= NOW() - INTERVAL \'90 days\'\n),\ncustomer_totals AS (\n    SELECT customer_id, SUM(total) AS lifetime_value\n    FROM orders GROUP BY customer_id\n),\nenriched AS (\n    SELECT ro.*, ct.lifetime_value\n    FROM raw_orders ro\n    JOIN customer_totals ct ON ro.customer_id = ct.customer_id\n),\ncategorized AS (\n    SELECT *,\n        CASE\n            WHEN lifetime_value >= 500000 THEN \'Platinum\'\n            WHEN lifetime_value >= 100000 THEN \'Gold\'\n            WHEN lifetime_value >= 20000  THEN \'Silver\'\n            ELSE \'Bronze\'\n        END AS customer_tier\n    FROM enriched\n)\nSELECT\n    customer_tier,\n    COUNT(*)            AS orders,\n    ROUND(AVG(total), 0) AS avg_order,\n    SUM(total)           AS total_revenue\nFROM categorized\nGROUP BY customer_tier\nORDER BY total_revenue DESC;\n\n-- 3. Нарастающий итог без пропусков\nWITH\ndate_series AS (\n    SELECT generate_series(\n        \'2024-01-01\'::DATE,\n        \'2024-12-31\'::DATE,\n        \'1 day\'::INTERVAL\n    )::DATE AS day\n),\ndaily_revenue AS (\n    SELECT DATE(created_at) AS day, SUM(total) AS revenue\n    FROM orders\n    WHERE created_at >= \'2024-01-01\' AND created_at < \'2025-01-01\'\n    GROUP BY DATE(created_at)\n)\nSELECT\n    ds.day,\n    COALESCE(dr.revenue, 0) AS daily_revenue,\n    SUM(COALESCE(dr.revenue, 0)) OVER (ORDER BY ds.day) AS cumulative\nFROM date_series ds\nLEFT JOIN daily_revenue dr ON ds.day = dr.day\nORDER BY ds.day;\n\n-- 4. CTE с DML\nWITH archived AS (\n    DELETE FROM orders\n    WHERE status = \'completed\'\n      AND created_at < NOW() - INTERVAL \'1 year\'\n    RETURNING *\n),\ninserted AS (\n    INSERT INTO orders_archive SELECT * FROM archived\n    RETURNING id\n)\nSELECT COUNT(*) AS archived_count FROM inserted;\n\n-- 5. Покупки в каждом из 3 последних месяцев\nSELECT customer_id\nFROM orders\nWHERE created_at >= DATE_TRUNC(\'month\', NOW()) - INTERVAL \'2 months\'\nGROUP BY customer_id\nHAVING COUNT(DISTINCT DATE_TRUNC(\'month\', created_at)) = 3;',
+      explanation: 'CTE pipeline — как переменные в коде: каждый шаг строит на предыдущем. generate_series() генерирует последовательности (даты, числа). CTE с DELETE...RETURNING атомарно переносит данные. BOOL_AND и COUNT(DISTINCT period) — паттерны для проверки условий по группам периодов.'
+    },
+    {
+      id: 8,
+      title: 'Работа с NULL и специальные случаи',
+      type: 'practice',
+      difficulty: 'medium',
+      description: 'Задачи на обработку NULL значений и граничных случаев.',
+      requirements: [
+        'Найди строки где любое из полей (phone, city, birth_date) равно NULL',
+        'Замени цепочкой COALESCE: primary_phone -> secondary_phone -> email -> "Нет контакта"',
+        'Вычисли средний рейтинг товара, игнорируя NULL и считая их как 0 раздельно',
+        'Сортировка: NULL значения должны быть последними (NULLS LAST)',
+        'Найди дубликаты email в таблице customers используя GROUP BY HAVING'
+      ],
+      hint: 'phone IS NULL OR city IS NULL OR birth_date IS NULL. AVG игнорирует NULL автоматически. AVG(COALESCE(rating, 0)) считает NULL как 0. ORDER BY column NULLS LAST.',
+      solution: '-- 1. Строки с NULL в любом поле\nSELECT id, name, phone, city, birth_date\nFROM customers\nWHERE phone IS NULL OR city IS NULL OR birth_date IS NULL\nORDER BY id;\n\n-- 2. Цепочка COALESCE\nSELECT\n    name,\n    COALESCE(\n        NULLIF(TRIM(primary_phone), \'\'),\n        NULLIF(TRIM(secondary_phone), \'\'),\n        NULLIF(TRIM(email), \'\'),\n        \'Нет контакта\'\n    ) AS best_contact\nFROM customers;\n\n-- 3. Средний рейтинг двумя способами\nSELECT\n    p.name,\n    COUNT(r.rating)              AS ratings_count,\n    ROUND(AVG(r.rating), 2)      AS avg_ignoring_null,   -- NULL игнорируется\n    ROUND(AVG(COALESCE(r.rating, 0)), 2) AS avg_null_as_zero  -- NULL = 0\nFROM products p\nLEFT JOIN reviews r ON p.id = r.product_id\nGROUP BY p.id, p.name\nORDER BY avg_ignoring_null DESC NULLS LAST;\n\n-- 4. NULL последними в сортировке\nSELECT name, salary, hire_date\nFROM employees\nORDER BY\n    salary DESC NULLS LAST,\n    hire_date   ASC  NULLS LAST;\n\n-- 5. Дубликаты email\nSELECT\n    email,\n    COUNT(*) AS occurrences,\n    array_agg(id) AS duplicate_ids\nFROM customers\nGROUP BY email\nHAVING COUNT(*) > 1\nORDER BY occurrences DESC;\n\n-- Удалить дубликаты (оставить с наименьшим id):\n-- DELETE FROM customers\n-- WHERE id NOT IN (\n--     SELECT MIN(id) FROM customers GROUP BY email\n-- );',
+      explanation: 'NULL в SQL особенный: IS NULL/IS NOT NULL для проверки. NULLIF(x, \'\') превращает пустую строку в NULL. AVG автоматически игнорирует NULL. NULLS LAST в ORDER BY помещает NULL в конец. COALESCE(a, b, c) возвращает первый не-NULL.'
+    },
+    {
+      id: 9,
+      title: 'Многошаговая аналитика',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Комплексная аналитическая задача: отчёт удержания клиентов (retention).',
+      requirements: [
+        'Cohort analysis: для каждой когорты (месяц первой покупки) посчитай % клиентов вернувшихся в следующие месяцы',
+        'Шаг 1: Найди первую покупку каждого клиента (cohort_month)',
+        'Шаг 2: Для каждого клиента определи в каком месяце (относительно первого) он покупал',
+        'Шаг 3: Агрегируй: количество клиентов в когорте и retention по месяцам 0, 1, 2, 3',
+        'Результат: таблица cohort_month × month_offset с retention %'
+      ],
+      hint: 'Шаг 1: MIN(created_at) GROUP BY customer_id. Шаг 2: EXTRACT(YEAR FROM age)*12 + EXTRACT(MONTH FROM age) для смещения. Шаг 3: COUNT(DISTINCT) + PIVOT через CASE.',
+      solution: 'WITH\n-- Шаг 1: Когорта = месяц первой покупки\nfirst_purchase AS (\n    SELECT\n        customer_id,\n        DATE_TRUNC(\'month\', MIN(created_at))::DATE AS cohort_month\n    FROM orders\n    GROUP BY customer_id\n),\n-- Шаг 2: Все покупки с смещением от первой\norder_periods AS (\n    SELECT\n        o.customer_id,\n        fp.cohort_month,\n        DATE_TRUNC(\'month\', o.created_at)::DATE AS order_month,\n        -- Смещение в месяцах от когорты:\n        (\n            EXTRACT(YEAR  FROM DATE_TRUNC(\'month\', o.created_at)) -\n            EXTRACT(YEAR  FROM fp.cohort_month)\n        ) * 12 +\n        (\n            EXTRACT(MONTH FROM DATE_TRUNC(\'month\', o.created_at)) -\n            EXTRACT(MONTH FROM fp.cohort_month)\n        ) AS month_offset\n    FROM orders o\n    JOIN first_purchase fp ON o.customer_id = fp.customer_id\n),\n-- Шаг 3: Размер когорты\ncohort_sizes AS (\n    SELECT cohort_month, COUNT(DISTINCT customer_id) AS cohort_size\n    FROM first_purchase\n    GROUP BY cohort_month\n),\n-- Шаг 4: Retention по периодам\nretention_data AS (\n    SELECT\n        op.cohort_month,\n        op.month_offset,\n        COUNT(DISTINCT op.customer_id) AS customers\n    FROM order_periods op\n    WHERE op.month_offset BETWEEN 0 AND 3\n    GROUP BY op.cohort_month, op.month_offset\n)\n-- Финальный pivot\nSELECT\n    r.cohort_month,\n    cs.cohort_size,\n    -- month_0 = 100% (все купили)\n    ROUND(MAX(CASE WHEN month_offset = 0 THEN customers END)::NUMERIC / cs.cohort_size * 100, 1) AS month_0_pct,\n    ROUND(MAX(CASE WHEN month_offset = 1 THEN customers END)::NUMERIC / cs.cohort_size * 100, 1) AS month_1_pct,\n    ROUND(MAX(CASE WHEN month_offset = 2 THEN customers END)::NUMERIC / cs.cohort_size * 100, 1) AS month_2_pct,\n    ROUND(MAX(CASE WHEN month_offset = 3 THEN customers END)::NUMERIC / cs.cohort_size * 100, 1) AS month_3_pct\nFROM retention_data r\nJOIN cohort_sizes cs ON r.cohort_month = cs.cohort_month\nGROUP BY r.cohort_month, cs.cohort_size\nORDER BY r.cohort_month;',
+      explanation: 'Cohort analysis — фундаментальный инструмент продуктовой аналитики. Разбивается на 4 шага через CTE: 1) найти первую покупку, 2) вычислить смещение каждой покупки, 3) агрегировать по когортам, 4) транспонировать в матрицу. Результат показывает сколько % клиентов возвращается.'
+    },
+    {
+      id: 10,
+      title: 'Финальный практикум: комплексные запросы',
+      type: 'practice',
+      difficulty: 'hard',
+      description: 'Набор сложных запросов объединяющих все темы курса.',
+      requirements: [
+        'Для каждого клиента: количество заказов, общая сумма, средний чек, первая и последняя дата, сегмент (Bronze/Silver/Gold/Platinum), ранг среди всех клиентов по сумме',
+        'Отчёт по категориям: выручка, количество заказов, уникальных клиентов, топ-товар в категории, % от общей выручки',
+        'Анализ дней: средняя выручка по дням недели, медиана, коэффициент вариации',
+        'Найди "спящих" клиентов: последний заказ > 90 дней назад, отсортируй по lifetime value DESC'
+      ],
+      hint: 'Для ранга: RANK() OVER (ORDER BY SUM(total) DESC). Для % от общей: SUM(revenue) / SUM(SUM(revenue)) OVER () * 100 (оконная функция поверх агрегата). Медиана: PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY revenue).',
+      solution: '-- 1. Полная статистика клиентов\nSELECT\n    c.id,\n    c.name,\n    c.email,\n    COUNT(o.id)                   AS orders_count,\n    COALESCE(SUM(o.total), 0)     AS total_spent,\n    ROUND(COALESCE(AVG(o.total), 0), 2) AS avg_order,\n    MIN(o.created_at)             AS first_order,\n    MAX(o.created_at)             AS last_order,\n    CASE\n        WHEN COALESCE(SUM(o.total), 0) >= 500000 THEN \'Platinum\'\n        WHEN COALESCE(SUM(o.total), 0) >= 100000 THEN \'Gold\'\n        WHEN COALESCE(SUM(o.total), 0) >= 20000  THEN \'Silver\'\n        ELSE \'Bronze\'\n    END AS segment,\n    RANK() OVER (ORDER BY COALESCE(SUM(o.total), 0) DESC) AS revenue_rank\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\nGROUP BY c.id, c.name, c.email\nORDER BY total_spent DESC;\n\n-- 2. Отчёт по категориям с топ-товаром\nWITH category_stats AS (\n    SELECT\n        cat.id AS cat_id,\n        cat.name AS category,\n        SUM(oi.quantity * oi.unit_price) AS revenue,\n        COUNT(DISTINCT o.id) AS orders_count,\n        COUNT(DISTINCT o.customer_id) AS unique_customers\n    FROM categories cat\n    JOIN products p   ON p.category_id = cat.id\n    JOIN order_items oi ON p.id = oi.product_id\n    JOIN orders o      ON oi.order_id = o.id\n    GROUP BY cat.id, cat.name\n),\ntop_products AS (\n    SELECT DISTINCT ON (p.category_id)\n        p.category_id,\n        p.name AS top_product,\n        SUM(oi.quantity * oi.unit_price) AS product_revenue\n    FROM products p\n    JOIN order_items oi ON p.id = oi.product_id\n    GROUP BY p.category_id, p.id, p.name\n    ORDER BY p.category_id, product_revenue DESC\n)\nSELECT\n    cs.category,\n    cs.revenue,\n    cs.orders_count,\n    cs.unique_customers,\n    tp.top_product,\n    ROUND(cs.revenue / SUM(cs.revenue) OVER () * 100, 2) AS pct_of_total\nFROM category_stats cs\nJOIN top_products tp ON cs.cat_id = tp.category_id\nORDER BY cs.revenue DESC;\n\n-- 3. Анализ по дням недели\nSELECT\n    TO_CHAR(DATE_TRUNC(\'day\', created_at), \'Day\') AS day_name,\n    EXTRACT(DOW FROM created_at)::INTEGER AS dow,\n    COUNT(*) AS orders,\n    ROUND(AVG(total), 2) AS avg_revenue,\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY total) AS median_revenue,\n    ROUND(STDDEV(total) / NULLIF(AVG(total), 0) * 100, 1) AS coeff_variation_pct\nFROM orders\nGROUP BY TO_CHAR(DATE_TRUNC(\'day\', created_at), \'Day\'), EXTRACT(DOW FROM created_at)\nORDER BY dow;\n\n-- 4. Спящие клиенты\nSELECT\n    c.id, c.name, c.email,\n    MAX(o.created_at) AS last_order_date,\n    NOW() - MAX(o.created_at) AS days_inactive,\n    SUM(o.total) AS lifetime_value,\n    COUNT(o.id) AS total_orders\nFROM customers c\nJOIN orders o ON c.id = o.customer_id\nGROUP BY c.id, c.name, c.email\nHAVING MAX(o.created_at) < NOW() - INTERVAL \'90 days\'\nORDER BY lifetime_value DESC;',
+      explanation: 'DISTINCT ON (category_id) ORDER BY revenue DESC — элегантный PostgreSQL-специфичный способ получить одну строку на группу. SUM(revenue) / SUM(SUM(revenue)) OVER () — оконная функция поверх агрегата для вычисления доли. PERCENTILE_CONT + STDDEV/AVG для статистического анализа.'
+    }
+  ]
+}
