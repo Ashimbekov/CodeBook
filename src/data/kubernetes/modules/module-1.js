@@ -110,6 +110,7 @@ export default {
         'Посмотреть доступные API ресурсы'
       ],
       hint: 'Используйте команды kubectl cluster-info, kubectl get nodes и kubectl get pods -n kube-system',
+      expectedOutput: 'kubectl cluster-info:\nKubernetes control plane is running at https://127.0.0.1:8443\nCoreDNS is running at https://127.0.0.1:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nkubectl get nodes:\nNAME       STATUS   ROLES           AGE   VERSION\nminikube   Ready    control-plane   5m    v1.28.0\n\nkubectl get pods -n kube-system:\nNAME                               READY   STATUS    RESTARTS\ncoredns-xxx                        1/1     Running   0\netcd-minikube                      1/1     Running   0\nkube-apiserver-minikube            1/1     Running   0\nkube-controller-manager-minikube   1/1     Running   0\nkube-scheduler-minikube            1/1     Running   0',
       solution: '# Информация о кластере\nkubectl cluster-info\n\n# Список узлов\nkubectl get nodes\nkubectl get nodes -o wide\n\n# Подробная информация об узле\nkubectl describe node <node-name>\n\n# Системные поды\nkubectl get pods -n kube-system\n\n# Все API ресурсы\nkubectl api-resources\n\n# Версия kubectl и кластера\nkubectl version',
       explanation: 'kubectl — основной инструмент для работы с Kubernetes. Команда get выводит список ресурсов, describe — подробную информацию. Флаг -n указывает namespace, -o wide добавляет дополнительные колонки.'
     },
@@ -127,6 +128,7 @@ export default {
         'Удалить оба Pod'
       ],
       hint: 'Используйте kubectl run для создания, kubectl get pod и kubectl describe pod для просмотра, kubectl delete pod для удаления.',
+      expectedOutput: 'kubectl get pods:\nNAME                READY   STATUS    RESTARTS   AGE\nnginx-imperative    1/1     Running   0          30s\nnginx-declarative   1/1     Running   0          10s\n\nkubectl describe pod nginx-imperative:\nName: nginx-imperative\nImage: nginx:1.21\nStatus: Running\nIP: 10.244.0.5\n\nПоды удалены: kubectl delete pod — pod deleted.',
       solution: '# Императивный способ\nkubectl run nginx-imperative --image=nginx:1.21\n\n# Проверить статус\nkubectl get pods\nkubectl describe pod nginx-imperative\n\n# Декларативный способ - создать файл pod.yaml:\n# apiVersion: v1\n# kind: Pod\n# metadata:\n#   name: nginx-declarative\n# spec:\n#   containers:\n#   - name: nginx\n#     image: nginx:1.21\n\nkubectl apply -f pod.yaml\nkubectl get pods\n\n# Удалить\nkubectl delete pod nginx-imperative\nkubectl delete -f pod.yaml',
       explanation: 'kubectl run создаёт Pod быстро, но не подходит для продакшена. kubectl apply -f применяет YAML-манифест — это правильный подход. Команда delete удаляет ресурсы по имени или по манифесту.'
     }

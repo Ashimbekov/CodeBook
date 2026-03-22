@@ -30,7 +30,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'По умолчанию NULL считается больше любого значения в PostgreSQL (при ASC — NULL идут последними). Это можно изменить явно.' },
-        { type: 'code', language: 'sql', value: '-- PostgreSQL по умолчанию:\n-- ASC:  NULL идут ПОСЛЕДНИМИ (NULLS LAST)\n-- DESC: NULL идут ПЕРВЫМИ (NULLS FIRST)\n\nSELECT name, rating\nFROM products\nORDER BY rating ASC;    -- NULL в конце: 2.8, 4.1, 4.2, ..., NULL\n\nSELECT name, rating\nFROM products\nORDER BY rating DESC;   -- NULL в начале: NULL, 4.9, 4.8, ...\n\n-- Явное управление\nSELECT name, rating\nFROM products\nORDER BY rating ASC NULLS FIRST;   -- NULL в начале при ASC\n\nSELECT name, rating\nFROM products\nORDER BY rating DESC NULLS LAST;   -- NULL в конце при DESC\n\n-- Практический паттерн: товары без рейтинга в конец\nSELECT name, COALESCE(rating::TEXT, \'—\') AS rating\nFROM products\nORDER BY rating DESC NULLS LAST;' }
+        { type: 'code', language: 'sql', value: '-- PostgreSQL по умолчанию:\n-- ASC:  NULL идут ПОСЛЕДНИМИ (NULLS LAST)\n-- DESC: NULL идут ПЕРВЫМИ (NULLS FIRST)\n\nSELECT name, rating\nFROM products\nORDER BY rating ASC;    -- NULL в конце: 2.8, 4.1, 4.2, ..., NULL\n\nSELECT name, rating\nFROM products\nORDER BY rating DESC;   -- NULL в начале: NULL, 4.9, 4.8, ...\n\n-- Явное управление\nSELECT name, rating\nFROM products\nORDER BY rating ASC NULLS FIRST;   -- NULL в начале при ASC\n\nSELECT name, rating\nFROM products\nORDER BY rating DESC NULLS LAST;   -- NULL в конце при DESC\n\n-- Практический паттерн: товары без рейтинга в конец\nSELECT name, COALESCE(rating::TEXT, \'—\') AS rating\nFROM products\nORDER BY rating DESC NULLS LAST;' },
+        { type: 'list', items: [
+          'PostgreSQL: ASC по умолчанию даёт NULLS LAST, DESC — NULLS FIRST',
+          'NULLS FIRST — NULL появляются первыми, NULLS LAST — последними',
+          'MySQL отличается: NULL считается меньше любого значения (ASC: NULL первые)',
+          'NULLS FIRST/LAST работает для каждого столбца в ORDER BY независимо',
+          'Явное указание NULLS FIRST/LAST делает код переносимым между СУБД'
+        ]},
+        { type: 'tip', value: 'Всегда указывай NULLS FIRST/LAST явно в продакшн-коде, если логика зависит от порядка NULL. Это делает запрос самодокументированным и защищает от сюрпризов при смене СУБД.' }
       ]
     },
     {
@@ -39,7 +47,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'LIMIT ограничивает количество возвращаемых строк. Используется для вывода топ-N записей и пагинации.' },
-        { type: 'code', language: 'sql', value: '-- Топ-5 самых дорогих товаров\nSELECT name, price\nFROM products\nORDER BY price DESC\nLIMIT 5;\n\n-- Последний заказ пользователя\nSELECT *\nFROM orders\nWHERE user_id = 42\nORDER BY created_at DESC\nLIMIT 1;\n\n-- Топ-3 пользователя по количеству заказов\nSELECT user_id, COUNT(*) AS order_count\nFROM orders\nGROUP BY user_id\nORDER BY order_count DESC\nLIMIT 3;\n\n-- LIMIT 0 — вернёт 0 строк (но схему видно в psql)\nSELECT * FROM products LIMIT 0;\n\n-- LIMIT ALL — без ограничений (редко нужен)\nSELECT * FROM products LIMIT ALL;' }
+        { type: 'code', language: 'sql', value: '-- Топ-5 самых дорогих товаров\nSELECT name, price\nFROM products\nORDER BY price DESC\nLIMIT 5;\n\n-- Последний заказ пользователя\nSELECT *\nFROM orders\nWHERE user_id = 42\nORDER BY created_at DESC\nLIMIT 1;\n\n-- Топ-3 пользователя по количеству заказов\nSELECT user_id, COUNT(*) AS order_count\nFROM orders\nGROUP BY user_id\nORDER BY order_count DESC\nLIMIT 3;\n\n-- LIMIT 0 — вернёт 0 строк (но схему видно в psql)\nSELECT * FROM products LIMIT 0;\n\n-- LIMIT ALL — без ограничений (редко нужен)\nSELECT * FROM products LIMIT ALL;' },
+        { type: 'list', items: [
+          'LIMIT всегда используется вместе с ORDER BY — без него результат непредсказуем',
+          'LIMIT 1 — один конкретный элемент: последний заказ, самый дорогой товар',
+          'В MySQL вместо LIMIT используется то же ключевое слово LIMIT',
+          'В SQL Server используется TOP N: SELECT TOP 5 * FROM products ORDER BY price DESC',
+          'В Oracle до 12c: SELECT * FROM (запрос) WHERE ROWNUM <= 5'
+        ]},
+        { type: 'tip', value: 'LIMIT без ORDER BY — антипаттерн. "Дай мне первые 5 записей" не имеет смысла если порядок не определён. Всегда добавляй ORDER BY перед LIMIT, чтобы результат был стабильным и предсказуемым.' }
       ]
     },
     {
@@ -67,6 +83,7 @@ export default {
         'Запрос 5: последние 2 добавленных товара'
       ],
       hint: 'Страница 2 из 3 = LIMIT 3 OFFSET 3. Самый дешёвый = ORDER BY price ASC LIMIT 1 с фильтром категории.',
+      expectedOutput: 'Топ-5 самых дорогих товаров:\n name            | price\n-----------------+----------\n Ноутбук Dell    | 85000.00\n Телефон Samsung | 65000.00\n Планшет Apple   | 55000.00\n Ноутбук HP      | 45000.00\n Наушники Sony   | 32000.00\n(5 rows)\n\nСортировка по категории ASC, цене DESC:\n category   | name            | price\n------------+-----------------+----------\n Ноутбуки   | Ноутбук Dell    | 85000.00\n Ноутбуки   | Ноутбук HP      | 45000.00\n Телефоны   | Телефон Samsung | 65000.00\n(3 rows)\n\nСтраница 2 (LIMIT 3 OFFSET 3):\n name          | price\n---------------+----------\n Ноутбук HP    | 45000.00\n Наушники Sony | 32000.00\n Кабель USB    |  1500.00\n(3 rows)\n\nСамый дешёвый ноутбук:\n name        | price\n-------------+----------\n Ноутбук HP  | 45000.00\n(1 row)',
       solution: '-- 1. Топ-3 дорогих\nSELECT name, price\nFROM products\nORDER BY price DESC\nLIMIT 3;\n\n-- 2. Топ-5 по рейтингу (NULL в конце)\nSELECT name, COALESCE(rating::TEXT, \'—\') AS rating\nFROM products\nORDER BY rating DESC NULLS LAST\nLIMIT 5;\n\n-- 3. Самый дешёвый телефон\nSELECT name, price\nFROM products\nWHERE category = \'Телефоны\'\nORDER BY price ASC\nLIMIT 1;\n\n-- 4. Страница 2 (по 3 товара)\nSELECT name, category, price\nFROM products\nORDER BY category ASC, price ASC\nLIMIT 3 OFFSET 3;\n\n-- 5. Последние 2 добавленных\nSELECT name, created_at\nFROM products\nORDER BY created_at DESC\nLIMIT 2;',
       explanation: 'ORDER BY + LIMIT — самый частый паттерн в SQL. NULLS LAST обеспечивает корректный порядок при наличии NULL. Пагинация: OFFSET = (страница - 1) * размер.'
     }

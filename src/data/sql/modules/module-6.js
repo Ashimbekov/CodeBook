@@ -39,7 +39,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'RIGHT JOIN — зеркало LEFT JOIN: все строки правой таблицы. На практике почти всегда заменяется на LEFT JOIN (меняем порядок таблиц). FULL JOIN — все строки обеих таблиц.' },
-        { type: 'code', language: 'sql', value: '-- RIGHT JOIN: все записи из правой таблицы\nSELECT u.name, o.id, o.amount\nFROM orders o\nRIGHT JOIN users u ON o.user_id = u.id;\n-- Эквивалентно:\nSELECT u.name, o.id, o.amount\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id;\n-- Используй LEFT JOIN — более читаемо\n\n-- FULL OUTER JOIN: все строки обеих таблиц\nSELECT u.name, o.id, o.amount\nFROM users u\nFULL OUTER JOIN orders o ON u.id = o.user_id;\n\n-- Результат: пользователи без заказов (NULL в order) +\n--             заказы без пользователей (NULL в user) +\n--             все совпадения\n\n-- Найти "осиротевшие" записи с обеих сторон\nSELECT\n    u.name AS user,\n    o.id AS order_id\nFROM users u\nFULL OUTER JOIN orders o ON u.id = o.user_id\nWHERE u.id IS NULL OR o.id IS NULL;  -- Только несовпадающие' }
+        { type: 'code', language: 'sql', value: '-- RIGHT JOIN: все записи из правой таблицы\nSELECT u.name, o.id, o.amount\nFROM orders o\nRIGHT JOIN users u ON o.user_id = u.id;\n-- Эквивалентно:\nSELECT u.name, o.id, o.amount\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id;\n-- Используй LEFT JOIN — более читаемо\n\n-- FULL OUTER JOIN: все строки обеих таблиц\nSELECT u.name, o.id, o.amount\nFROM users u\nFULL OUTER JOIN orders o ON u.id = o.user_id;\n\n-- Результат: пользователи без заказов (NULL в order) +\n--             заказы без пользователей (NULL в user) +\n--             все совпадения\n\n-- Найти "осиротевшие" записи с обеих сторон\nSELECT\n    u.name AS user,\n    o.id AS order_id\nFROM users u\nFULL OUTER JOIN orders o ON u.id = o.user_id\nWHERE u.id IS NULL OR o.id IS NULL;  -- Только несовпадающие' },
+        { type: 'list', items: [
+          'RIGHT JOIN = LEFT JOIN с переставленными таблицами — предпочитай LEFT JOIN для единообразия',
+          'FULL OUTER JOIN включает ВСЕ строки обеих таблиц, независимо от совпадений',
+          'FULL OUTER JOIN с WHERE IS NULL — находит "несогласованные" данные с обеих сторон',
+          'FULL OUTER JOIN используется для аудита целостности данных',
+          'MySQL до 8.0 не поддерживает FULL OUTER JOIN — эмулируй через LEFT UNION RIGHT'
+        ]},
+        { type: 'tip', value: 'В команде принято использовать только LEFT JOIN (не RIGHT). Это упрощает чтение: главная таблица всегда слева (в FROM), зависимые — справа (в JOIN). RIGHT JOIN читается менее интуитивно.' }
       ]
     },
     {
@@ -58,7 +66,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Реальные запросы часто объединяют 3-5 таблиц. JOIN-ы выполняются последовательно слева направо.' },
-        { type: 'code', language: 'sql', value: '-- Полный отчёт: заказы + пользователи + товары + категории\nSELECT\n    o.id          AS order_id,\n    u.name        AS customer,\n    u.email,\n    p.name        AS product,\n    c.name        AS category,   -- из таблицы categories\n    o.quantity,\n    o.amount,\n    o.status,\n    o.created_at\nFROM orders     o\nJOIN users      u ON o.user_id     = u.id\nJOIN products   p ON o.product_id  = p.id\nJOIN categories c ON p.category_id = c.id\nWHERE o.created_at >= \'2024-01-01\'\nORDER BY o.created_at DESC;\n\n-- Смешивание типов JOIN\nSELECT\n    u.name,\n    o.amount,\n    a.street AS address  -- может быть NULL если адрес не указан\nFROM users u\nJOIN orders o ON u.id = o.user_id         -- Только заказы (INNER)\nLEFT JOIN addresses a ON u.id = a.user_id  -- Адрес необязателен\nWHERE o.status = \'completed\';' }
+        { type: 'code', language: 'sql', value: '-- Полный отчёт: заказы + пользователи + товары + категории\nSELECT\n    o.id          AS order_id,\n    u.name        AS customer,\n    u.email,\n    p.name        AS product,\n    c.name        AS category,   -- из таблицы categories\n    o.quantity,\n    o.amount,\n    o.status,\n    o.created_at\nFROM orders     o\nJOIN users      u ON o.user_id     = u.id\nJOIN products   p ON o.product_id  = p.id\nJOIN categories c ON p.category_id = c.id\nWHERE o.created_at >= \'2024-01-01\'\nORDER BY o.created_at DESC;\n\n-- Смешивание типов JOIN\nSELECT\n    u.name,\n    o.amount,\n    a.street AS address  -- может быть NULL если адрес не указан\nFROM users u\nJOIN orders o ON u.id = o.user_id         -- Только заказы (INNER)\nLEFT JOIN addresses a ON u.id = a.user_id  -- Адрес необязателен\nWHERE o.status = \'completed\';' },
+        { type: 'list', items: [
+          'JOIN-ы выполняются последовательно: результат каждого становится входом следующего',
+          'Псевдонимы таблиц (o, u, p) — обязательны при нескольких JOIN для однозначности',
+          'Можно смешивать типы JOIN: INNER для обязательных связей, LEFT для необязательных',
+          'При LEFT JOIN стоп: WHERE на столбцы правой таблицы превращает LEFT в INNER',
+          'Порядок JOIN может влиять на производительность — оптимизатор обычно справляется сам'
+        ]},
+        { type: 'tip', value: 'Паттерн: делай INNER JOIN для обязательных связей (заказ всегда имеет пользователя), LEFT JOIN для необязательных (у пользователя может не быть адреса). WHERE фильтрует после всех JOIN-ов.' }
       ]
     },
     {
@@ -67,7 +83,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'JOIN часто комбинируют с GROUP BY для создания аналитических отчётов объединяющих данные из нескольких таблиц.' },
-        { type: 'code', language: 'sql', value: '-- Топ-3 категории по выручке\nSELECT\n    p.category,\n    COUNT(o.id)    AS orders,\n    SUM(o.amount)  AS revenue\nFROM products p\nJOIN orders o ON p.id = o.product_id\nWHERE o.status = \'completed\'\nGROUP BY p.category\nORDER BY revenue DESC\nLIMIT 3;\n\n-- Пользователи с количеством заказов по статусам\nSELECT\n    u.name,\n    COUNT(o.id)    AS total_orders,\n    COUNT(o.id) FILTER (WHERE o.status = \'completed\')  AS completed,\n    COUNT(o.id) FILTER (WHERE o.status = \'cancelled\')  AS cancelled,\n    COALESCE(SUM(o.amount) FILTER (WHERE o.status = \'completed\'), 0) AS revenue\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nGROUP BY u.id, u.name\nORDER BY revenue DESC;' }
+        { type: 'code', language: 'sql', value: '-- Топ-3 категории по выручке\nSELECT\n    p.category,\n    COUNT(o.id)    AS orders,\n    SUM(o.amount)  AS revenue\nFROM products p\nJOIN orders o ON p.id = o.product_id\nWHERE o.status = \'completed\'\nGROUP BY p.category\nORDER BY revenue DESC\nLIMIT 3;\n\n-- Пользователи с количеством заказов по статусам\nSELECT\n    u.name,\n    COUNT(o.id)    AS total_orders,\n    COUNT(o.id) FILTER (WHERE o.status = \'completed\')  AS completed,\n    COUNT(o.id) FILTER (WHERE o.status = \'cancelled\')  AS cancelled,\n    COALESCE(SUM(o.amount) FILTER (WHERE o.status = \'completed\'), 0) AS revenue\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nGROUP BY u.id, u.name\nORDER BY revenue DESC;' },
+        { type: 'list', items: [
+          'JOIN + GROUP BY — основной паттерн для аналитических отчётов по нескольким таблицам',
+          'LEFT JOIN + GROUP BY включает в отчёт пользователей с нулевыми показателями',
+          'COUNT(o.id) FILTER (WHERE ...) — условный подсчёт без подзапроса (PostgreSQL)',
+          'COALESCE(SUM(...), 0) заменяет NULL на 0 для пользователей без заказов',
+          'GROUP BY u.id, u.name — указывай id чтобы различать пользователей с одинаковым именем'
+        ]},
+        { type: 'tip', value: 'Для аналитики с несколькими метриками используй FILTER (WHERE ...) вместо подзапросов или CASE WHEN. Это чище и быстрее. Пример: COUNT(*) FILTER (WHERE status = \'completed\') считает только завершённые заказы.' }
       ]
     },
     {
@@ -85,6 +109,7 @@ export default {
         'Запрос 5: выручка по категориям товаров'
       ],
       hint: 'Пользователи без заказов: LEFT JOIN + WHERE o.id IS NULL. Выручка по категориям: JOIN products, потом GROUP BY category. Запрос 2 требует LEFT JOIN чтобы включить пользователей с 0 заказов.',
+      expectedOutput: 'Заказы с именами пользователей (INNER JOIN):\n order_id | user_name | amount    | status\n----------+-----------+-----------+-----------\n        1 | Алия      | 85000.00  | completed\n        2 | Нурлан    | 45000.00  | pending\n        3 | Алия      | 32000.00  | completed\n(3 rows)\n\nВсе пользователи с количеством заказов (LEFT JOIN):\n user_name | order_count | total_spent\n-----------+-------------+-------------\n Алия      |           2 |  117000.00\n Нурлан    |           1 |   45000.00\n Фарида    |           0 |       0.00\n(3 rows)\n\nПользователи без заказов:\n user_id | user_name\n---------+-----------\n       3 | Фарида\n(1 row)\n\nВыручка по категориям:\n category   | revenue    | orders_count\n------------+------------+--------------\n Ноутбуки   | 450000.00  |            7\n Телефоны   | 320000.00  |            9\n(2 rows)',
       solution: '-- 1. Заказы с покупателем и товаром\nSELECT\n    o.id            AS order_id,\n    u.name          AS customer,\n    p.name          AS product,\n    o.quantity,\n    o.amount,\n    o.status,\n    o.created_at\nFROM orders o\nJOIN users    u ON o.user_id    = u.id\nJOIN products p ON o.product_id = p.id\nORDER BY o.created_at DESC;\n\n-- 2. Пользователи + количество заказов\nSELECT\n    u.name,\n    COUNT(o.id) AS order_count\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nGROUP BY u.id, u.name\nORDER BY order_count DESC;\n\n-- 3. Топ-3 покупателя\nSELECT\n    u.name,\n    COUNT(o.id)   AS orders,\n    SUM(o.amount) AS total_spent\nFROM users u\nJOIN orders o ON u.id = o.user_id\nGROUP BY u.id, u.name\nORDER BY total_spent DESC\nLIMIT 3;\n\n-- 4. Пользователи без заказов\nSELECT u.id, u.name, u.email\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nWHERE o.id IS NULL;\n\n-- 5. Выручка по категориям\nSELECT\n    p.category,\n    COUNT(o.id)         AS total_orders,\n    SUM(o.amount)       AS revenue,\n    ROUND(AVG(o.amount), 0) AS avg_order\nFROM orders o\nJOIN products p ON o.product_id = p.id\nWHERE o.status = \'completed\'\nGROUP BY p.category\nORDER BY revenue DESC;',
       explanation: 'JOIN + GROUP BY — основа аналитической работы с SQL. LEFT JOIN с WHERE o.id IS NULL — паттерн для поиска "осиротевших" записей. COUNT(o.id) считает только реальные совпадения, не NULL.'
     }

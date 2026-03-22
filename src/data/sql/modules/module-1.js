@@ -51,7 +51,16 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'SELECT — самый важный SQL-оператор. Он извлекает данные из таблицы. Начнём с самых простых запросов.' },
-        { type: 'code', language: 'sql', value: '-- Выбрать все столбцы всех строк\nSELECT * FROM users;\n\n-- Выбрать конкретные столбцы\nSELECT name, email FROM users;\n\n-- Псевдоним (alias) для столбца\nSELECT name AS "Имя пользователя", email AS "Email" FROM users;\n\n-- Вычисляемые столбцы\nSELECT\n    name,\n    age,\n    age * 365 AS days_lived,       -- Умножение\n    UPPER(name) AS name_upper      -- Функция\nFROM users;\n\n-- Константы и выражения\nSELECT\n    1 + 1 AS two,                  -- 2\n    \'Привет\' AS greeting,          -- Привет\n    NOW() AS current_time;         -- Текущее время\n\n-- Убрать дубликаты\nSELECT DISTINCT city FROM users;   -- Уникальные города' }
+        { type: 'code', language: 'sql', value: '-- Выбрать все столбцы всех строк\nSELECT * FROM users;\n\n-- Выбрать конкретные столбцы\nSELECT name, email FROM users;\n\n-- Псевдоним (alias) для столбца\nSELECT name AS "Имя пользователя", email AS "Email" FROM users;\n\n-- Вычисляемые столбцы\nSELECT\n    name,\n    age,\n    age * 365 AS days_lived,       -- Умножение\n    UPPER(name) AS name_upper      -- Функция\nFROM users;\n\n-- Константы и выражения\nSELECT\n    1 + 1 AS two,                  -- 2\n    \'Привет\' AS greeting,          -- Привет\n    NOW() AS current_time;         -- Текущее время\n\n-- Убрать дубликаты\nSELECT DISTINCT city FROM users;   -- Уникальные города' },
+        { type: 'heading', value: 'Структура SELECT-запроса' },
+        { type: 'list', items: [
+          'SELECT * — выбрать все столбцы (удобно при изучении, но избегай в продакшне)',
+          'SELECT col1, col2 — выбирать только нужные столбцы (эффективнее)',
+          'AS — псевдоним для столбца или вычисляемого выражения',
+          'DISTINCT — убрать дублирующиеся строки по выбранным столбцам',
+          'Вычисляемые столбцы: age * 365, UPPER(name), NOW() — любые выражения'
+        ]},
+        { type: 'tip', value: 'Избегай SELECT * в приложениях: он передаёт лишние данные по сети и ломается при изменении схемы таблицы. Всегда явно перечисляй нужные столбцы: SELECT id, name, email FROM users.' }
       ]
     },
     {
@@ -79,6 +88,7 @@ export default {
         'SELECT: студенты где gpa IS NULL'
       ],
       hint: 'Конкатенация строк в PostgreSQL: first_name || \' \' || last_name. Для вставки нескольких строк используй один INSERT с несколькими VALUES.',
+      expectedOutput: 'CREATE TABLE students -- OK\n\nINSERT 0 5\n\nSELECT * FROM students:\n id | first_name | last_name   | email           | birth_date | gpa  | enrolled_at\n----+------------+-------------+-----------------+------------+------+-------------------\n  1 | Алия       | Джакупова   | aliya@uni.kz    | 2002-03-15 | 3.85 | 2026-03-21 10:00\n  2 | Нурлан     | Сейтов      | nurlan@uni.kz   | 2001-07-22 | 3.40 | 2026-03-21 10:00\n  3 | Фарида     | Бекова      | farida@uni.kz   | 2003-01-08 | 4.00 | 2026-03-21 10:00\n  4 | Асет       | Молдабеков  | aset@uni.kz     | 2002-11-30 | NULL | 2026-03-21 10:00\n  5 | Гульнар    | Ахметова    | gulnar@uni.kz   | 2001-05-19 | 2.95 | 2026-03-21 10:00\n(5 rows)\n\nSELECT full_name, gpa:\n full_name              | gpa\n-----------------------+---------\n Алия Джакупова        | 3.85\n Нурлан Сейтов         | 3.40\n Фарида Бекова         | 4.00\n Асет Молдабеков       | Не задан\n Гульнар Ахметова      | 2.95\n\nWHERE gpa IS NULL:\n id | first_name | last_name\n----+------------+------------\n  4 | Асет       | Молдабеков\n(1 row)',
       solution: '-- Создание таблицы\nCREATE TABLE students (\n    id          SERIAL PRIMARY KEY,\n    first_name  VARCHAR(50) NOT NULL,\n    last_name   VARCHAR(50) NOT NULL,\n    email       VARCHAR(100) UNIQUE NOT NULL,\n    birth_date  DATE,\n    gpa         DECIMAL(3, 2),\n    enrolled_at TIMESTAMP DEFAULT NOW()\n);\n\n-- Вставка данных\nINSERT INTO students (first_name, last_name, email, birth_date, gpa) VALUES\n    (\'Алия\',   \'Джакупова\',  \'aliya@uni.kz\',   \'2002-03-15\', 3.85),\n    (\'Нурлан\', \'Сейтов\',     \'nurlan@uni.kz\',  \'2001-07-22\', 3.40),\n    (\'Фарида\', \'Бекова\',     \'farida@uni.kz\',  \'2003-01-08\', 4.00),\n    (\'Асет\',   \'Молдабеков\', \'aset@uni.kz\',    \'2002-11-30\', NULL),\n    (\'Гульнар\',\'Ахметова\',   \'gulnar@uni.kz\',  \'2001-05-19\', 2.95);\n\n-- Все студенты\nSELECT * FROM students;\n\n-- Только имя и email\nSELECT first_name, email FROM students;\n\n-- Полное имя\nSELECT\n    id,\n    first_name || \' \' || last_name AS full_name,\n    email,\n    COALESCE(gpa::TEXT, \'Не задан\') AS gpa\nFROM students;\n\n-- Студенты без GPA\nSELECT * FROM students WHERE gpa IS NULL;',
       explanation: 'Это базовая структура любой работы с БД: CREATE TABLE (определение схемы), INSERT (наполнение), SELECT (чтение). SERIAL автоматически создаёт последовательность для id.'
     }

@@ -59,7 +59,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Специальные операторы для проверки на NULL. Нельзя использовать = NULL или != NULL — они всегда возвращают NULL (которое приравнивается к FALSE).' },
-        { type: 'code', language: 'sql', value: '-- Найти строки где phone не заполнен\nSELECT * FROM users WHERE phone IS NULL;\n\n-- Найти строки где phone заполнен\nSELECT * FROM users WHERE phone IS NOT NULL;\n\n-- Комбинирование с другими условиями\nSELECT * FROM employees\nWHERE department IS NULL\n  AND hire_date > \'2023-01-01\';\n\n-- COALESCE: значение по умолчанию для NULL\nSELECT\n    name,\n    COALESCE(phone, \'Не указан\') AS phone,\n    COALESCE(city, country, \'Неизвестно\') AS location\nFROM users;\n-- COALESCE возвращает первое НЕ NULL значение\n\n-- NULLIF: вернуть NULL если значения равны\nSELECT NULLIF(score, 0) AS score FROM exams;\n-- Если score = 0, вернёт NULL; иначе вернёт score\n-- Полезно для избежания деления на ноль:\nSELECT total / NULLIF(count, 0) AS average FROM stats;' }
+        { type: 'code', language: 'sql', value: '-- Найти строки где phone не заполнен\nSELECT * FROM users WHERE phone IS NULL;\n\n-- Найти строки где phone заполнен\nSELECT * FROM users WHERE phone IS NOT NULL;\n\n-- Комбинирование с другими условиями\nSELECT * FROM employees\nWHERE department IS NULL\n  AND hire_date > \'2023-01-01\';\n\n-- COALESCE: значение по умолчанию для NULL\nSELECT\n    name,\n    COALESCE(phone, \'Не указан\') AS phone,\n    COALESCE(city, country, \'Неизвестно\') AS location\nFROM users;\n-- COALESCE возвращает первое НЕ NULL значение\n\n-- NULLIF: вернуть NULL если значения равны\nSELECT NULLIF(score, 0) AS score FROM exams;\n-- Если score = 0, вернёт NULL; иначе вернёт score\n-- Полезно для избежания деления на ноль:\nSELECT total / NULLIF(count, 0) AS average FROM stats;' },
+        { type: 'list', items: [
+          'IS NULL — единственный правильный способ проверить NULL. = NULL всегда даёт NULL',
+          'IS NOT NULL — строки, где значение задано',
+          'COALESCE(a, b, c) — возвращает первое не-NULL значение из списка',
+          'NULLIF(a, b) — возвращает NULL если a = b, иначе a. Предотвращает деление на ноль',
+          'NULL в ORDER BY: по умолчанию NULL считается больше всех значений в PostgreSQL'
+        ]},
+        { type: 'tip', value: 'COALESCE очень полезен в SELECT для отображения: COALESCE(middle_name, \'\') позволяет конкатенировать ФИО без NULL. COALESCE(discount, 0) позволяет считать итог без проверки на NULL.' }
       ]
     },
     {
@@ -68,7 +76,15 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Реальные запросы часто сочетают несколько условий. Важно правильно расставлять скобки и понимать порядок вычисления.' },
-        { type: 'code', language: 'sql', value: '-- Пример: интернет-магазин\n-- Найти доступные товары в ценовом диапазоне\n-- определённых категорий кроме распродажных\n\nSELECT\n    name,\n    price,\n    category,\n    stock\nFROM products\nWHERE\n    -- Условие по цене\n    price BETWEEN 5000 AND 100000\n    -- Одна из допустимых категорий\n    AND category IN (\'Телефоны\', \'Планшеты\', \'Ноутбуки\')\n    -- Есть в наличии\n    AND stock > 0\n    -- Не устаревшая модель\n    AND (discontinued IS NULL OR discontinued = FALSE)\n    -- Имя содержит год\n    AND name LIKE \'%202%\';\n\n-- Ещё пример: поиск пользователей\nSELECT * FROM users\nWHERE\n    (age BETWEEN 18 AND 35 OR is_premium = TRUE)\n    AND email NOT LIKE \'%deleted%\'\n    AND last_login IS NOT NULL\n    AND last_login > NOW() - INTERVAL \'90 days\';' }
+        { type: 'code', language: 'sql', value: '-- Пример: интернет-магазин\n-- Найти доступные товары в ценовом диапазоне\n-- определённых категорий кроме распродажных\n\nSELECT\n    name,\n    price,\n    category,\n    stock\nFROM products\nWHERE\n    -- Условие по цене\n    price BETWEEN 5000 AND 100000\n    -- Одна из допустимых категорий\n    AND category IN (\'Телефоны\', \'Планшеты\', \'Ноутбуки\')\n    -- Есть в наличии\n    AND stock > 0\n    -- Не устаревшая модель\n    AND (discontinued IS NULL OR discontinued = FALSE)\n    -- Имя содержит год\n    AND name LIKE \'%202%\';\n\n-- Ещё пример: поиск пользователей\nSELECT * FROM users\nWHERE\n    (age BETWEEN 18 AND 35 OR is_premium = TRUE)\n    AND email NOT LIKE \'%deleted%\'\n    AND last_login IS NOT NULL\n    AND last_login > NOW() - INTERVAL \'90 days\';' },
+        { type: 'list', items: [
+          'Сложные WHERE читаются лучше с отступами и комментариями для каждого блока условий',
+          'Скобки в (a OR b) AND c обязательны — AND приоритетнее OR без скобок',
+          'Условия на NULL: (col IS NULL OR col = value) — стандартный паттерн',
+          'NOW() - INTERVAL "90 days" — динамические фильтры по времени без хардкода дат',
+          'Порядок условий в WHERE не влияет на результат, но влияет на читаемость'
+        ]},
+        { type: 'tip', value: 'При написании сложных WHERE-условий сначала напиши запрос по частям и проверяй каждую. Добавляй условия постепенно: сначала проверь базовый SELECT, затем добавляй AND-условия одно за другим.' }
       ]
     },
     {
@@ -87,6 +103,7 @@ export default {
         'Запрос 5: товары без рейтинга (NULL) или с рейтингом ниже 3.0'
       ],
       hint: 'Для запроса 3: WHERE rating BETWEEN 4.0 AND 5.0 AND stock > 0. Для запроса 5: WHERE rating IS NULL OR rating < 3.0.',
+      expectedOutput: 'Запрос 1 — товары дороже 50000:\n name            | price    | category\n-----------------+----------+----------\n Ноутбук Dell    | 85000.00 | Ноутбуки\n Телефон Samsung | 65000.00 | Телефоны\n(2 rows)\n\nЗапрос 2 — поиск LIKE "нот%":\n name            | price\n-----------------+----------\n Ноутбук Dell    | 85000.00\n Ноутбук HP      | 45000.00\n(2 rows)\n\nЗапрос 3 — рейтинг BETWEEN 4.0 AND 5.0 и stock > 0:\n name           | rating | stock\n----------------+--------+-------\n Ноутбук Dell   |   4.5  |   12\n Телефон Xiaomi |   4.2  |   30\n(2 rows)\n\nЗапрос 4 — ORDER BY price DESC LIMIT 3:\n name            | price\n-----------------+----------\n Ноутбук Dell    | 85000.00\n Телефон Samsung | 65000.00\n Ноутбук HP      | 45000.00\n(3 rows)\n\nЗапрос 5 — rating IS NULL OR rating < 3.0:\n name          | rating\n---------------+--------\n Кабель USB    | NULL\n Чехол дешёвый |   2.5\n(2 rows)',
       solution: 'CREATE TABLE products (\n    id         SERIAL PRIMARY KEY,\n    name       VARCHAR(100) NOT NULL,\n    category   VARCHAR(50),\n    price      DECIMAL(10, 2) NOT NULL,\n    stock      INTEGER DEFAULT 0,\n    rating     DECIMAL(2, 1),\n    created_at TIMESTAMP DEFAULT NOW()\n);\n\nINSERT INTO products (name, category, price, stock, rating) VALUES\n    (\'iPhone 15 Pro\',  \'Телефоны\',   \'185000\', 15, 4.8),\n    (\'Samsung S24\',    \'Телефоны\',   \'160000\', 20, 4.5),\n    (\'Наушники AirPods\',\'Аксессуары\', \'45000\', 50, 4.7),\n    (\'Чехол для iPhone\',\'Аксессуары\', \'3500\',  100, 4.2),\n    (\'iPad Pro\',       \'Планшеты\',   \'250000\',  8, 4.9),\n    (\'Xiaomi 13\',      \'Телефоны\',    \'85000\', 30, 4.3),\n    (\'Кабель USB-C\',   \'Аксессуары\',  \'2500\', 200, NULL),\n    (\'Galaxy Tab\',     \'Планшеты\',   \'120000\', 12, 4.1),\n    (\'Redmi Note Pro\', \'Телефоны\',    \'55000\', 45, 2.8),\n    (\'MacBook Pro\',    \'Ноутбуки\',   \'450000\',  5, 4.9);\n\n-- 1. Дешевле 30000 тг\nSELECT name, price FROM products WHERE price < 30000;\n\n-- 2. Телефоны или Аксессуары\nSELECT name, category, price\nFROM products\nWHERE category IN (\'Телефоны\', \'Аксессуары\');\n\n-- 3. Рейтинг 4.0-5.0 в наличии\nSELECT name, rating, stock\nFROM products\nWHERE rating BETWEEN 4.0 AND 5.0\n  AND stock > 0;\n\n-- 4. Имя содержит "Pro"\nSELECT name, category, price\nFROM products\nWHERE name LIKE \'%Pro%\';\n\n-- 5. Без рейтинга или рейтинг < 3.0\nSELECT name, COALESCE(rating::TEXT, \'Нет рейтинга\') AS rating\nFROM products\nWHERE rating IS NULL OR rating < 3.0;',
       explanation: 'Фильтрация — основа SQL. Комбинация BETWEEN, IN, LIKE и IS NULL покрывает большинство реальных задач. Обрати внимание на COALESCE для замены NULL в выводе.'
     }

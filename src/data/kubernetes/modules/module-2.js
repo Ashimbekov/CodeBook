@@ -98,6 +98,7 @@ export default {
         'Остановить кластер'
       ],
       hint: 'После minikube start используйте kubectl get nodes для проверки. Аддоны включаются командой minikube addons enable.',
+      expectedOutput: 'minikube start:\n* Starting control plane node minikube in cluster minikube\n* Done! kubectl is now configured to use "minikube"\n\nkubectl get nodes:\nNAME       STATUS   ROLES           AGE   VERSION\nminikube   Ready    control-plane   1m    v1.28.0\n\nminikube addons enable ingress:\n* ingress was successfully enabled\n\nminikube addons list | grep ingress:\n| ingress                     | minikube | enabled\n\nminikube stop:\n* Stopping node "minikube" ...',
       solution: '# Установка (Linux)\ncurl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"\nchmod +x kubectl && sudo mv kubectl /usr/local/bin/\n\ncurl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64\nsudo install minikube-linux-amd64 /usr/local/bin/minikube\n\n# Запуск кластера\nminikube start --driver=docker --cpus=2 --memory=4096\n\n# Проверка\nkubectl get nodes\nkubectl cluster-info\nkubectl get pods -A\n\n# Dashboard\nminikube dashboard &\n\n# Включить Ingress\nminikube addons enable ingress\nminikube addons list\n\n# Остановить\nminikube stop',
       explanation: 'minikube start создаёт однонодовый кластер. После запуска kubeconfig автоматически настраивается. Dashboard предоставляет веб-интерфейс для визуального управления кластером. Аддоны расширяют функциональность minikube.'
     }
