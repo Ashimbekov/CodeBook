@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и оценка',
       type: 'practice',
+      description: 'Определение требований Instagram и оценка масштаба: 100M фото/день = 300 ГБ/день, 290K feed RPS — вывод о необходимости S3+CDN, Redis кеша лент и Cassandra.',
       requirements: [
         'Определить функциональные требования (фото, лента, Stories)',
         'Указать нефункциональные требования (масштаб, latency)',
@@ -46,6 +47,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Загрузка и хранение медиа',
       type: 'practice',
+      description: 'Upload pipeline через pre-signed S3 URL, параллельная обработка изображений в несколько форматов (thumbnail/feed/detail + WebP) и CDN структура для быстрой раздачи.',
       requirements: [
         'Описать upload pipeline через pre-signed S3 URL',
         'Перечислить все размеры изображений для обработки',
@@ -69,6 +71,7 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      description: 'Схема данных Instagram: таблица posts со Snowflake ID, два индекса user_follows для разных запросов, Stories в Redis с TTL, выбор хранилищ для каждого типа данных.',
       requirements: [
         'Спроектировать таблицу posts с полем media_keys',
         'Описать два индекса для user_follows',
@@ -94,6 +97,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Алгоритмическая лента новостей',
       type: 'practice',
+      description: 'Алгоритм ранжирования ленты Instagram: факторы interest/recency/relationship, гибридный offline (ML batch) + online (fresh posts + Bloom Filter) pipeline для генерации топ-20 постов.',
       requirements: [
         'Описать факторы ранжирования Instagram Feed',
         'Описать offline batch компонент генерации ленты',
@@ -119,6 +123,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Поиск и Explore',
       type: 'practice',
+      description: 'Поиск хештегов через Elasticsearch с автодополнением на Redis Sorted Set; Explore Page — ML-based рекомендации через offline предвычисление + online trending компонент.',
       requirements: [
         'Описать индексирование хештегов в Elasticsearch',
         'Спроектировать автодополнение хештегов',
@@ -142,6 +147,7 @@ export default {
       id: 6,
       title: 'Шаг 6: Лайки, комментарии и счётчики',
       type: 'practice',
+      description: 'Таблица likes с двумя Cassandra-индексами для разных запросов; Redis INCR для счётчиков + batch flush в БД; soft delete для модерации комментариев.',
       requirements: [
         'Спроектировать таблицу likes с двумя индексами',
         'Описать Redis INCR для счётчиков + batch flush',
@@ -166,6 +172,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура',
       type: 'practice',
+      description: 'Итоговая архитектура Instagram: 9 сервисов, 6 ключевых архитектурных решений, сравнение с Twitter — сходство Feed/Social Graph при уникальности медиа-обработки и Stories TTL.',
       requirements: [
         'Перечислить все сервисы Instagram',
         'Назвать 6 ключевых архитектурных решений',

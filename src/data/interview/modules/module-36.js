@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: '3Sum — три числа с нулевой суммой',
       type: 'practice',
+      description: 'Найти все уникальные тройки с суммой 0. Сортировка + два указателя: фиксируем i, сжимаем left/right. Пропуск дубликатов. O(n²) время, O(1) доп. память.',
+      solution: 'def three_sum(nums):\n    nums.sort()\n    result = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i-1]: continue\n        if nums[i] > 0: break\n        left, right = i + 1, len(nums) - 1\n        while left < right:\n            total = nums[i] + nums[left] + nums[right]\n            if total == 0:\n                result.append([nums[i], nums[left], nums[right]])\n                while left < right and nums[left] == nums[left+1]: left += 1\n                while left < right and nums[right] == nums[right-1]: right -= 1\n                left += 1; right -= 1\n            elif total < 0: left += 1\n            else: right -= 1\n    return result\n# O(n²) время, O(1) доп. память',
       content: [
         { type: 'text', value: 'Задача: найдите все уникальные тройки [a, b, c] в массиве nums такие что a + b + c = 0. Тройки не должны дублироваться.' },
         { type: 'text', value: 'Пример: [-1,0,1,2,-1,-4] → [[-1,-1,2],[-1,0,1]].' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Longest Substring Without Repeating',
       type: 'practice',
+      description: 'Длина наидлиннейшей подстроки без повторов. Скользящее окно с HashMap: при повторе левая граница прыгает к позиции последнего вхождения + 1. O(n) время.',
+      solution: 'def length_of_longest_substring(s):\n    char_index = {}\n    max_len = 0\n    left = 0\n    for right, char in enumerate(s):\n        if char in char_index and char_index[char] >= left:\n            left = char_index[char] + 1\n        char_index[char] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len\n# O(n) время, O(min(n, alphabet)) память',
       content: [
         { type: 'text', value: 'Задача: найдите длину самой длинной подстроки без повторяющихся символов.' },
         { type: 'text', value: 'Примеры: "abcabcbb" → 3 ("abc"). "bbbbb" → 1 ("b"). "pwwkew" → 3 ("wke").' },
@@ -32,6 +36,8 @@ export default {
       id: 3,
       title: 'Add Two Numbers — сложение через связные списки',
       type: 'practice',
+      description: 'Сложение двух чисел, записанных обратными связными списками. Симуляция сложения столбиком с переносом (carry). Цикл пока есть l1 или l2 или carry.',
+      solution: 'def add_two_numbers(l1, l2):\n    dummy = ListNode(0)\n    current = dummy\n    carry = 0\n    while l1 or l2 or carry:\n        val1 = l1.val if l1 else 0\n        val2 = l2.val if l2 else 0\n        total = val1 + val2 + carry\n        carry = total // 10\n        current.next = ListNode(total % 10)\n        current = current.next\n        if l1: l1 = l1.next\n        if l2: l2 = l2.next\n    return dummy.next\n# O(max(n,m)) время и память',
       content: [
         { type: 'text', value: 'Задача: два числа представлены в виде обратных связных списков (цифра за цифрой, от младшего разряда). Сложите их и верните результат в том же формате.' },
         { type: 'text', value: 'Пример: (2→4→3) + (5→6→4) = 342 + 465 = 807 → 7→0→8.' },
@@ -44,6 +50,8 @@ export default {
       id: 4,
       title: 'Container With Most Water',
       type: 'practice',
+      description: 'Максимальная площадь контейнера. Два указателя с краёв: двигаем указатель с меньшей высотой (больший двигать бессмысленно — площадь только упадёт). O(n) время.',
+      solution: 'def max_area(height):\n    left, right = 0, len(height) - 1\n    max_water = 0\n    while left < right:\n        water = min(height[left], height[right]) * (right - left)\n        max_water = max(max_water, water)\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return max_water\n# O(n) время, O(1) память',
       content: [
         { type: 'text', value: 'Задача: дан массив height высот вертикальных линий. Найдите два индекса i, j такие что площадь контейнера между ними максимальна. Площадь = min(height[i], height[j]) * (j - i).' },
         { type: 'text', value: 'Пример: [1,8,6,2,5,4,8,3,7] → 49 (индексы 1 и 8, min(8,7) * 7 = 49).' },
@@ -57,6 +65,8 @@ export default {
       id: 5,
       title: 'Group Anagrams — группировка анаграмм',
       type: 'practice',
+      description: 'Сгруппировать анаграммы. HashMap с ключом = tuple(sorted(word)): анаграммы имеют одинаковые буквы → одинаковый ключ. O(n × k log k) время.',
+      solution: 'from collections import defaultdict\n\ndef group_anagrams(strs):\n    anagram_map = defaultdict(list)\n    for word in strs:\n        key = tuple(sorted(word))\n        anagram_map[key].append(word)\n    return list(anagram_map.values())\n\n# O(n × k log k) время, O(n × k) память\n# Без сортировки: ключ = tuple(26 счётчиков букв) → O(n × k)',
       content: [
         { type: 'text', value: 'Задача: дан массив строк. Сгруппируйте анаграммы вместе. Порядок групп не важен.' },
         { type: 'text', value: 'Пример: ["eat","tea","tan","ate","nat","bat"] → [["bat"],["nat","tan"],["ate","eat","tea"]].' },
@@ -69,6 +79,8 @@ export default {
       id: 6,
       title: 'Product of Array Except Self',
       type: 'practice',
+      description: 'Произведение всех элементов кроме текущего без деления. Два прохода: prefix (произведение левее) и suffix (произведение правее). O(n) время, O(1) доп. память.',
+      solution: 'def product_except_self(nums):\n    n = len(nums)\n    result = [1] * n\n    prefix = 1\n    for i in range(n):\n        result[i] = prefix\n        prefix *= nums[i]\n    suffix = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= suffix\n        suffix *= nums[i]\n    return result\n# [1,2,3,4] → [24,12,8,6]\n# O(n) время, O(1) доп. память',
       content: [
         { type: 'text', value: 'Задача: дан массив nums. Верните массив answer где answer[i] = произведение всех элементов nums, кроме nums[i]. Нельзя использовать деление. O(n) по времени.' },
         { type: 'text', value: 'Пример: [1,2,3,4] → [24,12,8,6].' },
@@ -81,6 +93,8 @@ export default {
       id: 7,
       title: 'Merge Intervals — слияние интервалов',
       type: 'practice',
+      description: 'Слить пересекающиеся интервалы. Сортировка по началу, затем: если начало текущего ≤ конец последнего в результате → расширить, иначе → добавить новый. O(n log n).',
+      solution: 'def merge(intervals):\n    intervals.sort(key=lambda x: x[0])\n    result = [intervals[0]]\n    for start, end in intervals[1:]:\n        if start <= result[-1][1]:\n            result[-1][1] = max(result[-1][1], end)\n        else:\n            result.append([start, end])\n    return result\n# O(n log n) время (сортировка), O(n) память',
       content: [
         { type: 'text', value: 'Задача: дан массив интервалов intervals = [[start,end],...]. Слейте все пересекающиеся интервалы и верните результат.' },
         { type: 'text', value: 'Пример: [[1,3],[2,6],[8,10],[15,18]] → [[1,6],[8,10],[15,18]].' },
@@ -93,6 +107,8 @@ export default {
       id: 8,
       title: 'LRU Cache — кэш с вытеснением',
       type: 'practice',
+      description: 'LRU Cache с O(1) get и put. OrderedDict (Python): move_to_end при доступе, popitem(last=False) при переполнении. Вручную: HashMap + двусвязный список.',
+      solution: 'from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache: return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache: self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n# O(1) get и put\n# Вручную: HashMap + двусвязный список (head=MRU, tail=LRU)',
       content: [
         { type: 'text', value: 'Задача: реализуйте LRU (Least Recently Used) Cache с операциями get(key) и put(key, value). Оба за O(1). При переполнении вытесняйте давно неиспользованный элемент.' },
         { type: 'heading', value: 'Решение: OrderedDict (HashMap + Doubly Linked List)' },
@@ -105,6 +121,8 @@ export default {
       id: 9,
       title: 'Course Schedule — топологическая сортировка',
       type: 'practice',
+      description: 'Можно ли пройти все курсы (нет циклических зависимостей)? BFS Kahn: убираем вершины с in_degree=0, если в конце все убраны — цикла нет. O(V+E) время.',
+      solution: 'from collections import defaultdict, deque\n\ndef can_finish(num_courses, prerequisites):\n    graph = defaultdict(list)\n    in_degree = [0] * num_courses\n    for course, prereq in prerequisites:\n        graph[prereq].append(course)\n        in_degree[course] += 1\n    queue = deque([i for i in range(num_courses) if in_degree[i] == 0])\n    completed = 0\n    while queue:\n        course = queue.popleft()\n        completed += 1\n        for next_course in graph[course]:\n            in_degree[next_course] -= 1\n            if in_degree[next_course] == 0:\n                queue.append(next_course)\n    return completed == num_courses\n# O(V+E) время и память',
       content: [
         { type: 'text', value: 'Задача: у вас numCourses курсов (0 до numCourses-1) и массив prerequisites [[a,b]] означающий "для курса a нужно сначала b". Можно ли пройти все курсы?' },
         { type: 'text', value: 'Пример: numCourses=2, prerequisites=[[1,0]] → True. [[1,0],[0,1]] → False (циклическая зависимость).' },
@@ -117,6 +135,8 @@ export default {
       id: 10,
       title: 'Word Break — разбиение на слова',
       type: 'practice',
+      description: 'Можно ли разбить строку на слова из словаря? DP: dp[i] = True если s[:i] разбивается. Для каждой позиции проверяем все возможные "последние слова". O(n² × m).',
+      solution: 'def word_break(s, word_dict):\n    word_set = set(word_dict)\n    n = len(s)\n    dp = [False] * (n + 1)\n    dp[0] = True\n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[n]\n# O(n² × m) время, O(n) память\n# Оптимизация: ограничить j по min/max длине слова из словаря',
       content: [
         { type: 'text', value: 'Задача: дана строка s и словарь wordDict. Можно ли разбить s на одно или более слов из словаря?' },
         { type: 'text', value: 'Примеры: s="leetcode", wordDict=["leet","code"] → True. s="applepenapple", wordDict=["apple","pen"] → True. s="catsandog", wordDict=["cats","dog","sand","cat"] → False.' },

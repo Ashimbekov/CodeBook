@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'CDN: принципы работы и зачем нужен',
       type: 'theory',
+      description: 'CDN: сотни POP по всему миру, GeoDNS/Anycast направляет к ближайшему. Без CDN: Токио→NY = 150–200мс. С CDN: Токио→POP = 5мс. Бонусы: DDoS-защита, SSL termination, gzip.',
+      solution: 'CDN решает: latency (150мс→5мс), нагрузка на origin (-80–95%), DDoS-защита, SSL termination, gzip/Brotli. Провайдеры: Cloudflare (самый популярный), AWS CloudFront, Akamai (enterprise), Fastly, Google CDN. GeoDNS или Anycast → автоматический routing к ближайшему POP.',
       content: [
         { type: 'text', value: 'CDN (Content Delivery Network) — глобальная сеть серверов, хранящих кешированные копии контента рядом с пользователями. Цель: минимальная латентность, снижение нагрузки на origin.' },
         { type: 'heading', value: 'Проблема без CDN' },
@@ -28,6 +30,8 @@ export default {
       id: 2,
       title: 'Pull CDN: лениво по требованию',
       type: 'theory',
+      description: 'Pull CDN: cache miss → CDN тянет с origin → кеширует. Все последующие запросы — cache hit. Cache-Control заголовки: max-age, no-cache, private. SPA: hash в имени файла + TTL=1 год.',
+      solution: 'Cache-Control: max-age=31536000 (JS/CSS с хешем, 1 год), max-age=3600 (изображения, 1ч), no-cache (всегда проверять у origin), private (не кешировать на CDN). SPA: app.{hash}.js → новый деплой = новый hash = CDN автоматически обновляется. Минус Pull: cold start для нового региона.',
       content: [
         { type: 'text', value: 'Pull CDN (наиболее распространённый тип): CDN загружает контент с origin только по первому запросу.' },
         { type: 'heading', value: 'Как работает Pull CDN' },
@@ -43,6 +47,8 @@ export default {
       id: 3,
       title: 'Push CDN: активная загрузка',
       type: 'theory',
+      description: 'Push CDN: файлы загружаются заранее на все POP. Нет cold start. Подходит для небольшого объёма критичного контента: game assets, маркетинговые лендинги.',
+      solution: 'Push CDN workflow: CI/CD → cdnClient.upload() → файлы сразу во всех POP мира. Pull: большой сайт, тысячи файлов, автоматически, cold start по регионам. Push: небольшой критичный контент, нет cold start, нужно управлять загрузкой. Типичное применение Push: game assets, статичные лендинги.',
       content: [
         { type: 'text', value: 'Push CDN: вы заранее загружаете контент на CDN серверы. CDN хранит всё, что вы загрузили, пока вы это не удалите.' },
         { type: 'heading', value: 'Как работает Push CDN' },
@@ -62,6 +68,8 @@ export default {
       id: 4,
       title: 'Инвалидация CDN кеша',
       type: 'theory',
+      description: 'Три стратегии: версионирование в имени файла (лучшее), короткий TTL, явная инвалидация через API. Золотая стратегия: index.html no-cache + остальное с хешем TTL=1 год.',
+      solution: 'Стратегия 1 (лучшая): hash в имени (app.abc123.js) → TTL=1 год, инвалидация не нужна. Стратегия 2: короткий TTL (5мин) → просто, но пользователи 5 мин видят старое. Стратегия 3: CDN API purge ("POST /invalidate paths:[/index.html]") → задержка 30с–5мин. Золото: index.html no-cache + остальные ресурсы с хешем.',
       content: [
         { type: 'text', value: 'Вы обновили файл на origin. Как убедиться, что CDN раздаёт новую версию?' },
         { type: 'heading', value: 'Стратегия 1: Версионирование в имени файла' },
@@ -77,6 +85,8 @@ export default {
       id: 5,
       title: 'CDN для динамического контента',
       type: 'theory',
+      description: 'Edge Computing (Cloudflare Workers, Lambda@Edge): A/B тестирование и логика на CDN без обращения к origin. CDN кеш публичных API (s-maxage=300). Jamstack архитектура.',
+      solution: 'Edge Functions: A/B тест на CDN → userId хеш → variant A/B, всё без origin. CDN кеш API: публичный каталог (s-maxage=300) → тысячи запросов → origin 1 раз в 5мин. НЕ кешировать: /api/user/cart (Cache-Control: private, no-store). Jamstack: вся статика на CDN + API backend.',
       content: [
         { type: 'text', value: 'CDN — не только для статики. Современные CDN умеют кешировать и обрабатывать динамические запросы.' },
         { type: 'heading', value: 'Edge Computing: логика на CDN' },
@@ -90,6 +100,7 @@ export default {
       id: 6,
       title: 'Практика: CDN стратегия для крупного сайта',
       type: 'practice',
+      description: 'Практика CDN стратегии для новостного сайта (50M пользователей/месяц, глобальная аудитория): TTL и инвалидация для JS/CSS/HTML/изображений/видео/API.',
       requirements: [
         'Определить стратегию кеширования для каждого типа контента',
         'Выбрать TTL и механизм инвалидации',

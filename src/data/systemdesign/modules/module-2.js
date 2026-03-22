@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Вертикальное масштабирование: когда и почему',
       type: 'theory',
+      description: 'Scale Up: когда применять, физические ограничения, единая точка отказа и ценовая кривая — первый шаг перед переходом к горизонтальному масштабированию.',
+      solution: 'Scale Up: добавить CPU/RAM/SSD на один сервер. Использовать при: стартап, stateful монолит, БД. Ограничения: физический предел, SPOF, downtime при апгрейде, экспоненциальный рост цены (x2 производительности = x4-8 цены).',
       content: [
         { type: 'text', value: 'Вертикальное масштабирование (Scale Up) — самый простой способ справиться с ростом нагрузки: берём более мощный сервер.' },
         { type: 'heading', value: 'Как это работает' },
@@ -32,6 +34,8 @@ export default {
       id: 2,
       title: 'Горизонтальное масштабирование: добавляем серверы',
       type: 'theory',
+      description: 'Scale Out: архитектура с Load Balancer + N серверов, ключевое условие stateless, преимущества и гео-распределение.',
+      solution: 'Scale Out: [Клиент] → [Load Balancer] → [Server 1..N]. Условие: серверы взаимозаменяемы (stateless). Преимущества: безлимитное масштабирование, HA, commodity hardware, zero downtime добавление. Требует вынос состояния в Redis/S3.',
       content: [
         { type: 'text', value: 'Горизонтальное масштабирование (Scale Out) — добавляем больше одинаковых серверов и распределяем нагрузку между ними.' },
         { type: 'heading', value: 'Архитектура с горизонтальным масштабированием' },
@@ -53,6 +57,8 @@ export default {
       id: 3,
       title: 'Stateless vs Stateful: где хранить состояние',
       type: 'theory',
+      description: 'Проблема Sticky Sessions и правильное решение: Stateless серверы с общим Session Store (Redis), что выносить из серверов в общее хранилище.',
+      solution: 'Stateless: сессии → Redis, файлы → S3, кеш → Redis/Memcached, БД → отдельный слой. Проблема Sticky Sessions: теряем равномерность нагрузки. Решение: любой сервер читает сессию из Redis по токену. Cloud-native стандарт.',
       content: [
         { type: 'text', value: 'Это один из ключевых вопросов при проектировании масштабируемых систем. Где хранить данные сессии пользователя?' },
         { type: 'heading', value: 'Проблема Stateful архитектуры' },
@@ -73,6 +79,8 @@ export default {
       id: 4,
       title: 'Автомасштабирование (Auto Scaling)',
       type: 'theory',
+      description: 'Reactive, Predictive и Scheduled Auto Scaling: алгоритм работы, пороги CPU, проблема задержки запуска (30с–2мин) и защита от runaway costs.',
+      solution: 'Auto Scaling: CPU > 70% → добавить сервер, CPU < 30% → убрать. Min=2 (HA), Max=задать вручную. Типы: Reactive (сейчас), Predictive (по истории), Scheduled (расписание). Проблема: lag 30с–2мин → масштабировать заблаговременно.',
       content: [
         { type: 'text', value: 'Зачем держать 100 серверов постоянно, если пик нагрузки только в рабочее время? Автомасштабирование добавляет и убирает серверы автоматически.' },
         { type: 'heading', value: 'Как работает Auto Scaling' },
@@ -90,6 +98,8 @@ export default {
       id: 5,
       title: 'Масштабирование баз данных: read replicas',
       type: 'theory',
+      description: 'Master-Replica архитектура: write на Master, read на Replica, асинхронная репликация и проблема "read your own write" с задержкой 10–100мс.',
+      solution: 'Master-Replica: все write → Master, все SELECT → Replicas. 80% чтение + 3 реплики = 4x throughput. Проблема: replication lag 10–100мс. Решение "read your own write": после write читать из Master в течение ~1с.',
       content: [
         { type: 'text', value: 'Базы данных — самое сложное для масштабирования звено. Простейший первый шаг — добавить read replicas (реплики для чтения).' },
         { type: 'heading', value: 'Архитектура Master-Replica' },
@@ -103,6 +113,8 @@ export default {
       id: 6,
       title: 'Кеш как инструмент масштабирования',
       type: 'theory',
+      description: 'Cache Hit Rate, паттерн Cache-Aside и влияние на нагрузку БД: при 90% hit rate нагрузка на БД падает в 10 раз.',
+      solution: 'Cache-Aside: запрос → проверить Redis (~1мс) → если miss → идти в БД → сохранить в Redis. Hit Rate = (cache hits / all requests) × 100%. Цель: 80–95%. Hit Rate 90% + 10K RPS на БД → 1K RPS после кеша. Проблемы: stale data, инвалидация.',
       content: [
         { type: 'text', value: 'Один из самых эффективных способов масштабирования — вообще не ходить в базу данных. Кеш хранит часто запрашиваемые данные в памяти.' },
         { type: 'heading', value: 'Где ставить кеш' },
@@ -116,6 +128,7 @@ export default {
       id: 7,
       title: 'Практика: выбери стратегию масштабирования',
       type: 'practice',
+      description: 'Практика выбора стратегии масштабирования для 4 сценариев: стартап с ограниченным бюджетом, вирусный рост, медленная БД, глобальная аудитория.',
       requirements: [
         'Определить текущий bottleneck системы',
         'Обосновать выбор вертикального или горизонтального масштабирования',
@@ -144,6 +157,7 @@ export default {
       id: 8,
       title: 'Антипаттерны масштабирования',
       type: 'practice',
+      description: 'Четыре антипаттерна: преждевременная оптимизация, God Server, N+1 запросы и синхронная обработка всего — с правильными решениями для каждого.',
       requirements: [
         'Идентифицировать каждый антипаттерн',
         'Объяснить почему он проблематичен',

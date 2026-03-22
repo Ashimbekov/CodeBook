@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и масштаб',
       type: 'practice',
+      description: 'Определение требований Twitter и оценка масштаба: 300M DAU, 500M твитов в день, расчёт write/read RPS и выбор архитектурного подхода.',
       requirements: [
         'Определить функциональные требования (твиты, лента, подписки)',
         'Указать нефункциональные требования (масштаб, SLA, latency)',
@@ -45,6 +46,7 @@ export default {
       id: 2,
       title: 'Шаг 2: API Design',
       type: 'practice',
+      description: 'Проектирование REST API для Twitter: Tweets, Feed (с cursor-based пагинацией), Social Graph — обоснование cursor-based vs offset-based подхода.',
       requirements: [
         'Спроектировать Tweets API (создание, получение, удаление)',
         'Спроектировать Feed API с курсорной пагинацией',
@@ -70,6 +72,7 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      description: 'Схема данных Twitter: таблицы tweets и user_follows с Snowflake ID, выбор хранилищ (Cassandra, PostgreSQL, Redis Sorted Set) для разных типов данных.',
       requirements: [
         'Спроектировать таблицу tweets с индексами',
         'Спроектировать таблицу user_follows с двумя индексами',
@@ -97,6 +100,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Алгоритм ленты — Fan-Out',
       type: 'practice',
+      description: 'Сравнение Fan-Out on Write и Fan-Out on Read, проблема знаменитостей и гибридный подход Twitter: обычные пользователи — push, celebrities (>10K подписчиков) — pull.',
       requirements: [
         'Описать Fan-Out on Write (Push) с плюсами и минусами',
         'Описать Fan-Out on Read (Pull) с плюсами и минусами',
@@ -122,6 +126,7 @@ export default {
       id: 5,
       title: 'Шаг 5: High-Level архитектура',
       type: 'practice',
+      description: 'Сервисная архитектура Twitter: Tweet, Feed, Social Graph, Media, Notification, Search сервисы и data flow публикации твита через Kafka с асинхронным fan-out.',
       requirements: [
         'Перечислить все сервисы и их ответственность',
         'Описать data flow публикации твита через Kafka',
@@ -145,6 +150,7 @@ export default {
       id: 6,
       title: 'Шаг 6: Поиск и тренды',
       type: 'practice',
+      description: 'Поиск твитов через Elasticsearch и вычисление трендов через Redis Sorted Set: индексирование via Kafka, velocity-based ранжирование хештегов.',
       requirements: [
         'Описать индексирование твитов в Elasticsearch',
         'Спроектировать поиск по твитам и пользователям',
@@ -168,6 +174,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Масштабирование и bottlenecks',
       type: 'practice',
+      description: 'Анализ трёх ключевых bottleneck Twitter: fan-out для знаменитостей (25 мин!), Redis memory (2.4 ТБ), Cassandra hot partition — и решения для каждого.',
       requirements: [
         'Идентифицировать bottleneck Fan-out для знаменитостей',
         'Рассчитать время fan-out для 150M подписчиков',
@@ -194,6 +201,7 @@ export default {
       id: 8,
       title: 'Шаг 8: Reliability и Edge Cases',
       type: 'practice',
+      description: 'Отказоустойчивость Twitter: geo-distribution в 4 регионах, graceful degradation при отказах, защита от спама (rate limit, ML, shadow ban).',
       requirements: [
         'Описать geo-distribution и стратегию репликации',
         'Объяснить поведение при частичных отказах',

@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Median of Two Sorted Arrays',
       type: 'practice',
+      description: 'Медиана двух отсортированных массивов за O(log(min(m,n))). Бинарный поиск: найти точку разреза в меньшем массиве так, чтобы левые половины были корректны.',
+      solution: 'def find_median_sorted_arrays(nums1, nums2):\n    if len(nums1) > len(nums2):\n        nums1, nums2 = nums2, nums1\n    m, n = len(nums1), len(nums2)\n    half = (m + n) // 2\n    left, right = 0, m\n    while left <= right:\n        i = (left + right) // 2\n        j = half - i\n        n1l = nums1[i-1] if i > 0 else float("-inf")\n        n1r = nums1[i] if i < m else float("inf")\n        n2l = nums2[j-1] if j > 0 else float("-inf")\n        n2r = nums2[j] if j < n else float("inf")\n        if n1l <= n2r and n2l <= n1r:\n            if (m + n) % 2 == 1: return float(min(n1r, n2r))\n            return (max(n1l, n2l) + min(n1r, n2r)) / 2.0\n        elif n1l > n2r: right = i - 1\n        else: left = i + 1\n# O(log(min(m,n))) время, O(1) память',
       content: [
         { type: 'text', value: 'Задача: найдите медиану двух отсортированных массивов nums1 и nums2. Сложность должна быть O(log(m+n)).' },
         { type: 'text', value: 'Пример: nums1=[1,3], nums2=[2] → 2.0. nums1=[1,2], nums2=[3,4] → 2.5.' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Merge K Sorted Lists',
       type: 'practice',
+      description: 'Слить k отсортированных связных списков. MinHeap из k элементов (один из каждого списка): извлекаем минимум, добавляем следующий из того же списка. O(n log k).',
+      solution: 'import heapq\n\ndef merge_k_lists(lists):\n    heap = []\n    for i, node in enumerate(lists):\n        if node:\n            heapq.heappush(heap, (node.val, i, node))\n    dummy = ListNode(0)\n    current = dummy\n    while heap:\n        val, i, node = heapq.heappop(heap)\n        current.next = node\n        current = current.next\n        if node.next:\n            heapq.heappush(heap, (node.next.val, i, node.next))\n    return dummy.next\n# O(n log k) время, O(k) память (куча)\n# Альтернатива: Divide and Conquer — тот же O(n log k)',
       content: [
         { type: 'text', value: 'Задача: слейте k отсортированных связных списков в один отсортированный.' },
         { type: 'text', value: 'Пример: [[1,4,5],[1,3,4],[2,6]] → [1,1,2,3,4,4,5,6].' },
@@ -32,6 +36,8 @@ export default {
       id: 3,
       title: 'Trapping Rain Water',
       type: 'practice',
+      description: 'Объём воды между столбами. Два указателя: вода в позиции i = min(left_max, right_max) - height[i]. Двигаем сторону с меньшим максимумом. O(n) время, O(1) память.',
+      solution: 'def trap(height):\n    left, right = 0, len(height) - 1\n    left_max = right_max = water = 0\n    while left < right:\n        if height[left] <= height[right]:\n            if height[left] >= left_max: left_max = height[left]\n            else: water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max: right_max = height[right]\n            else: water += right_max - height[right]\n            right -= 1\n    return water\n# O(n) время, O(1) память\n# Нарисуй на бумаге перед объяснением!',
       content: [
         { type: 'text', value: 'Задача: дан массив height — высоты столбов. Посчитайте сколько воды может накопиться между столбами после дождя.' },
         { type: 'text', value: 'Пример: [0,1,0,2,1,0,1,3,2,1,2,1] → 6. [4,2,0,3,2,5] → 9.' },
@@ -45,6 +51,8 @@ export default {
       id: 4,
       title: 'Minimum Window Substring',
       type: 'practice',
+      description: 'Минимальная подстрока s, содержащая все символы t. Скользящее окно: расширять правую пока все символы покрыты, затем сужать левую. Счётчики have и required. O(n+m).',
+      solution: 'from collections import Counter\n\ndef min_window(s, t):\n    need = Counter(t)\n    window = {}\n    have = required = len(need)\n    left = 0\n    min_len = float("inf"); min_start = 0\n    for right, char in enumerate(s):\n        window[char] = window.get(char, 0) + 1\n        if char in need and window[char] == need[char]:\n            have -= 1\n        while have == 0:\n            if right - left + 1 < min_len:\n                min_len = right - left + 1; min_start = left\n            lc = s[left]\n            window[lc] -= 1\n            if lc in need and window[lc] < need[lc]: have += 1\n            left += 1\n    return s[min_start:min_start+min_len] if min_len != float("inf") else ""\n# O(n+m) время, O(m) память',
       content: [
         { type: 'text', value: 'Задача: найдите минимальную подстроку в s, содержащую все символы t (с учётом повторений).' },
         { type: 'text', value: 'Пример: s="ADOBECODEBANC", t="ABC" → "BANC". s="a", t="aa" → "" (невозможно).' },
@@ -57,6 +65,8 @@ export default {
       id: 5,
       title: 'Serialize/Deserialize Binary Tree',
       type: 'practice',
+      description: 'Сериализация дерева через preorder обход с маркерами "#" для null. Preorder однозначно определяет структуру. Десериализация — итерация токенов в том же порядке.',
+      solution: 'class Codec:\n    def serialize(self, root):\n        res = []\n        def pre(node):\n            if not node: res.append("#"); return\n            res.append(str(node.val))\n            pre(node.left); pre(node.right)\n        pre(root)\n        return ",".join(res)\n\n    def deserialize(self, data):\n        nodes = iter(data.split(","))\n        def build():\n            val = next(nodes)\n            if val == "#": return None\n            node = TreeNode(int(val))\n            node.left = build(); node.right = build()\n            return node\n        return build()\n# O(n) время и память\n# Формат: "1,2,#,#,3,4,#,#,5,#,#"',
       content: [
         { type: 'text', value: 'Задача: реализуйте сериализацию бинарного дерева в строку и десериализацию обратно. Формат — на ваш выбор.' },
         { type: 'heading', value: 'Решение: preorder с маркерами null O(n)' },
@@ -68,6 +78,8 @@ export default {
       id: 6,
       title: 'Sliding Window Maximum',
       type: 'practice',
+      description: 'Максимум в скользящем окне размера k. Monotonic Deque: хранит индексы в убывающем порядке значений. Голова deque = максимум текущего окна. O(n) время, O(k) память.',
+      solution: 'from collections import deque\n\ndef max_sliding_window(nums, k):\n    result = []\n    dq = deque()  # индексы, убывающие значения\n    for i, num in enumerate(nums):\n        while dq and dq[0] <= i - k:\n            dq.popleft()\n        while dq and nums[dq[-1]] < num:\n            dq.pop()\n        dq.append(i)\n        if i >= k - 1:\n            result.append(nums[dq[0]])\n    return result\n# [1,3,-1,-3,5,3,6,7] k=3 → [3,3,5,5,6,7]\n# O(n) время, O(k) память',
       content: [
         { type: 'text', value: 'Задача: дан массив nums и размер окна k. Для каждой позиции скользящего окна найдите максимум. Верните массив максимумов.' },
         { type: 'text', value: 'Пример: nums=[1,3,-1,-3,5,3,6,7], k=3 → [3,3,5,5,6,7].' },
@@ -80,6 +92,8 @@ export default {
       id: 7,
       title: 'Word Search II — Trie + Backtracking',
       type: 'practice',
+      description: 'Поиск всех слов из словаря в матрице символов. Trie из словаря + DFS backtracking с pruning (удаление пустых ветвей Trie). O(M × 4^L) время.',
+      solution: 'class TrieNode:\n    def __init__(self): self.children = {}; self.word = None\n\ndef find_words(board, words):\n    root = TrieNode()\n    for word in words:\n        node = root\n        for c in word:\n            if c not in node.children: node.children[c] = TrieNode()\n            node = node.children[c]\n        node.word = word\n    rows, cols = len(board), len(board[0])\n    result = set()\n    def dfs(r, c, node):\n        char = board[r][c]\n        if char not in node.children: return\n        nxt = node.children[char]\n        if nxt.word: result.add(nxt.word); nxt.word = None\n        board[r][c] = "#"\n        for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n            nr, nc = r+dr, c+dc\n            if 0 <= nr < rows and 0 <= nc < cols and board[nr][nc] != "#":\n                dfs(nr, nc, nxt)\n        board[r][c] = char\n        if not nxt.children and not nxt.word: del node.children[char]\n    for r in range(rows):\n        for c in range(cols): dfs(r, c, root)\n    return list(result)',
       content: [
         { type: 'text', value: 'Задача: дана матрица символов board и список words. Найдите все слова из списка, которые можно составить из соседних ячеек матрицы.' },
         { type: 'heading', value: 'Решение: Trie + DFS backtracking O(M * 4^L)' },
@@ -91,6 +105,8 @@ export default {
       id: 8,
       title: 'Alien Dictionary — порядок букв',
       type: 'practice',
+      description: 'Порядок букв инопланетного алфавита из отсортированного словаря. Сравнение соседних слов → граф зависимостей → топологическая сортировка Kahn. Цикл = пустая строка.',
+      solution: 'from collections import defaultdict, deque\n\ndef alien_order(words):\n    adj = defaultdict(set)\n    in_degree = {c: 0 for word in words for c in word}\n    for i in range(len(words) - 1):\n        w1, w2 = words[i], words[i+1]\n        if len(w1) > len(w2) and w1[:len(w2)] == w2: return ""\n        for c1, c2 in zip(w1, w2):\n            if c1 != c2:\n                if c2 not in adj[c1]:\n                    adj[c1].add(c2); in_degree[c2] += 1\n                break\n    queue = deque([c for c in in_degree if in_degree[c] == 0])\n    result = []\n    while queue:\n        c = queue.popleft(); result.append(c)\n        for nb in adj[c]:\n            in_degree[nb] -= 1\n            if in_degree[nb] == 0: queue.append(nb)\n    return "".join(result) if len(result) == len(in_degree) else ""\n# O(C) где C = суммарная длина слов',
       content: [
         { type: 'text', value: 'Задача: дан отсортированный словарь "инопланетного" языка. Определите порядок букв в алфавите. Если противоречие — верните "".' },
         { type: 'text', value: 'Пример: words=["wrt","wrf","er","ett","rftt"] → "wertf".' },
@@ -103,6 +119,8 @@ export default {
       id: 9,
       title: 'N-Queens — расстановка ферзей',
       type: 'practice',
+      description: 'Расстановка n ферзей на доске n×n без атак. Backtracking по строкам: три множества для O(1) проверки атаки по столбцу и двум диагоналям. O(n!) время.',
+      solution: 'def solve_n_queens(n):\n    result = []\n    cols = set(); diag1 = set(); diag2 = set()\n    board = [["."]*n for _ in range(n)]\n    def backtrack(row):\n        if row == n:\n            result.append(["".join(r) for r in board]); return\n        for col in range(n):\n            if col in cols or (row-col) in diag1 or (row+col) in diag2: continue\n            board[row][col] = "Q"\n            cols.add(col); diag1.add(row-col); diag2.add(row+col)\n            backtrack(row+1)\n            board[row][col] = "."\n            cols.remove(col); diag1.remove(row-col); diag2.remove(row+col)\n    backtrack(0)\n    return result\n# O(n!) время, O(n²) память\n# n=4: 2 решения',
       content: [
         { type: 'text', value: 'Задача: расставьте n ферзей на шахматной доске n×n так, чтобы они не атаковали друг друга. Верните все возможные расстановки.' },
         { type: 'heading', value: 'Решение: backtracking O(n!)' },
@@ -114,6 +132,8 @@ export default {
       id: 10,
       title: 'Edit Distance — расстояние редактирования',
       type: 'practice',
+      description: 'Расстояние Левенштейна: минимум операций (вставка, удаление, замена) для преобразования word1 в word2. DP: dp[i][j] = min трёх операций. O(mn) время, O(n) память.',
+      solution: 'def min_distance(word1, word2):\n    m, n = len(word1), len(word2)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(m+1): dp[i][0] = i\n    for j in range(n+1): dp[0][j] = j\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            if word1[i-1] == word2[j-1]:\n                dp[i][j] = dp[i-1][j-1]\n            else:\n                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\n    return dp[m][n]\n# O(mn) время, O(mn) память (оптимизировать до O(n) через rolling array)\n# "horse"→"ros"=3, "intention"→"execution"=5',
       content: [
         { type: 'text', value: 'Задача: найдите минимальное количество операций (вставка, удаление, замена) для преобразования строки word1 в word2.' },
         { type: 'text', value: 'Примеры: "horse" → "ros" = 3 операции. "intention" → "execution" = 5 операций.' },

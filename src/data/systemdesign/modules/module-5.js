@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'SQL: реляционные базы данных',
       type: 'theory',
+      description: 'RDBMS: таблицы с жёсткой схемой, ACID транзакции, сложные JOIN. Сильные стороны и ограничения. Когда выбирать SQL: финансы, ERP, сложные связи.',
+      solution: 'SQL сильные стороны: ACID транзакции, сложные JOIN/агрегации, зрелость, строгая схема. Ограничения: горизонтальное масштабирование сложно, жёсткая схема, дорогие JOIN при очень большой нагрузке. Выбирать при: финансы, ERP/CRM, чёткая структура, нужны агрегации.',
       content: [
         { type: 'text', value: 'Реляционные базы данных (RDBMS) хранят данные в таблицах со строгой схемой. Связи между таблицами определены через внешние ключи. SQL — язык запросов.' },
         { type: 'heading', value: 'Сильные стороны SQL' },
@@ -39,6 +41,8 @@ export default {
       id: 2,
       title: 'NoSQL: виды и применения',
       type: 'theory',
+      description: 'Четыре типа NoSQL: Key-Value (Redis), Document (MongoDB), Wide Column (Cassandra), Graph (Neo4j) — модели данных, плюсы, минусы и примеры применения.',
+      solution: 'Key-Value (Redis, DynamoDB): O(1) get/set, сессии/кеш. Document (MongoDB): гибкая JSON схема, каталоги/профили. Wide Column (Cassandra): млрд записей/день, IoT/логи/history. Graph (Neo4j): обход связей (друзья друзей, fraud detection). Нет JOIN и транзакций в NoSQL.',
       content: [
         { type: 'text', value: 'NoSQL — "Not Only SQL". Семейство БД с разными моделями данных, оптимизированных для конкретных задач.' },
         { type: 'heading', value: 'Key-Value хранилища' },
@@ -55,6 +59,8 @@ export default {
       id: 3,
       title: 'ACID: гарантии транзакций в SQL',
       type: 'theory',
+      description: 'ACID: Atomicity (всё или ничего), Consistency (constraints), Isolation (уровни: Read Committed, Serializable), Durability (WAL). Цена — производительность.',
+      solution: 'A: BEGIN → commit/rollback целиком (перевод денег не потеряется). C: constraints соблюдены (баланс ≥ 0). I: уровни изоляции — Read Committed (стандарт PG), Serializable (безопасно+медленно). D: WAL на диск перед commit. ACID = платим производительностью за надёжность.',
       content: [
         { type: 'text', value: 'ACID — аббревиатура четырёх свойств, которые гарантируют надёжность транзакций в реляционных БД.' },
         { type: 'heading', value: 'A — Atomicity (Атомарность)' },
@@ -72,6 +78,8 @@ export default {
       id: 4,
       title: 'BASE: модель согласованности NoSQL',
       type: 'theory',
+      description: 'BASE: Basically Available (доступность при частичных отказах), Soft State (состояние меняется со временем), Eventually Consistent — пример DNS распространения за 24–48ч.',
+      solution: 'BASE vs ACID: доступность vs строгая согласованность. BA: Cassandra отвечает даже при падении 1 из 10 нод. E: DNS изменения за 24–48ч, Instagram аватар за 1–2с. Применять BASE: лайки, счётчики, социальный фид. ACID: банковские транзакции, заказы.',
       content: [
         { type: 'text', value: 'BASE — противоположность ACID. Модель, принятая в большинстве NoSQL систем, ориентированных на доступность и масштабируемость.' },
         { type: 'heading', value: 'B — Basically Available (Базовая доступность)' },
@@ -89,6 +97,7 @@ export default {
       id: 5,
       title: 'Когда выбирать SQL, когда NoSQL',
       type: 'practice',
+      description: 'Практика выбора БД для 5 сценариев: финансовая система, сессии/кеш, каталог товаров, история сообщений мессенджера, социальный граф.',
       requirements: [
         'Определить структуру данных и паттерн доступа для каждого случая',
         'Оценить требования к согласованности (ACID vs eventual)',
@@ -117,6 +126,8 @@ export default {
       id: 6,
       title: 'Индексы: как БД ускоряет поиск',
       type: 'theory',
+      description: 'B-Tree индекс: O(log N) vs O(N) full scan. Типы индексов (Hash, GiST/GIN, Composite). Цена индексов на запись и правило выбора полей для индексирования.',
+      solution: 'B-Tree: O(log N), диапазоны (>, <, BETWEEN, LIKE "prefix%"). Hash: только =, быстрее. GiST/GIN: full-text, JSON. Composite: INDEX(last_name, first_name). Создавать только для: WHERE, JOIN, ORDER BY. Минус: каждый INDEX замедляет INSERT/UPDATE/DELETE.',
       content: [
         { type: 'text', value: 'Индекс — вспомогательная структура данных для быстрого поиска. Как индекс в книге: не нужно перечитывать всё — сразу открываем нужную страницу.' },
         { type: 'heading', value: 'Как работает B-Tree индекс' },
@@ -132,6 +143,7 @@ export default {
       id: 7,
       title: 'Практика: проектируем схему данных',
       type: 'practice',
+      description: 'Практика проектирования схемы PostgreSQL для системы бронирования авиабилетов: таблицы, индексы, UNIQUE constraint и решение конкурентного бронирования через SELECT FOR UPDATE.',
       requirements: [
         'Спроектировать таблицы и их связи',
         'Определить первичные и внешние ключи',

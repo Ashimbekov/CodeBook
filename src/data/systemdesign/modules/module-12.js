@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Проблема консенсуса в распределённых системах',
       type: 'theory',
+      description: 'Консенсус: Agreement + Validity + Termination. FLP Impossibility: нельзя гарантировать одновременно Safety и Liveness при отказах. Применение: leader election, distributed locks, replicated log.',
+      solution: 'Задача консенсуса: все корректные узлы принимают одно значение (Agreement), предложенное одним из них (Validity). FLP: нельзя одновременно Safety (не ошибиться) + Liveness (всегда завершить) + fault tolerance. Raft/Paxos: жертвуют Liveness (могут зависнуть при сбоях), но Safety всегда.',
       content: [
         { type: 'text', value: 'Консенсус — соглашение между несколькими узлами о едином значении. Звучит просто, но в условиях отказов узлов и сетевых разделений это нетривиальная задача.' },
         { type: 'heading', value: 'Задача консенсуса' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Paxos: первый алгоритм консенсуса',
       type: 'theory',
+      description: 'Paxos: 3 фазы (Prepare/Accept/Commit) и 3 роли (Proposer/Acceptor/Learner). Multi-Paxos: стабильный Leader пропускает Prepare. Сложен в реализации → создали Raft.',
+      solution: 'Фаза 1: Proposer посылает Prepare(n) → Acceptor отвечает Promise если n > обещанного. Фаза 2: Accept(n, value) при quorum → Acceptor принимает если n >= обещанного. Фаза 3: commit → уведомить Learners. Multi-Paxos: Leader избирается → следующие write пропускают Fазу 1. Используется в: Google Spanner, Chubby.',
       content: [
         { type: 'text', value: 'Paxos — алгоритм консенсуса Лесли Лэмпорта (1989). Теоретически элегантен, но сложен в понимании и реализации.' },
         { type: 'heading', value: 'Роли в Paxos' },
@@ -35,6 +39,8 @@ export default {
       id: 3,
       title: 'Raft: понятный алгоритм консенсуса',
       type: 'theory',
+      description: 'Raft: роли Leader/Follower/Candidate, election timeout (150–300мс случайный), Leader Election через RequestVote + quorum голосов. Log Replication: AppendEntries → majority commit.',
+      solution: 'Leader Election: timeout → Candidate → RequestVote(term) → если большинство голосов → Leader → heartbeat. Случайный timeout предотвращает split vote. Log Replication: клиент → Leader лог → AppendEntries Followers → большинство подтвердило → commit → ответ. Используется в: etcd (Kubernetes), Kafka KRaft.',
       content: [
         { type: 'text', value: 'Raft создан в 2014 (Диего Ongaro, John Ousterhout) с явной целью быть понятнее Paxos. "Raft: In Search of an Understandable Consensus Algorithm."' },
         { type: 'heading', value: 'Роли в Raft' },
@@ -49,6 +55,8 @@ export default {
       id: 4,
       title: 'Quorum: большинство голосов',
       type: 'theory',
+      description: 'Quorum = N/2+1. N=2f+1 выдерживает f отказов. Почему нечётное число: 4 узла = 3 узла по отказоустойчивости, но дороже. Cassandra/DynamoDB: R+W>N.',
+      solution: 'Quorum: 3 нод = 2 quorum (1 отказ), 5 нод = 3 quorum (2 отказа), 7 нод = 4 quorum (3 отказа). N=2f+1. Нечётное: 4 нода = те же 1 отказ что у 3, но сложнее и дороже. Cassandra: R+W>N (N=3, W=2, R=2: каждый write/read подтверждают 2 ноды → пересечение ≥ 1 → актуальные данные).',
       content: [
         { type: 'text', value: 'Quorum — минимальное число узлов, необходимое для операции. Ключевая концепция для понимания fault tolerance в distributed системах.' },
         { type: 'heading', value: 'Формула Quorum' },
@@ -62,6 +70,7 @@ export default {
       id: 5,
       title: 'Применение consensus алгоритмов на практике',
       type: 'practice',
+      description: 'Практика: реальные системы с consensus — etcd (Kubernetes), ZooKeeper (Kafka), Google Spanner/Chubby (Paxos). Поведение при потере quorum и обоснование CP выбора.',
       requirements: [
         'Назвать реальные системы, использующие consensus алгоритмы',
         'Объяснить почему для каждой системы нужна strong consistency',
@@ -88,6 +97,8 @@ export default {
       id: 6,
       title: 'Byzantine Fault Tolerance (BFT)',
       type: 'theory',
+      description: 'BFT: защита от злонамеренных узлов (взломанные серверы, подделка данных). N=3t+1 для t предателей. Применение: blockchain (PoW/PoS), permissioned blockchains, авиапилоты.',
+      solution: 'BFT: Raft/Paxos — узлы могут отказывать, но не лгать. BFT — узлы могут отправлять поддельные данные. N=3t+1: 1 предатель → 4 ноды, 10 предателей → 31 нода. Дорого! Применение: Bitcoin/Ethereum (PoW/PoS), Hyperledger Fabric (pBFT), авиапилоты. На SD-интервью упоминать только при обсуждении blockchain.',
       content: [
         { type: 'text', value: 'Raft и Paxos предполагают, что узлы могут отказывать, но не лгать. Byzantine Fault Tolerance — защита от злонамеренных или коррумпированных узлов.' },
         { type: 'heading', value: 'Задача Византийских Генералов' },

@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и оценка',
       type: 'practice',
+      description: 'Определение требований YouTube и оценка масштаба: 500 часов видео/мин = 4.3 ПБ raw данных в день, 277 Тбит/с streaming bandwidth.',
       requirements: [
         'Определить функциональные требования (загрузка, стриминг, поиск)',
         'Указать нефункциональные требования (масштаб, latency)',
@@ -44,6 +45,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Video Upload и Transcode Pipeline',
       type: 'practice',
+      description: 'Загрузка видео напрямую в S3 через pre-signed URL и параллельный DAG transcode pipeline: GPU-инстансы для одновременного создания всех форматов (360p–4K, HLS).',
       requirements: [
         'Описать загрузку видео напрямую в S3 (bypass серверов)',
         'Объяснить pre-signed URL механизм',
@@ -69,6 +71,7 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      description: 'Схема данных YouTube: таблицы videos и video_transcodes с YouTube-style ID, выбор специализированных хранилищ (Cassandra, PostgreSQL, Elasticsearch, S3+CDN).',
       requirements: [
         'Спроектировать таблицу videos с полем status',
         'Спроектировать таблицу video_transcodes',
@@ -94,6 +97,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Видео стриминг и CDN',
       type: 'practice',
+      description: 'HLS Adaptive Bitrate Streaming и трёхуровневая CDN архитектура (Origin → Regional PoP → Edge): плеер автоматически выбирает качество по скорости соединения.',
       requirements: [
         'Объяснить HLS Adaptive Bitrate Streaming',
         'Описать структуру манифест-файла (.m3u8)',
@@ -118,6 +122,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Счётчики просмотров и метрики',
       type: 'practice',
+      description: 'Масштабируемые счётчики просмотров: Redis INCR + batch flush снижают 11К UPDATE/сек до 1 раза в 5 мин; HyperLogLog для дедупликации уникальных просмотров.',
       requirements: [
         'Объяснить проблему наивного подхода (прямой UPDATE)',
         'Описать Redis INCR + batch flush паттерн',
@@ -143,6 +148,7 @@ export default {
       id: 6,
       title: 'Шаг 6: Поиск и рекомендации',
       type: 'practice',
+      description: 'Поиск через Elasticsearch с автодополнением на Redis Sorted Set; Two-Tower Neural Network для рекомендаций: offline batch предвычисление + online real-time корректировка.',
       requirements: [
         'Описать индексирование видео в Elasticsearch',
         'Объяснить автодополнение через Redis Sorted Set',
@@ -166,6 +172,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура',
       type: 'practice',
+      description: 'Итоговая архитектура YouTube: все 9 сервисов и их ответственность, 5 ключевых архитектурных решений, принцип специализированной инфраструктуры под каждый тип нагрузки.',
       requirements: [
         'Перечислить все сервисы YouTube и их ответственность',
         'Назвать 5 ключевых архитектурных решений',

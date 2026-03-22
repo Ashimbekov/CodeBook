@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Структура System Design интервью',
       type: 'theory',
+      description: 'Тайминг и структура 45-минутного System Design интервью: 5 этапов от уточнения требований до Q&A с распределением времени по каждому блоку.',
       content: [
         { type: 'text', value: 'System Design интервью длится 45–60 минут. Знание правильной структуры — половина успеха.' },
         { type: 'heading', value: 'Тайминг интервью (45 минут)' },
@@ -18,6 +19,7 @@ export default {
       id: 2,
       title: 'Уточнение требований: правильные вопросы',
       type: 'practice',
+      description: '7 обязательных вопросов для любой задачи и специфические вопросы по типу системы (чат, лента, видео); разница функциональных и нефункциональных требований.',
       requirements: [
         'Назвать 7 обязательных вопросов для любой задачи',
         'Привести специфические вопросы для чат-системы',
@@ -50,6 +52,7 @@ export default {
       id: 3,
       title: 'Как думать вслух и подавать идеи',
       type: 'theory',
+      description: 'Техника "думать вслух" на интервью: правило озвучивать варианты и trade-offs, структурированный формат обсуждения "Вариант А vs Вариант Б".',
       content: [
         { type: 'text', value: 'System Design — это разговор, не монолог. Интервьюер хочет слышать ваш мыслительный процесс.' },
         { type: 'heading', value: 'Правило "Думай вслух"' },
@@ -63,6 +66,7 @@ export default {
       id: 4,
       title: 'Типичные ошибки и как их избежать',
       type: 'practice',
+      description: '5 типичных ошибок на System Design интервью: детали без high-level, необоснованные решения, игнор NFR, overengineering, отсутствие вопросов — с правильным подходом для каждой.',
       requirements: [
         'Назвать 5 типичных ошибок на System Design интервью',
         'Описать правильный подход для каждой ошибки',
@@ -93,6 +97,7 @@ export default {
       id: 5,
       title: 'Компоненты обязательные к знанию',
       type: 'theory',
+      description: 'Чеклист компонентов для Senior+ интервью: хранилища данных (PostgreSQL, Cassandra, Redis, Elasticsearch, S3), инфраструктура (LB, CDN, Kafka) и ключевые паттерны.',
       content: [
         { type: 'text', value: 'Список компонентов, которые должен знать любой кандидат на Senior+.' },
         { type: 'heading', value: 'Хранилища данных' },
@@ -127,6 +132,7 @@ export default {
       id: 6,
       title: 'Переход от Middle к Senior: что меняется',
       type: 'theory',
+      description: 'Отличие Middle, Senior и Staff инженера на System Design интервью: от "работающего решения" к самостоятельному ведению, proactive bottleneck-анализу и operational thinking.',
       content: [
         { type: 'text', value: 'На Senior/Staff интервью ожидания гораздо выше. Вот ключевые различия.' },
         { type: 'heading', value: 'Middle кандидат' },
@@ -159,6 +165,7 @@ export default {
       id: 7,
       title: 'Практика: симуляция интервью',
       type: 'practice',
+      description: 'Полная симуляция 45-минутного интервью на задаче Dropbox: 5 этапов от требований до deep dive — block-level дедупликация как ключевой insight.',
       requirements: [
         'Уточнить требования за 5 минут (5–7 вопросов)',
         'Сделать back-of-the-envelope оценку масштаба',

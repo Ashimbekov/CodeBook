@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Монолитная архитектура: плюсы и минусы',
       type: 'theory',
+      description: 'Монолит: один деплой, одна БД. Модульный монолит vs Big Ball of Mud. Плюсы: скорость разработки, ACID, простота. Минусы при росте: масштабирование целиком, рискованный деплой.',
+      solution: 'Монолит плюсы: один деплой, вызов функции (~1нс vs сеть ~1мс), ACID транзакции, простая отладка, дешевле инфра. Минусы при 50+ разработчиках: масштабировать только всё целиком, деплой рискован для всего, команды мешают друг другу. Правило: Monolith-first (Фаулер). Amazon/Netflix/Uber — начинали с монолита.',
       content: [
         { type: 'text', value: 'Монолит — приложение, где все компоненты развёртываются вместе как единый артефакт. Это не "плохо" — это первый правильный шаг для большинства систем.' },
         { type: 'heading', value: 'Типы монолитов' },
@@ -35,6 +37,8 @@ export default {
       id: 2,
       title: 'Микросервисная архитектура',
       type: 'theory',
+      description: 'Микросервисы: Single Responsibility, Independent deployment, Database per Service, Loose coupling. Плюсы: независимое масштабирование и деплой. Минусы: distributed systems сложность.',
+      solution: 'Принципы: каждый сервис — своя БД (нет shared DB), деплоится независимо. Плюсы: масштабировать видео отдельно от профилей, технологический выбор, 2-pizza team. Минусы: latency сетевых вызовов, сложная отладка (10 сервисов), операционный overhead, ACID невозможен. Применять при: команда > 15–20 человек, разные нагрузки на компоненты.',
       content: [
         { type: 'text', value: 'Микросервисы — архитектурный стиль: приложение разбито на небольшие, независимо развёртываемые сервисы, каждый отвечает за одну бизнес-функцию.' },
         { type: 'heading', value: 'Принципы микросервисов' },
@@ -68,6 +72,8 @@ export default {
       id: 3,
       title: 'Паттерн Saga: распределённые транзакции',
       type: 'theory',
+      description: 'Saga: серия компенсирующих транзакций вместо distributed ACID. Choreography (события, нет координатора) vs Orchestration (центральный Orchestrator управляет шагами).',
+      solution: 'Saga шаги: Order→Payment→Inventory→Delivery. При сбое Inventory: компенсация → Payment refund → Order CANCELLED. Choreography: каждый сервис реагирует на события, слабая связь, сложно отследить весь поток. Orchestration: Saga Orchestrator управляет явно, легче мониторить. Netflix Conductor, Uber Cadence.',
       content: [
         { type: 'text', value: 'В микросервисах нельзя использовать ACID транзакции между сервисами. Saga — паттерн для обеспечения согласованности через серию компенсирующих транзакций.' },
         { type: 'heading', value: 'Пример: оформление заказа' },
@@ -81,6 +87,8 @@ export default {
       id: 4,
       title: 'CQRS: разделение чтения и записи',
       type: 'theory',
+      description: 'CQRS: Write Model (нормализованная БД) + Read Model (денормализованный документ без JOIN). Event Sourcing: хранить историю событий вместо текущего состояния + replay.',
+      solution: 'CQRS: Write → PostgreSQL (нормализованно), событие → Read DB (Elasticsearch/Redis/Cassandra денормализованно). Чтение без JOIN → быстро. Event Sourcing: [account_opened:1000, withdrawal:200, deposit:100] → replay = баланс 900. Плюсы: полная история, time-travel, debug. Минус: сложность, нужны snapshots.',
       content: [
         { type: 'text', value: 'CQRS (Command Query Responsibility Segregation) — паттерн: разделить операции изменения данных (Commands) и операции чтения (Queries) на разные модели/сервисы.' },
         { type: 'heading', value: 'Почему разделять' },
@@ -94,6 +102,8 @@ export default {
       id: 5,
       title: 'Service Mesh и API Gateway',
       type: 'theory',
+      description: 'API Gateway: единая точка входа, роутинг, JWT проверка, rate limiting, SSL termination. Service Mesh (Istio): Sidecar Envoy прокси, mTLS, distributed tracing, circuit breaker.',
+      solution: 'API Gateway (Kong/Nginx): /users/* → User Service, проверить JWT → X-User-ID. Service Mesh: [Service]+[Envoy Sidecar] ↔ [Envoy]+[Service] → mTLS + tracing + metrics + CB автоматически. Service Mesh: только при 50+ микросервисов. До этого — library в каждом сервисе.',
       content: [
         { type: 'text', value: 'При десятках микросервисов cross-cutting concerns (аутентификация, логирование, трассировка) нельзя дублировать в каждом сервисе.' },
         { type: 'heading', value: 'API Gateway' },
@@ -107,6 +117,8 @@ export default {
       id: 6,
       title: 'Когда переходить от монолита к микросервисам',
       type: 'theory',
+      description: 'Признаки пора переходить: деплой часами, команды > 15–20 чел, разные ресурсы. Рано: < 10 чел, нет CI/CD, нет тестов. Стратегия Strangler Fig: постепенное выделение сервисов.',
+      solution: 'Переходить при: деплой часы, команды > 15-20 мешают, нужно масштабировать части отдельно. НЕ переходить: < 10 чел, нет CI/CD, нет тестов, нет product-market fit, "потому что модно". Strangler Fig: новый функционал → сразу микросервис, постепенно выделять из монолита, монолит "усыхает" за 1–2 года.',
       content: [
         { type: 'text', value: 'Переход на микросервисы — большое решение. Не делайте это без реальных причин.' },
         { type: 'heading', value: 'Признаки, что пора переходить' },
@@ -135,6 +147,7 @@ export default {
       id: 7,
       title: 'Практика: декомпозиция монолита',
       type: 'practice',
+      description: 'Практика декомпозиции e-commerce монолита (50 разработчиков) на 6 микросервисов с Strangler Fig: порядок выделения, Database per Service, gRPC+Kafka, API Gateway.',
       requirements: [
         'Определить сервисы по бизнес-доменам',
         'Назначить каждому сервису собственную базу данных',

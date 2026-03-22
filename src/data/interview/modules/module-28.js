@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: '4-шаговый фреймворк SD-интервью',
       type: 'theory',
+      description: 'Структурированный подход к SD-интервью: 4 шага (требования, оценка, дизайн, deep dive) с временными рамками для каждого этапа.',
+      solution: 'Шаг 1 — Требования (5-10 мин): уточни функциональные и нефункциональные требования, scope (что входит, что нет).\nШаг 2 — Оценка нагрузки (5 мин): DAU, QPS, объём хранилища.\nШаг 3 — Высокоуровневый дизайн (15-20 мин): основные компоненты, поток данных (write path и read path).\nШаг 4 — Deep Dive (15-20 мин): разбор критических компонентов.\n\nПравило: никогда не начинай проектировать до уточнения требований.',
       content: [
         { type: 'text', value: 'SD-интервью длится 45-60 минут. Без структуры легко потеряться. 4-шаговый фреймворк помогает провести интервью организованно и произвести впечатление на интервьюера.' },
         { type: 'heading', value: 'Шаги фреймворка' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Функциональные vs нефункциональные требования',
       type: 'theory',
+      description: 'Разница между функциональными требованиями (что делает система) и нефункциональными (как работает): availability, latency, consistency, scalability.',
+      solution: 'Функциональные (что делает): публикация твита, чтение ленты, подписка. Сузь до 3-4 ключевых фич.\n\nНефункциональные (как работает):\n- Availability: 99.9% = 8.7 ч downtime/год; 99.99% = 52 мин/год\n- Latency: лента < 200ms, редирект < 50ms\n- Consistency: strong (банк) vs eventual (соцсеть)\n- Scale: DAU, write/read QPS\n\nВопрос: система read-heavy или write-heavy? Это меняет архитектуру.',
       content: [
         { type: 'text', value: 'Перед проектированием нужно чётко понять, что система должна делать (функциональные) и как она должна работать (нефункциональные).' },
         { type: 'heading', value: 'Функциональные требования (что делает система)' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Back-of-the-envelope оценка',
       type: 'theory',
+      description: 'Быстрые расчёты нагрузки на интервью: QPS, объём хранилища и пропускная способность по формуле DAU × действий / 86400.',
+      solution: 'Ключевые числа:\n1 день = 86 400 сек ≈ 100 000 сек\n1M DAU × 1 действие/день = 12 QPS\n\nШаблон для Twitter (300M DAU, 500M твитов/день):\nWrite QPS: 500M / 86400 ≈ 6000/сек\nRead QPS (100:1): 6000 × 100 = 600K/сек\nHранилище/день: 500M × 140 байт ≈ 70 ГБ/день\nЗа 5 лет: 70 × 365 × 5 ≈ 127 ТБ\n\nПорядок величин важнее точности. 1K QPS → один сервер. 10K+ → нужен кеш. 100K+ → шардирование.',
       content: [
         { type: 'text', value: 'Оценка "на коленке" (back-of-envelope) — приблизительный расчёт ключевых метрик: QPS, объём хранилища, пропускная способность. Точность не нужна — нужен порядок величин.' },
         { type: 'heading', value: 'Ключевые числа для запоминания' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'API Design',
       type: 'theory',
+      description: 'Проектирование REST API на SD-интервью: версионирование, cursor-based пагинация, rate limiting и правила именования эндпоинтов.',
+      solution: 'REST API для Twitter (пример):\n\nPOST /v1/tweets\n  Body: { user_id, content, media_ids[] }\n  Response 201: { tweet_id, created_at }\n\nGET /v1/users/{user_id}/feed?cursor=xxx&limit=20\n  Response: { tweets: [...], next_cursor }\n\nPOST /v1/users/{user_id}/follow\n  Body: { followee_id }\n\nПравила:\n- Версионирование /v1/ для обратной совместимости\n- Cursor-based пагинация (не offset — падает на больших данных)\n- Rate limiting: POST 300 req/15 мин, GET 1500 req/15 мин\n- Ошибки: 400 Bad Request, 404 Not Found, 429 Too Many Requests',
       content: [
         { type: 'text', value: 'Проектирование API — важная часть SD-интервью. Хорошо спроектированное API показывает понимание требований и умение думать о контрактах между компонентами.' },
         { type: 'heading', value: 'REST API шаблон' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Высокоуровневый дизайн (High-Level Design)',
       type: 'theory',
+      description: 'Построение высокоуровневой архитектуры на SD-интервью: ключевые компоненты (Load Balancer, Cache, Queue, CDN), write path и read path для типичной веб-системы.',
+      solution: 'Стандартная схема:\nClient → CDN (статика) → Load Balancer → API Servers → Cache (Redis) → DB\n                                                           ↓\n                                                    Message Queue (Kafka)\n                                                           ↓\n                                                    Worker Services\n\nWrite path (Twitter — публикация твита):\n1. Client → API Gateway (auth + rate limit)\n2. API Gateway → Tweet Service\n3. Tweet Service → PostgreSQL (сохранить твит)\n4. Tweet Service → Kafka (событие "new_tweet")\n5. Fan-out Worker → обновить Redis-ленты подписчиков\n\nRead path (получить ленту):\n1. Client → Feed Service\n2. Feed Service → Redis (cache hit? вернуть)\n3. Cache miss → Feed DB → Redis → клиент\n\nПравило: рисуй на доске, комментируй каждую стрелку вслух.',
       content: [
         { type: 'text', value: 'Высокоуровневый дизайн — схема основных компонентов и их взаимодействия. Цель: показать, что ты понимаешь архитектуру целиком, до деталей.' },
         { type: 'heading', value: 'Компоненты типичной веб-системы' },
@@ -72,6 +82,8 @@ export default {
       id: 6,
       title: 'Deep Dive: разбор компонентов',
       type: 'theory',
+      description: 'Углублённый разбор критических компонентов на SD-интервью: схема БД, индексы, шардирование, стратегии кеширования и пример fan-out для ленты Twitter.',
+      solution: 'БД Deep Dive:\n- Схема таблиц: tweets(id, user_id, content, created_at), users(id, name, follower_count)\n- Индексы: tweets(user_id, created_at DESC) для ленты\n- Шардирование по user_id (hash sharding)\n- Репликация: 1 master + 2 read replicas\n\nCache Deep Dive:\n- Кешируем: hot tweets, user feed (Redis sorted set)\n- Не кешируем: старые твиты, редкие запросы\n- Стратегия: write-through (сразу пишем в кеш при записи в DB)\n- TTL: лента 5 минут, профиль 1 час\n- Eviction: LRU\n\nFan-out Deep Dive:\n- Обычный пользователь (<100K фолловеров): fan-out on write → Redis\n- Celebrity (>100K): fan-out on read при запросе ленты\n- Гибрид: Redis (обычные) + realtime pull (celebrity) при загрузке ленты',
       content: [
         { type: 'text', value: 'Deep Dive — углублённый разбор одного-двух критических компонентов. Интервьюер хочет видеть, что ты можешь не только нарисовать "коробки", но и объяснить реализацию.' },
         { type: 'heading', value: 'Что разбирают на Deep Dive' },
@@ -85,6 +97,7 @@ export default {
       id: 7,
       title: 'Практика: применить фреймворк к задаче',
       type: 'practice',
+      description: 'Применение 4-шагового SD-фреймворка к проектированию URL Shortener: требования, оценка нагрузки, высокоуровневый дизайн и deep dive в алгоритм генерации короткого кода.',
       requirements: [
         'Применить 4-шаговый фреймворк к проектированию системы "URL Shortener"',
         'Шаг 1: Уточнить функциональные требования (2-3 пункта) и нефункциональные (2-3 пункта)',

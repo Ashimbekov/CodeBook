@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Twitter: требования и оценка нагрузки',
       type: 'practice',
+      description: 'Требования Twitter: 300M DAU, read-heavy 100:1, 175 твитов/сек, лента < 200ms. Хранилище: 2.8 TB/год текст + 100 TB с медиа.',
+      solution: 'Функциональные требования:\n- Публикация твита (текст 280 символов + медиа)\n- Лента новостей от подписок\n- Подписка/отписка, Like, Retweet, Reply\n- Поиск по хэштегам, Trending Topics\n\nНефункциональные:\n- 300M DAU, ~1% авторы = 3M активных\n- Read-heavy: read/write = 100:1\n- Eventual consistency для ленты — OK\n- Latency ленты < 200ms (p95)\n\nОценка нагрузки:\nWrite: 3M × 5 твитов/день / 86400 ≈ 175 твитов/сек (пик × 3 = 500/сек)\nRead: 300M × 10 просмотров/день / 86400 ≈ 35 000 RPS\nХранилище: 175 × 86400 × 365 × 500B ≈ 2.8 TB/год\nС медиа (25% твитов): +100 TB/год\n\nКлючевой challenge: собрать ленту за 200ms для 10K подписок.',
       content: [
         { type: 'text', value: 'Интервьюер: "Спроектируйте Twitter." Начните с требований и оценки масштаба.' },
         { type: 'heading', value: 'Задание' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Twitter: генерация ленты и fan-out',
       type: 'practice',
+      description: 'Гибридный подход к Timeline: PUSH (fan-out on write) для обычных пользователей в Redis Sorted Set, PULL (fan-out on read) для celebrity > 10K фолловеров.',
+      solution: 'Pull модель: при запросе ленты выбираем твиты всех подписок → медленно при 10K подписок\n\nPush модель (precomputed timeline):\n- При публикации → tweet_id в Redis список каждого подписчика\n- При чтении: O(1) из Redis\n- Минус: celebrity 50M фолловеров → 50M операций записи при одном твите!\n\nГибридный подход (Twitter реально):\n- PUSH для обычных (< 10K фолловеров)\n- PULL для celebrity (> 10K фолловеров)\n- При чтении: merge precomputed timeline + реальные твиты celebrity\n\nRedis Timeline:\nKey: timeline:{user_id}\nValue: sorted set, score = timestamp, member = tweet_id\nХранить последние 800 tweet_id (не контент — экономия памяти)\n\nFan-out Service (Kafka consumer):\n- Событие "tweet_published"\n- Читает follower list из User Graph Service\n- Batch запись в Redis pipeline\n\n300M пользователей × 800 tweet_ids × 8 байт ≈ 1.9 TB RAM (Redis Cluster)',
       content: [
         { type: 'text', value: 'Интервьюер: "Как вы будете генерировать Timeline для пользователей? Это самая сложная часть Twitter."' },
         { type: 'heading', value: 'Задание' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Twitter: поиск и Trending Topics',
       type: 'practice',
+      description: 'Поиск через Elasticsearch (inverted index, async через Kafka). Trending Topics: Apache Flink sliding window → Redis Sorted Set. Геоперсонализация трендов.',
+      solution: 'Поиск твитов:\n- Elasticsearch: inverted index для хэштегов и текста\n- При публикации: async → Kafka → Elasticsearch индексация\n- Шардирование по временным диапазонам (hot shard = последние 7 дней)\n\nTrending Topics:\n1. При твите с #хэштегом → Kafka событие\n2. Apache Flink (stream processing):\n   - Sliding window: счёт упоминаний за 24 ч, обновляется каждые 5 мин\n3. Результат → Redis Sorted Set:\n   Key: trending:{country_code}\n   Score: count за 24ч\n4. API: GET /trending → из Redis (< 1ms)\n\nПерсонализация: trending:ru, trending:us — разные тренды по региону\n\nСпам-фильтрация:\n- Аномальный рост хэштега за < 10 мин → флаг для ревью\n- 1 IP, 1000 твитов с одним хэштегом → блокировка',
       content: [
         { type: 'text', value: 'Интервьюер: "Как реализовать поиск по хэштегам и показывать трендовые темы в реальном времени?"' },
         { type: 'heading', value: 'Задание' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'Instagram: загрузка фото и лента',
       type: 'practice',
+      description: 'Pipeline загрузки фото Instagram: presigned S3 URL → Kafka → async Photo Processing (thumbnails 3 размера) → CDN. Лента через precomputed timeline в Redis аналогично Twitter.',
+      solution: 'Масштаб: 1B DAU, 100M фото/день, 300 TB/день\n\nФлоу загрузки (presigned URL):\n1. Клиент → API: "хочу загрузить фото" → presigned S3 URL\n2. Клиент → S3 напрямую (не через API — экономим bandwidth)\n3. API → Kafka: "photo_uploaded"\n4. Async Photo Processing Service:\n   - Thumbnails: 150×150, 480×480, 1080×1080\n   - Загружает все размеры в S3\n   - Photo DB: status="processed", URL для каждого размера\n5. CDN: раздаёт фото с ближайшего edge\n\nPhoto Feed:\n- precomputed timeline в Redis (аналогично Twitter)\n- Key: feed:{user_id}, sorted set по timestamp\n- Fan-out при публикации → подписчики\n- Celebrity (Kylie Jenner, 400M followers): pull on read\n\nФильтры: обрабатываются на клиенте, не на сервере (экономим CPU)\n\nPresigned URL — ключевой паттерн для медиа: загрузка прямо в S3.',
       content: [
         { type: 'text', value: 'Интервьюер: "Теперь Instagram. Сфокусируйтесь на загрузке изображений и генерации ленты."' },
         { type: 'heading', value: 'Задание' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Instagram: Stories — ephemeral content',
       type: 'practice',
+      description: 'Instagram Stories: soft delete с expires_at, фоновый job удаления, сортировка ленты (непросмотренные + closeness_score), счётчик просмотров через Redis + batch flush.',
+      solution: 'Схема:\nstories: story_id, user_id, media_url, created_at, expires_at (created_at + 24h)\nstory_views: story_id + viewer_id + viewed_at\n\nАвтоматическое удаление (soft delete):\nфлаг is_expired = true при запросе: WHERE expires_at > NOW()\nCron job каждый час: DELETE expired stories + S3 объекты\n→ Не удалять немедленно: дорого, блокирует БД\n\nОтображение Stories Feed:\nRedis sorted set stories_feed:{user_id}:\n  score = has_unviewed × 1000 + closeness_score\nНепросмотренные → выше в ленте\n\nПросмотры:\n- async запись в story_views\n- Aggregate counter в Redis → flush в БД каждые 5 мин\n- Автор видит "Просмотрели: Алиса, Борис и ещё 543"\n\nАрхивирование:\nПосле 24ч: переносить в личный архив (не удалять совсем)',
       content: [
         { type: 'text', value: 'Интервьюер: "Как реализовать Stories — контент, который исчезает через 24 часа?"' },
         { type: 'heading', value: 'Задание' },
@@ -72,6 +82,8 @@ export default {
       id: 6,
       title: 'YouTube: загрузка и транскодинг видео',
       type: 'practice',
+      description: 'Pipeline YouTube: chunked upload → S3 → Kafka → Video Splitter → Parallel GPU Transcoding (6 качеств) → HLS manifest → CDN. 10 мин видео транскодируется ~10-15 мин параллельно.',
+      solution: 'Масштаб: 500 ч видео/мин, 2B пользователей, 1B ч просмотров/день\n\nФлоу загрузки:\n1. Клиент разбивает файл на chunks 5MB\n2. POST /videos/init → upload_id\n3. Chunks параллельно → S3 (resumable upload)\n4. Metadata → Video DB (status: "processing")\n5. Kafka: "video_uploaded"\n\nПайплайн транскодинга:\n1. Kafka consumer получает событие\n2. Video Splitter: делит на 1-мин сегменты (GOP aligned)\n3. Parallel Transcoding Workers (GPU):\n   Каждый сегмент → 6 качеств (360p, 480p, 720p, 1080p, 1440p, 4K)\n   ffmpeg / libvpx\n4. Video Assembler: собирает сегменты\n5. HLS manifest (.m3u8) / MPEG-DASH (.mpd) — пути к сегментам\n6. Все форматы → S3 → CDN\n7. Video DB: status = "published"\n\nПараллелизация сегментов — ключевая оптимизация. Без неё 4K видео транскодируется часами.',
       content: [
         { type: 'text', value: 'Интервьюер: "Спроектируйте YouTube. Начните с процесса загрузки видео."' },
         { type: 'heading', value: 'Задание' },
@@ -85,6 +97,8 @@ export default {
       id: 7,
       title: 'YouTube: стриминг и CDN',
       type: 'practice',
+      description: 'Adaptive Bitrate Streaming (HLS/MPEG-DASH): плеер адаптирует качество под bandwidth в реальном времени. CDN с 200+ edge nodes, предзагрузка, счётчик просмотров через Redis INCR.',
+      solution: 'Adaptive Bitrate Streaming (ABR):\n- Видео нарезано на 2-10 сек сегменты\n- Для каждого сегмента: 1080p, 720p, 480p, 360p\n- Протоколы: HLS (.m3u8) — Apple, MPEG-DASH — открытый\n\nКак работает:\n1. Плеер загружает manifest: список сегментов и URL по качествам\n2. Плеер измеряет bandwidth текущего соединения\n3. Выбирает качество для следующего сегмента\n4. bandwidth упал → автоматически переключается на 480p\n5. Буферизует 30 сек вперёд\n\nCDN:\n- Edge nodes в 200+ городах\n- Видео-сегменты кешируются на ближайшем edge\n- Cache miss: edge → S3 → кешировать\n- Hit ratio для популярных: 99%+\n- DNS Anycast → ближайший CDN PoP\n\nСчётчик просмотров:\n- Redis INCR "video:{id}:views" каждые 30 сек просмотра\n- Batch flush в DB периодически\n- Не писать в SQL при каждом просмотре (2B просмотров/день)',
       content: [
         { type: 'text', value: 'Интервьюер: "Как пользователь смотрит видео? Объясните adaptive bitrate streaming и роль CDN."' },
         { type: 'heading', value: 'Задание' },
@@ -98,6 +112,8 @@ export default {
       id: 8,
       title: 'YouTube: система рекомендаций',
       type: 'practice',
+      description: 'Двухэтапная рекомендательная архитектура: Candidate Generation (ANN embeddings, 100-500 кандидатов) → Ranking DNN (предсказывает watch time). Стандарт для Netflix, TikTok, Spotify.',
+      solution: 'Входные сигналы:\n- Explicit: лайки, дизлайки, подписки\n- Implicit: watch time (%), rewatches, паузы\n- Контекст: время суток, устройство, история 24ч\n\nЭтап 1 — Candidate Generation (сотни из миллионов):\n- Collaborative Filtering: "похожие пользователи смотрели X"\n- Content-based: похожие видео по тегам и категории\n- ANN (Faiss/ScaNN) в embedding space\n- Выдаёт 100-500 кандидатов за < 100ms\n\nЭтап 2 — Ranking (10 из сотен):\n- Нейросеть (DNN) с сотнями features:\n  User: история просмотров (embedding), демография\n  Video: engagement rate, freshness, CTR\n  Context: время суток, device\n- Предсказывает P(watch > 50%)\n- Топ-10 с учётом diversity (не всё из одной категории)\n\nInfrastructure:\n- Обучение: TensorFlow/PyTorch, раз в день на свежих данных\n- Serving: TF Serving на GPU, latency < 50ms\n- A/B тесты: 100+ экспериментов одновременно\n\nCold Start: новый пользователь → топ региона + выбранные интересы при регистрации',
       content: [
         { type: 'text', value: 'Интервьюер: "Как работает система рекомендаций YouTube? Почему она так хорошо удерживает пользователей?"' },
         { type: 'heading', value: 'Задание' },

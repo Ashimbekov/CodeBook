@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования — личные и групповые чаты',
       type: 'practice',
+      description: 'Уточнение scope мессенджера: личные и групповые чаты (до 500 участников), push-уведомления, история 5 лет. Нефункциональные: < 100ms latency, 99.99% uptime.',
+      solution: 'Вопросы интервьюеру:\n- Сколько участников в группе? (до 500)\n- Нужна история сообщений? (да, 5 лет)\n- Мультиустройство? (да)\n- E2E шифрование? (не в MVP)\n\nФункциональные требования:\n1. Личные сообщения 1-на-1 (text, image, voice)\n2. Групповые чаты до 500 участников\n3. Статус онлайн/оффлайн\n4. Push-уведомления при получении\n5. История сообщений (5 лет)\n6. Read receipts (доставлено/прочитано)\n\nНефункциональные:\n- Latency: < 100ms для доставки сообщений\n- Availability: 99.99% uptime\n- Eventual consistency для read receipts\n- Сообщения хранятся на сервере (мультиустройство)\n\nOut of scope MVP: звонки, платежи, публичные каналы',
       content: [
         { type: 'text', value: 'Интервьюер: "Спроектируйте мессенджер вроде WhatsApp или Telegram." Ваша задача — первым делом уточнить требования и scope.' },
         { type: 'heading', value: 'Задание' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Шаг 2: Оценка нагрузки — 500M пользователей',
       type: 'practice',
+      description: 'Back-of-envelope для мессенджера с 500M пользователями: 115K write msg/sec, 1 TB/день текста, 20 TB/день с медиа, 2500 chat серверов для WebSocket соединений.',
+      solution: 'DAU: 500M × 50% = 250M активных\n\nСообщения:\nWrite RPS: 250M × 40 msg/день / 86400 ≈ 115 000 msg/сек\nПиковый: 115K × 3 = 350 000 msg/сек\n\nХранилище:\nТекст: 250M × 40 × 100 байт = 1 TB/день\nМедиа (+20x): ~20 TB/день\nЗа 5 лет: ~37 PB\n\nWebSocket соединения:\n250M одновременно открытых соединений\n1 сервер держит ~100K соединений\n→ 250M / 100K = 2500 chat серверов\n\nBandwidth:\n115K msg/сек × 100 байт = 11.5 MB/сек ≈ 100 Gbps входящего\n\nПоказывайте ход вычислений вслух!',
       content: [
         { type: 'text', value: 'Интервьюер: "Хорошо. Давайте оценим нагрузку. Предположим 500 миллионов пользователей."' },
         { type: 'heading', value: 'Задание' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Шаг 3: API Design — WebSocket + REST',
       type: 'practice',
+      description: 'WebSocket для real-time обмена сообщениями (bidirectional, persistent connection), REST для non-real-time (история, список чатов). Формат событий с ACK для подтверждения доставки.',
+      solution: 'WebSocket — основной протокол:\n+ Bidirectional: клиент и сервер отправляют без нового HTTP-запроса\n+ Persistent connection: одно соединение всё время сессии\n+ Нет overhead HTTP-заголовков на каждое сообщение\n\nREST для не-real-time:\nGET /api/v1/conversations — список чатов\nGET /api/v1/conversations/{id}/messages?before=ts&limit=50\nPOST /api/v1/users/{id}/devices — регистрация push-токена\n\nWebSocket события:\n{ "type": "message", "conversation_id": "uuid", "sender_id": "uuid",\n  "content": "текст", "timestamp": 1700000000, "message_id": "uuid" }\n\nACK подтверждение доставки:\n{ "type": "ack", "message_id": "uuid", "status": "delivered" }\n\nHTTP long-polling: устаревший fallback. SSE: только server→client. WebSocket — лучший выбор.',
       content: [
         { type: 'text', value: 'Интервьюер: "Как клиент будет общаться с сервером? Какой протокол выберете?"' },
         { type: 'heading', value: 'Задание' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Модель данных — сообщения, чаты, пользователи',
       type: 'practice',
+      description: 'Схема БД мессенджера: users и conversations в PostgreSQL, messages в Cassandra (partition_key=conversation_id, clustering_key=created_at DESC), медиа в S3+CDN.',
+      solution: 'users: user_id (UUID PK), username, phone, avatar_url, last_seen\nconversations: conversation_id (PK), type (direct/group), name, created_at\nparticipants: (conversation_id + user_id) composite PK, role (admin/member)\n\nmessages (Cassandra):\n  message_id UUID, conversation_id (partition key),\n  sender_id UUID, content TEXT, type (text/image/audio),\n  created_at TIMESTAMP (clustering key DESC), status (sent/delivered/read)\n  PRIMARY KEY (conversation_id, created_at)\n\nВыбор БД:\n- Сообщения → Cassandra: горизонтальное масштабирование, быстрая запись, запрос по partition_key=conversation_id\n- Метаданные (users, conversations) → PostgreSQL: реляционные связи, ACID\n- Медиа → S3 + CDN\n\nГлавный паттерн доступа: "получить последние N сообщений чата" → Cassandra оптимальна.',
       content: [
         { type: 'text', value: 'Интервьюер: "Как вы смоделируете данные? Какую базу данных выберете?"' },
         { type: 'heading', value: 'Задание' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Шаг 5: Chat Service Design',
       type: 'practice',
+      description: 'Путь сообщения от Алисы к Бобу: WebSocket → Chat Server → Kafka → Cassandra + Fan-out Service. Доставка offline пользователю через Notification Service → APNs/FCM.',
+      solution: 'Компоненты:\n1. API Gateway — балансировка, auth\n2. Chat Server Farm — держат WebSocket соединения\n3. Kafka — буферизация, гарантированная доставка\n4. Message Storage Service — запись в Cassandra\n5. Notification Service — push для offline\n6. Presence Service — онлайн статус\n7. Session Service — на каком Chat Server пользователь\n\nФлоу сообщения Алиса → Боб:\n1. Алиса → WebSocket → Chat Server A\n2. Chat Server A → Kafka topic "messages"\n3. Kafka → Message Storage → Cassandra (запись)\n4. Kafka → Fan-out Service:\n   а. Боб онлайн: Session Service → Chat Server B → WebSocket → Боб\n   б. Боб оффлайн: → Notification Service → APNs/FCM\n5. Chat Server A ← ACK "delivered" ← Боб → Алиса: статус "delivered"\n\nKafka даёт at-least-once delivery. Дедупликация по message_id на стороне клиента.',
       content: [
         { type: 'text', value: 'Интервьюер: "Опишите архитектуру chat сервиса. Что происходит когда Алиса отправляет сообщение Боту?"' },
         { type: 'heading', value: 'Задание' },
@@ -72,6 +82,8 @@ export default {
       id: 6,
       title: 'Шаг 6: Notification Service',
       type: 'practice',
+      description: 'Notification Service: device_tokens таблица, Kafka consumer → APNs/FCM/Web Push, обработка ошибок (invalid token), агрегация уведомлений и rate limiting.',
+      solution: 'device_tokens: user_id, device_id, token, platform (ios/android/web), last_active\nОдин пользователь → N устройств\n\nАрхитектура Notification Service:\n1. Kafka consumer читает события "message_received"\n2. Проверяет статус в Presence Service\n3. Если offline → читает device_tokens из Redis (cache) / PostgreSQL\n4. Распределяет по платформам:\n   iOS → APNs\n   Android → FCM\n   Web → Web Push Protocol\n5. Retry с exponential backoff при ошибке\n\nОбработка ошибок:\n- "invalid token" от APNs/FCM → удалить из device_tokens\n- Rate limiting: не больше N уведомлений/сек на пользователя\n\nАгрегация:\n5 сообщений пока offline → одно push "5 новых сообщений от Алисы"\n\nДля E2E шифрования: отправлять только "новое сообщение", без контента.',
       content: [
         { type: 'text', value: 'Интервьюер: "Расскажите подробнее о системе уведомлений. Как отправлять push на iOS, Android, web?"' },
         { type: 'heading', value: 'Задание' },
@@ -85,6 +97,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Presence Service — онлайн статус',
       type: 'practice',
+      description: 'Presence Service на Redis с TTL 30 сек: heartbeat каждые 10 сек обновляет TTL. Обработка "мерцания" статуса и fan-out через Pub/Sub при изменении онлайн-статуса.',
+      solution: 'Хранение статуса:\nRedis: user_id → {status: "online", last_seen: timestamp, server_id} TTL 30 сек\n\nHeartbeat механизм:\n- Клиент → heartbeat каждые 10 сек по WebSocket\n- Chat Server → Redis: обновить TTL при heartbeat\n- Нет heartbeat 30 сек → TTL истёк → автоматически offline\n\nПроблема "мерцания" (нестабильный интернет):\nРешение: показывать online только после 3+ heartbeats подряд\n\nМасштабирование (500 друзей Алисы):\nПри изменении статуса → Redis Pub/Sub или Kafka → уведомить серверы где онлайн друзья\n\nОптимизация: ленивая загрузка — показывать статус только тех, кто в открытом чате\n\nHeartbeat нагрузка:\n250M активных × 1 heartbeat/10 сек = 25M heartbeats/сек\n→ Redis Cluster с шардированием по user_id % N_shards\n\nGDPR: дать пользователям возможность скрыть онлайн-статус.',
       content: [
         { type: 'text', value: 'Интервьюер: "Как вы реализуете показ онлайн/оффлайн статуса? Это звучит несложно, но там есть нюансы..."' },
         { type: 'heading', value: 'Задание' },
@@ -98,6 +112,8 @@ export default {
       id: 8,
       title: 'Шаг 8: Масштабирование до миллиардов',
       type: 'practice',
+      description: 'Bottlenecks мессенджера при 5B пользователях: hot partitions Cassandra, fan-out для больших групп (push < 100, pull > 100), multi-region deployment, дедупликация медиа.',
+      solution: 'Узкие места и решения:\n\n1. Chat Servers (WebSocket):\nБоттлнек: 2500 серверов × 100K соединений\nРешение: горизонтальное масштабирование + consistent hashing по conversation_id\n\n2. Cassandra hot partitions:\nБоттлнек: популярные группы → один partition перегружен\nРешение: sharding по (conversation_id, bucket_id) где bucket = timestamp / BUCKET_SIZE\n\n3. Fan-out для групповых чатов (500 участников):\nБоттлнек: группа на 25 разных серверах\nРешение:\n- Малые группы (< 100): Push model (fan-out on write)\n- Большие группы (> 100): Pull model — клиент сам запрашивает при открытии чата\n\n4. Media Storage:\nS3 + CDN (CloudFront/Akamai)\nДедупликация: hash файла → не загружать повторно\n\n5. Multi-region:\nСервисы в США, Европе, Азии\nПользователи → ближайший регион\nМежрегиональная репликация (eventual consistency)\n\nМониторинг: latency p99/p999 доставки, Kafka consumer lag, WebSocket соединений на сервер',
       content: [
         { type: 'text', value: 'Интервьюер: "Отлично. Как мы масштабируемся если нагрузка вырастет в 10 раз? Какие bottlenecks вы видите?"' },
         { type: 'heading', value: 'Задание' },

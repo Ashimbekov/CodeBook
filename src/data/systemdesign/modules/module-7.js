@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'CAP теорема: основы',
       type: 'theory',
+      description: 'CAP теорема Брюера: Consistency (актуальные данные), Availability (всегда отвечает), Partition Tolerance (работает при разрыве сети). P всегда нужен → выбор CP vs AP.',
+      solution: 'C: все узлы видят одни данные. A: всегда отвечает (возможно stale). P: работает при network partition. P неизбежен в реальных системах → выбираем CP или AP. CA существует только в теории (один сервер). CAP важен только ВО ВРЕМЯ partition.',
       content: [
         { type: 'text', value: 'CAP теорема (Эрик Брюер, 2000) утверждает: распределённая система не может одновременно гарантировать все три свойства — Consistency, Availability, Partition Tolerance.' },
         { type: 'heading', value: 'Три свойства CAP' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'CP системы: согласованность важнее доступности',
       type: 'theory',
+      description: 'CP при partition: возвращает 503 вместо устаревших данных. Примеры: ZooKeeper, etcd, PostgreSQL с синхронной репликацией. Когда выбирать: финансы, locks, бронирование.',
+      solution: 'CP при partition: DC2 не может синхронизироваться с DC1 → возвращает 503. Примеры: ZooKeeper, etcd (Kubernetes), HBase, Redis strong consistency, PostgreSQL синхронная репликация. Выбирать при: финансовые транзакции, distributed locks, конфигурации, бронирование.',
       content: [
         { type: 'text', value: 'CP системы жертвуют доступностью ради согласованности. При network partition — возвращают ошибку, а не устаревшие данные.' },
         { type: 'heading', value: 'Как ведёт себя CP система при partition' },
@@ -45,6 +49,8 @@ export default {
       id: 3,
       title: 'AP системы: доступность важнее согласованности',
       type: 'theory',
+      description: 'AP при partition: продолжает работать с stale данными, после восстановления — reconciliation. Примеры: Cassandra, DynamoDB, DNS. Когда выбирать: соцсети, корзина, метрики.',
+      solution: 'AP при partition: каждый DC работает независимо, возвращает stale data. После восстановления: reconciliation конфликтов. Примеры: Cassandra (tunable), DynamoDB eventual, CouchDB, DNS. Выбирать при: лайки/посты, корзина (лучше stale чем 503), метрики, кеш/CDN.',
       content: [
         { type: 'text', value: 'AP системы жертвуют строгой согласованностью ради доступности. При network partition продолжают работать, возможно возвращая устаревшие данные.' },
         { type: 'heading', value: 'Как ведёт себя AP система при partition' },
@@ -71,6 +77,8 @@ export default {
       id: 4,
       title: 'Уровни согласованности (Consistency Levels)',
       type: 'theory',
+      description: 'Спектр согласованности: Strong → Sequential → Causal → Read-Your-Own-Writes → Eventual → Weak. Tunable consistency в Cassandra (QUORUM, ONE, ALL).',
+      solution: 'Strong (ZooKeeper): последнее значение всегда. Causal: пост виден до комментария к нему. Read-Your-Writes: свои записи видишь сразу. Eventual: в конечном счёте придут к одному значению. Cassandra tunable: QUORUM (большинство нод), ONE (одна нода), ALL (все ноды).',
       content: [
         { type: 'text', value: 'CAP — упрощение реальности. На практике согласованность — это спектр, а не бинарный выбор.' },
         { type: 'heading', value: 'Уровни согласованности (от сильного к слабому)' },
@@ -82,6 +90,8 @@ export default {
       id: 5,
       title: 'PACELC: расширение CAP теоремы',
       type: 'theory',
+      description: 'PACELC: при Partition → A или C; Else → Latency или Consistency. Cassandra = PA/EL (доступность + скорость). PostgreSQL = PC/EC (всегда согласован).',
+      solution: 'PACELC: P→(A или C), E→(L или C). Cassandra: PA/EL — при partition AP, обычно низкая latency. DynamoDB: PA/EL (default), PC/EC (strong consistency option). PostgreSQL: PC/EC. В нормальном режиме: синхронная репликация (C) медленнее асинхронной (L).',
       content: [
         { type: 'text', value: 'CAP говорит только о поведении при partition. Но что происходит в нормальном режиме? PACELC добавляет это измерение.' },
         { type: 'heading', value: 'PACELC: PAC ELC' },
@@ -93,6 +103,7 @@ export default {
       id: 6,
       title: 'Практика: выбор системы по CAP',
       type: 'practice',
+      description: 'Практика выбора CP vs AP для 4 сценариев: банковский перевод, лайки YouTube, distributed lock, Shopping Cart — с обоснованием и технологиями.',
       requirements: [
         'Определить что хуже для каждого сценария: ошибка или устаревшие данные',
         'Выбрать CP или AP систему с обоснованием',

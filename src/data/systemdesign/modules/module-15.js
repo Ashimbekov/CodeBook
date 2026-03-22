@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования',
       type: 'practice',
+      description: 'Уточнение требований URL Shortener: функциональные (создание, редирект, aliases, TTL), нефункциональные (99.99% SLA, < 10мс latency, 100M ссылок/день, 10B redirects/день).',
       requirements: [
         'Определить функциональные требования (создание, редирект, aliases)',
         'Уточнить масштаб: количество ссылок в день и redirects',
@@ -49,6 +50,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Оценка нагрузки',
       type: 'practice',
+      description: 'Back-of-the-envelope: 1,200 write RPS, 120,000 read RPS (100:1 read-heavy), 91 ТБ за 5 лет, base62 7 символов = 3.5 трлн комбинаций = 95 лет.',
       requirements: [
         'Рассчитать write RPS (создание ссылок)',
         'Рассчитать read RPS (redirects)',
@@ -75,6 +77,7 @@ export default {
       id: 3,
       title: 'Шаг 3: API Design',
       type: 'practice',
+      description: 'API URL Shortener: POST /api/v1/urls (201) для создания, GET /{code} (302) для редиректа. Ключевой trade-off: 302 vs 301 — аналитика кликов vs нагрузка на сервер.',
       requirements: [
         'Спроектировать эндпоинт создания короткой ссылки',
         'Спроектировать эндпоинт redirect',
@@ -99,6 +102,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Модель данных',
       type: 'practice',
+      description: 'Схема таблицы url_mappings, обоснование NoSQL (DynamoDB/Cassandra) вместо SQL: key-value паттерн + 91 ТБ + нет JOIN. Почему Redis не подходит как основная БД.',
       requirements: [
         'Спроектировать схему таблицы url_mappings',
         'Определить типы полей и индексы',
@@ -123,6 +127,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Алгоритм генерации коротких кодов',
       type: 'practice',
+      description: 'Три алгоритма: Random+collision check, Counter+Base62, MD5+truncation. Рекомендуемый: Range-based Counter (как Twitter Snowflake ID) — гарантированная уникальность без bottleneck.',
       requirements: [
         'Описать алгоритм случайной генерации + проверка коллизий',
         'Описать подход Counter + Base62',
@@ -149,6 +154,7 @@ export default {
       id: 6,
       title: 'Шаг 6: High-Level архитектура',
       type: 'practice',
+      description: 'Write path (1,200 RPS): Client → API GW → URL Service → ID Generator → Cassandra. Read path (120K RPS): CDN 80% + Redis LFU 18% + Cassandra 2%. Трёхуровневый кеш.',
       requirements: [
         'Нарисовать write path (создание ссылки)',
         'Нарисовать read path (redirect)',
@@ -173,6 +179,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Deep Dives и Edge Cases',
       type: 'practice',
+      description: 'Deep dives: Lazy Deletion + Batch Cleanup для истёкших ссылок, rate limiting (100/день на IP), аналитика (Redis INCR + Kafka async), HyperLogLog для уникальных посетителей (±1%, 12 КБ).',
       requirements: [
         'Описать стратегию очистки устаревших ссылок',
         'Предложить защиту от злоупотреблений',

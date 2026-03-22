@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Задача 1: Спроектируй систему ограничения скорости (Rate Limiter)',
       type: 'practice',
+      description: 'Распределённый Rate Limiter: Sliding Window через Redis Sorted Set + Lua скрипт для атомарности, масштабирование до 5M RPS через Redis Cluster, multi-datacenter стратегия.',
       requirements: [
         'Описать компоненты Rate Limiter (API Gateway, Redis, Rules Service)',
         'Реализовать Sliding Window через Redis Sorted Set',
@@ -31,6 +32,7 @@ export default {
       id: 2,
       title: 'Задача 2: Спроектируй систему поиска (Google Search)',
       type: 'practice',
+      description: 'Архитектура поисковой системы: Web Crawler → Inverted Index (80 ТБ) → Ranking (TF-IDF + PageRank) → Serving; SimHash для дедупликации, кеш топ-20% запросов.',
       requirements: [
         'Описать Web Crawler компонент (URL Frontier, politeness)',
         'Описать Document Processor (parsing, deduplication)',
@@ -54,6 +56,7 @@ export default {
       id: 3,
       title: 'Задача 3: Спроектируй Dropbox (File Storage)',
       type: 'practice',
+      description: 'Файловое хранилище с синхронизацией: block-level SHA256 дедупликация (60–70% экономия трафика), WebSocket sync, PostgreSQL для metadata, S3 для блоков.',
       requirements: [
         'Описать block-level хранение с SHA256 дедупликацией',
         'Описать upload flow с проверкой существующих блоков',
@@ -77,6 +80,7 @@ export default {
       id: 4,
       title: 'Задача 4: Спроектируй систему нотификаций',
       type: 'practice',
+      description: 'Система нотификаций на 10B уведомлений/день: разделение P1/P0 очередей (OTP vs маркетинг), Cassandra Device Token Store, Template Engine с i18n, Dead Letter Queue с exponential backoff.',
       requirements: [
         'Описать компоненты системы уведомлений',
         'Объяснить разделение на Priority Queue и Bulk Queue',
@@ -100,6 +104,7 @@ export default {
       id: 5,
       title: 'Задача 5: Спроектируй систему live streaming',
       type: 'practice',
+      description: 'Live streaming архитектура: RTMP → Transcode → HLS сегменты → CDN (TTL 2–4 сек) для 1M зрителей; LL-HLS для задержки 1–3 сек; partitioned chat rooms через Kafka.',
       requirements: [
         'Описать ingest pipeline (RTMP → транскодинг → HLS сегменты)',
         'Описать CDN распределение с коротким TTL',
@@ -123,6 +128,7 @@ export default {
       id: 6,
       title: 'Задача 6: Спроектируй distributed job scheduler',
       type: 'practice',
+      description: 'Распределённый планировщик задач: PostgreSQL FOR UPDATE SKIP LOCKED как distributed lock без внешних систем, Kafka + Workers для выполнения, exponential backoff retry.',
       requirements: [
         'Спроектировать схему данных (tasks, task_runs)',
         'Описать Scheduler через PostgreSQL FOR UPDATE SKIP LOCKED',
@@ -146,6 +152,7 @@ export default {
       id: 7,
       title: 'Задача 7: Спроектируй Ticketmaster (продажа билетов)',
       type: 'practice',
+      description: 'Продажа билетов без двойной продажи: Redis Lua script для атомарного Hold механизма, TTL 10 мин для автоосвобождения, виртуальная очередь при flash sale, real-time статус через SSE/WebSocket.',
       requirements: [
         'Спроектировать схему данных (events, seats, orders)',
         'Описать Hold механизм через Redis Lua script',
@@ -169,6 +176,7 @@ export default {
       id: 8,
       title: 'Задача 8: Спроектируй Stock Exchange (биржу)',
       type: 'practice',
+      description: 'Архитектура торговой биржи с latency < 1 мс: однопоточный Matching Engine (Bids Max-Heap + Asks Min-Heap), Sequencer для fairness, Kafka как Write-Ahead Log, Hot Standby failover.',
       requirements: [
         'Описать однопоточный Matching Engine и его преимущества',
         'Описать структуру In-memory Order Book (Heap)',
@@ -192,6 +200,7 @@ export default {
       id: 9,
       title: 'Задача 9: Спроектируй Google Docs (совместное редактирование)',
       type: 'practice',
+      description: 'Совместное редактирование: Operational Transformation (OT) vs CRDT для конкурентных изменений, append-only лог операций + snapshots каждые 100 ops, WebSocket для real-time синхронизации.',
       requirements: [
         'Описать проблему конкурентных изменений',
         'Объяснить Operational Transformation (OT) на примере',
@@ -215,6 +224,7 @@ export default {
       id: 10,
       title: 'Задача 10: Спроектируй систему рекомендаций',
       type: 'practice',
+      description: 'Рекомендательная система Netflix-style: двухуровневая архитектура (Candidate Generation через Collaborative Filtering + Two-Tower NN Ranking), offline batch предвычисление + online re-ranking, решение Cold Start.',
       requirements: [
         'Описать двухуровневую архитектуру (Candidate Generation + Ranking)',
         'Объяснить Collaborative Filtering и Matrix Factorization',

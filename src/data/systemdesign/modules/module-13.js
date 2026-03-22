@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Зачем нужен Rate Limiting',
       type: 'theory',
+      description: 'Rate Limiting: защита от DoS/DDoS, равномерное распределение ресурсов, монетизация (тарифные планы). Уровни: по IP, User ID, API Key, endpoint. Ответ: HTTP 429 + X-RateLimit-* заголовки.',
+      solution: 'Зачем: DoS защита, равномерность, защита backend БД/API, монетизация тарифов, антискрапинг. Ответ: 429 Too Many Requests + X-RateLimit-Limit (разрешено), X-RateLimit-Remaining (осталось), X-RateLimit-Reset (timestamp сброса), Retry-After (ждать N секунд). По IP — обходится через прокси. По User ID или API Key — точнее.',
       content: [
         { type: 'text', value: 'Rate Limiting — ограничение частоты запросов от клиента. Защищает систему от перегрузки, DDoS атак, злоупотреблений API.' },
         { type: 'heading', value: 'Почему это необходимо' },
@@ -27,6 +29,8 @@ export default {
       id: 2,
       title: 'Fixed Window Counter: простой алгоритм',
       type: 'theory',
+      description: 'Fixed Window: INCR счётчик в Redis по ключу "user:epoch_minute". Проблема границы окна: 5 запросов в последние секунды + 5 в первые = 10 за 10 секунд при лимите 5.',
+      solution: 'Алгоритм: key = userId + ":" + floor(now/windowSec) → redis.incr(key) → redis.expire(key, windowSec). Проблема: на границе окна можно пройти 2× лимит за короткий период (5 req за 14:00:55 + 5 req за 14:01:00 = 10 за 10 секунд). Для точного контроля → Sliding Window.',
       content: [
         { type: 'text', value: 'Самый простой алгоритм: считать запросы в фиксированных временных окнах (по минутам, часам).' },
         { type: 'heading', value: 'Алгоритм' },
@@ -40,6 +44,8 @@ export default {
       id: 3,
       title: 'Token Bucket и Leaky Bucket',
       type: 'theory',
+      description: 'Token Bucket: ведро с токенами (пополняется со скоростью R, burst разрешён). Leaky Bucket: очередь вытекает с постоянной скоростью (равномерно, без burst). Применение каждого.',
+      solution: 'Token Bucket: {tokens, last_refill} → elapsed → tokens = min(cap, tokens + elapsed×rate) → запрос: tokens-- → allow. Burst разрешён (накопленные токены). Token Bucket → API лимиты (AWS, Stripe). Leaky Bucket: равномерный поток к downstream, burst запросы отклоняются. Leaky Bucket → защита backend от спайков.',
       content: [
         { type: 'text', value: 'Два классических алгоритма для более гибкого rate limiting.' },
         { type: 'heading', value: 'Token Bucket (Ведро с токенами)' },
@@ -53,6 +59,8 @@ export default {
       id: 4,
       title: 'Sliding Window Log и Sliding Window Counter',
       type: 'theory',
+      description: 'Sliding Window Log: Redis Sorted Set с timestamps, точный но O(N) памяти. Sliding Window Counter: приближённый (погрешность <1%), O(1) память. Формула: prev×overlap + current.',
+      solution: 'Sliding Window Log: ZREMRANGEBYSCORE → ZCARD → ZADD timestamp. Точный, нет проблемы границ. Минус: O(N) памяти при высоком RPS. Sliding Window Counter: count = prev_window × (window - elapsed_in_current)/window + current_window. O(1) памяти, погрешность < 1%. Использовать Counter для production.',
       content: [
         { type: 'text', value: 'Скользящее окно решает проблему Fixed Window у границ.' },
         { type: 'heading', value: 'Sliding Window Log (точный, дорогой)' },
@@ -65,6 +73,7 @@ export default {
       id: 5,
       title: 'Распределённый Rate Limiting с Redis',
       type: 'practice',
+      description: 'Практика: проблема локального счётчика при нескольких инстансах (лимит превышается в N раз), решение через Redis + атомарный Lua скрипт (ZREMRANGEBYSCORE+ZCARD+ZADD).',
       requirements: [
         'Объяснить проблему локального счётчика при нескольких инстансах',
         'Описать архитектуру с Redis как общим счётчиком',
@@ -91,6 +100,7 @@ export default {
       id: 6,
       title: 'Практика: проектируем rate limiter',
       type: 'practice',
+      description: 'Практика проектирования rate limiter для публичного API с 3 тарифными планами (1K/10K/100K req/hour), Token Bucket с burst, X-RateLimit-* заголовки, мониторинг топ-N по 429.',
       requirements: [
         'Выбрать алгоритм rate limiting под требования (burst разрешён)',
         'Описать хранение тарифных планов и состояния bucket',

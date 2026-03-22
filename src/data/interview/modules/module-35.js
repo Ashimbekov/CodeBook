@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Two Sum — поиск пары с суммой',
       type: 'practice',
+      description: 'Найти два индекса с суммой элементов равной target. Решение за O(n) через HashMap: для каждого элемента ищем complement = target - num.',
+      solution: 'def two_sum(nums, target):\n    seen = {}  # значение -> индекс\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []\n\n# O(n) время, O(n) память\n# Наивное решение O(n²) — два цикла',
       content: [
         { type: 'text', value: 'Задача: дан массив nums и число target. Найдите два индекса, сумма элементов которых равна target. Гарантировано ровно одно решение.' },
         { type: 'text', value: 'Пример: nums = [2, 7, 11, 15], target = 9 → [0, 1], потому что nums[0] + nums[1] = 2 + 7 = 9.' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Valid Parentheses — проверка скобок',
       type: 'practice',
+      description: 'Проверить корректность расстановки скобок через стек: открывающие кладём в стек, закрывающие проверяем с вершиной. В конце стек должен быть пуст.',
+      solution: 'def is_valid(s):\n    stack = []\n    mapping = {")": "(", "}": "{", "]": "["}\n    for char in s:\n        if char in mapping:\n            top = stack.pop() if stack else "#"\n            if mapping[char] != top:\n                return False\n        else:\n            stack.append(char)\n    return len(stack) == 0\n\n# O(n) время, O(n) память',
       content: [
         { type: 'text', value: 'Задача: дана строка s из символов (, ), {, }, [, ]. Проверьте, корректно ли расставлены скобки.' },
         { type: 'text', value: 'Примеры: "()" → True, "()[]{}" → True, "(]" → False, "([)]" → False, "{[]}" → True.' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Merge Two Sorted Lists — слияние списков',
       type: 'practice',
+      description: 'Слить два отсортированных связных списка. Итеративно через dummy node: сравниваем значения, переключаем указатели. O(n+m) время, O(1) память.',
+      solution: 'def merge_two_lists(l1, l2):\n    dummy = ListNode(0)\n    current = dummy\n    while l1 and l2:\n        if l1.val <= l2.val:\n            current.next = l1; l1 = l1.next\n        else:\n            current.next = l2; l2 = l2.next\n        current = current.next\n    current.next = l1 if l1 else l2\n    return dummy.next\n\n# dummy node — стандартный трюк для linked lists\n# O(n+m) время, O(1) память',
       content: [
         { type: 'text', value: 'Задача: слейте два отсортированных связных списка в один отсортированный. Верните голову нового списка.' },
         { type: 'text', value: 'Пример: 1→2→4 и 1→3→4 → 1→1→2→3→4→4.' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'Best Time to Buy and Sell Stock',
       type: 'practice',
+      description: 'Максимальная прибыль от одной сделки. Один проход: отслеживать минимальную цену и максимальную прибыль (текущая цена - min_price). O(n) время, O(1) память.',
+      solution: 'def max_profit(prices):\n    min_price = float("inf")\n    max_profit = 0\n    for price in prices:\n        if price < min_price:\n            min_price = price\n        elif price - min_price > max_profit:\n            max_profit = price - min_price\n    return max_profit\n\n# O(n) время, O(1) память\n# Ошибка: искать max-min в массиве — min должен быть ЛЕВЕЕ max',
       content: [
         { type: 'text', value: 'Задача: дан массив prices, где prices[i] — цена акции в день i. Найдите максимальную прибыль от одной сделки (купить и продать). Нельзя продать раньше чем купить.' },
         { type: 'text', value: 'Пример: [7,1,5,3,6,4] → 5 (купить за 1, продать за 6). [7,6,4,3,1] → 0 (выгоднее не торговать).' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Valid Palindrome — палиндром строки',
       type: 'practice',
+      description: 'Проверить является ли строка палиндромом (только буквы и цифры, без регистра). Два указателя с пропуском не-alnum символов. O(n) время, O(1) память.',
+      solution: 'def is_palindrome(s):\n    left, right = 0, len(s) - 1\n    while left < right:\n        while left < right and not s[left].isalnum():\n            left += 1\n        while left < right and not s[right].isalnum():\n            right -= 1\n        if s[left].lower() != s[right].lower():\n            return False\n        left += 1; right -= 1\n    return True\n\n# O(n) время, O(1) память\n# Короче: cleaned = "".join(c.lower() for c in s if c.isalnum()); return cleaned == cleaned[::-1]',
       content: [
         { type: 'text', value: 'Задача: строка s является палиндромом если после удаления не-алфавитно-цифровых символов и приведения к нижнему регистру читается одинаково слева и справа.' },
         { type: 'text', value: 'Примеры: "A man, a plan, a canal: Panama" → True. "race a car" → False.' },
@@ -71,6 +81,8 @@ export default {
       id: 6,
       title: 'Invert Binary Tree — зеркальное дерево',
       type: 'practice',
+      description: 'Зеркальное отражение бинарного дерева: для каждого узла поменять левый и правый потомок местами, рекурсивно. O(n) время, O(h) память.',
+      solution: 'def invert_tree(root):\n    if not root:\n        return None\n    root.left, root.right = root.right, root.left\n    invert_tree(root.left)\n    invert_tree(root.right)\n    return root\n\n# O(n) время, O(h) память (h = высота дерева)\n# Классическая задача — знаменита благодаря твиту Макса Хоуэлла',
       content: [
         { type: 'text', value: 'Задача: переверните бинарное дерево (зеркальное отображение). Для каждого узла поменяйте местами левого и правого потомка.' },
         { type: 'text', value: 'Пример: дерево [4,2,7,1,3,6,9] → [4,7,2,9,6,3,1].' },
@@ -84,6 +96,8 @@ export default {
       id: 7,
       title: 'Maximum Depth of Binary Tree',
       type: 'practice',
+      description: 'Максимальная глубина бинарного дерева. Рекурсия DFS: глубина узла = 1 + max(глубина левого, глубина правого). O(n) время, O(h) память.',
+      solution: 'def max_depth(root):\n    if not root:\n        return 0\n    return 1 + max(max_depth(root.left), max_depth(root.right))\n\n# O(n) время, O(h) память (рекурсивный стек)\n# Итеративно BFS: считать уровни через deque',
       content: [
         { type: 'text', value: 'Задача: найдите максимальную глубину бинарного дерева — количество узлов вдоль самого длинного пути от корня до листа.' },
         { type: 'text', value: 'Пример: [3,9,20,null,null,15,7] → 3.' },
@@ -96,6 +110,8 @@ export default {
       id: 8,
       title: 'Linked List Cycle — цикл в списке',
       type: 'practice',
+      description: 'Определить наличие цикла в связном списке. Алгоритм Флойда (черепаха и заяц): быстрый указатель (2 шага) и медленный (1 шаг). Встретились = цикл. O(n) время, O(1) память.',
+      solution: 'def has_cycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n\n# O(n) время, O(1) память (алгоритм Флойда)\n# Альтернатива: HashSet посещённых узлов — O(n) память',
       content: [
         { type: 'text', value: 'Задача: определите, есть ли цикл в односвязном списке. Цикл существует если какой-то узел достижим снова, двигаясь по указателям next.' },
         { type: 'heading', value: 'Решение: алгоритм Флойда (черепаха и заяц)' },
@@ -108,6 +124,8 @@ export default {
       id: 9,
       title: 'Contains Duplicate — есть ли дубликаты',
       type: 'practice',
+      description: 'Проверить наличие дубликатов в массиве. HashSet: добавляем элементы, возвращаем True при повторе. O(n) время, O(n) память. Без доп. памяти: сортировка O(n log n).',
+      solution: 'def contains_duplicate(nums):\n    seen = set()\n    for num in nums:\n        if num in seen:\n            return True\n        seen.add(num)\n    return False\n\n# Короче: return len(nums) != len(set(nums))\n# Без доп. памяти: nums.sort(); return any(nums[i]==nums[i-1] for i in range(1,len(nums)))',
       content: [
         { type: 'text', value: 'Задача: дан массив nums. Верните True если любое значение встречается хотя бы дважды. False если все элементы уникальны.' },
         { type: 'text', value: 'Примеры: [1,2,3,1] → True. [1,2,3,4] → False. [1,1,1,3,3,4,3,2,4,2] → True.' },
@@ -121,6 +139,8 @@ export default {
       id: 10,
       title: 'Climbing Stairs — ступеньки',
       type: 'practice',
+      description: 'Количество способов подняться на n ступеней (по 1 или 2). DP: dp[i] = dp[i-1] + dp[i-2] — это последовательность Фибоначчи. O(n) время, O(1) память.',
+      solution: 'def climb_stairs(n):\n    if n <= 2:\n        return n\n    prev2, prev1 = 1, 2\n    for _ in range(3, n + 1):\n        current = prev1 + prev2\n        prev2 = prev1\n        prev1 = current\n    return prev1\n\n# O(n) время, O(1) память\n# Это последовательность Фибоначчи!\n# DP: dp[i] = dp[i-1] + dp[i-2]',
       content: [
         { type: 'text', value: 'Задача: вы поднимаетесь по лестнице с n ступенями. За один раз можно подняться на 1 или 2 ступени. Сколькими способами вы можете подняться до вершины?' },
         { type: 'text', value: 'Примеры: n=2 → 2 способа (1+1, 2). n=3 → 3 способа (1+1+1, 1+2, 2+1). n=5 → 8 способов.' },

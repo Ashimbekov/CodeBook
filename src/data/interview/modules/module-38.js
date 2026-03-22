@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Паттерн: Sliding Window (скользящее окно)',
       type: 'practice',
+      description: 'Sliding Window для подмассивов/подстрок: правый указатель расширяет окно, левый сужает по условию. Избегает O(n²) вложенных циклов. Три варианта: фиксированный, переменный, с HashMap.',
+      solution: '# Фиксированное окно k: max сумма подмассива\ndef max_sum_subarray(nums, k):\n    window_sum = sum(nums[:k]); max_sum = window_sum\n    for i in range(k, len(nums)):\n        window_sum += nums[i] - nums[i-k]\n        max_sum = max(max_sum, window_sum)\n    return max_sum\n\n# Переменное окно: мин подмассив с суммой >= target\ndef min_size_subarray(target, nums):\n    left = window_sum = 0; min_len = float("inf")\n    for right in range(len(nums)):\n        window_sum += nums[right]\n        while window_sum >= target:\n            min_len = min(min_len, right-left+1)\n            window_sum -= nums[left]; left += 1\n    return 0 if min_len == float("inf") else min_len\n\n# Паттерн: right расширяет, while сужает с left',
       content: [
         { type: 'text', value: 'Паттерн Sliding Window применяется для задач на подмассивах и подстроках фиксированного или переменного размера. Избегает вложенных циклов O(n²) за счёт поддержания окна.\n\nПрименять когда: задача на непрерывном подмассиве/подстроке, нужен максимум/минимум/сумма в окне.' },
         { type: 'heading', value: 'Задача 1: максимальная сумма подмассива длины k' },
@@ -22,6 +24,8 @@ export default {
       id: 2,
       title: 'Паттерн: Two Pointers (два указателя)',
       type: 'practice',
+      description: 'Two Pointers: навстречу (отсортированный массив — поиск пар), в одном направлении (fast/slow — partition, удаление). Dutch National Flag — три указателя для трёхцветной сортировки.',
+      solution: '# Навстречу: пара с суммой target (отсортированный)\ndef two_sum_sorted(arr, target):\n    left, right = 0, len(arr)-1\n    while left < right:\n        s = arr[left]+arr[right]\n        if s == target: return [left, right]\n        elif s < target: left += 1\n        else: right -= 1\n    return []\n\n# В одном направлении: удаление дубликатов in-place\ndef remove_duplicates(nums):\n    slow = 0\n    for fast in range(1, len(nums)):\n        if nums[fast] != nums[slow]:\n            slow += 1; nums[slow] = nums[fast]\n    return slow + 1\n\n# Dutch National Flag: sort_colors O(n), O(1)',
       content: [
         { type: 'text', value: 'Паттерн Two Pointers использует два указателя на один массив или строку. Обычно движутся навстречу (sorted array) или в одном направлении (partitioning).\n\nПрименять когда: отсортированный массив, поиск пар, partition (удаление элементов).' },
         { type: 'heading', value: 'Задача 1: пара с заданной суммой (отсортированный массив)' },
@@ -37,6 +41,8 @@ export default {
       id: 3,
       title: 'Паттерн: Fast/Slow Pointers (черепаха и заяц)',
       type: 'practice',
+      description: 'Fast/Slow Pointers: fast идёт в 2 раза быстрее slow. Применения: цикл в списке, середина списка (когда fast на конце, slow на середине), счастливое число, палиндром списка.',
+      solution: '# Середина связного списка:\ndef find_middle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    return slow  # slow в середине\n\n# Счастливое число:\ndef is_happy(n):\n    def nxt(x): return sum(int(d)**2 for d in str(x))\n    slow, fast = n, nxt(n)\n    while fast != 1 and slow != fast:\n        slow = nxt(slow); fast = nxt(nxt(fast))\n    return fast == 1\n\n# Свойство: когда fast на конце, slow на середине.\n# Цикл в списке: fast догоняет slow на кольцевой трассе.',
       content: [
         { type: 'text', value: 'Паттерн Fast/Slow Pointers: один указатель движется на 1 шаг, другой на 2. Используется для обнаружения циклов, нахождения середины, перестановки списков.\n\nПрименять когда: связные списки, обнаружение цикла, "счастливое число".' },
         { type: 'heading', value: 'Задача 1: середина связного списка' },
@@ -52,6 +58,8 @@ export default {
       id: 4,
       title: 'Паттерн: Merge Intervals',
       type: 'practice',
+      description: 'Merge Intervals: сортировка по началу → проход с проверкой пересечения. Применения: слияние, вставка интервала, минимум переговорных комнат (MinHeap), пересечение списков.',
+      solution: '# Вставка интервала:\ndef insert_interval(intervals, new_interval):\n    result = []; i = 0; n = len(intervals)\n    while i < n and intervals[i][1] < new_interval[0]:\n        result.append(intervals[i]); i += 1\n    while i < n and intervals[i][0] <= new_interval[1]:\n        new_interval[0] = min(new_interval[0], intervals[i][0])\n        new_interval[1] = max(new_interval[1], intervals[i][1]); i += 1\n    result.append(new_interval)\n    result.extend(intervals[i:])\n    return result\n\n# Минимум комнат: MinHeap хранит время окончания\n# heapreplace если heap[0] <= start (освободилась)\n# heappush иначе (нужна новая комната)',
       content: [
         { type: 'text', value: 'Паттерн Merge Intervals для задач с перекрывающимися интервалами. Ключевая операция: сортировка по началу интервала.\n\nПрименять когда: расписания встреч, временные интервалы, планирование ресурсов.' },
         { type: 'heading', value: 'Задача 1: вставка интервала в отсортированный список' },
@@ -67,6 +75,8 @@ export default {
       id: 5,
       title: 'Паттерн: Cyclic Sort',
       type: 'practice',
+      description: 'Cyclic Sort для массивов с числами в диапазоне [1, n]: каждое число кладём на правильный индекс (nums[i]-1). O(n) время, O(1) память. Применения: пропущенное число, дубликат.',
+      solution: '# Cyclic Sort:\ndef cyclic_sort(nums):\n    i = 0\n    while i < len(nums):\n        correct = nums[i] - 1\n        if nums[i] != nums[correct]:\n            nums[i], nums[correct] = nums[correct], nums[i]\n        else: i += 1\n    return nums\n\n# Найти пропущенное число:\ndef find_missing(nums):\n    i = 0; n = len(nums)\n    while i < n:\n        j = nums[i]\n        if nums[i] < n and nums[i] != nums[j]:\n            nums[i], nums[j] = nums[j], nums[i]\n        else: i += 1\n    for i in range(n):\n        if nums[i] != i: return i\n    return n\n\n# O(n) время, O(1) память',
       content: [
         { type: 'text', value: 'Паттерн Cyclic Sort эффективен для массивов с числами в диапазоне [1, n] или [0, n]. Идея: каждое число кладём на правильный индекс за O(n).\n\nПрименять когда: массив содержит числа из известного диапазона, нужно найти пропущенное/дублирующееся число.' },
         { type: 'heading', value: 'Задача 1: сортировка массива [1..n]' },
@@ -82,6 +92,8 @@ export default {
       id: 6,
       title: 'Паттерн: In-place LinkedList Reversal',
       type: 'practice',
+      description: 'Разворот связного списка на месте: три переменные prev/current/next. Варианты: весь список, подсписок [left, right], k-групп (рекурсивно). O(n) время, O(1) память.',
+      solution: '# Разворот всего списка:\ndef reverse_list(head):\n    prev = None; current = head\n    while current:\n        nxt = current.next; current.next = prev\n        prev = current; current = nxt\n    return prev\n\n# Разворот подсписка [left, right]:\n# 1. Дойти до left-1 (prev)\n# 2. current = prev.next\n# 3. Разворачивать right-left раз:\n#    nxt = current.next\n#    current.next = nxt.next\n#    nxt.next = prev.next\n#    prev.next = nxt\n\n# k-групп: рекурсивно — разворот k узлов + рекурсия',
       content: [
         { type: 'text', value: 'Паттерн разворота связного списка на месте за O(1) доп. памяти. Ключевые операции: разворот всего списка, разворота подсписка, k-групп.\n\nПрименять когда: нужно изменить порядок элементов связного списка.' },
         { type: 'heading', value: 'Задача 1: разворот всего списка' },
@@ -97,6 +109,8 @@ export default {
       id: 7,
       title: 'Паттерн: Tree BFS (обход в ширину)',
       type: 'practice',
+      description: 'Tree BFS через deque: level_size = len(queue) перед циклом обрабатывает ровно один уровень. Применения: level order, right side view, zigzag traversal, минимальная глубина.',
+      solution: 'from collections import deque\n\ndef level_order(root):\n    if not root: return []\n    result = []; queue = deque([root])\n    while queue:\n        level_size = len(queue); level = []\n        for _ in range(level_size):\n            node = queue.popleft()\n            level.append(node.val)\n            if node.left: queue.append(node.left)\n            if node.right: queue.append(node.right)\n        result.append(level)\n    return result\n\n# Right Side View: последний элемент каждого уровня\n# Zigzag: appendleft для нечётных уровней\n# Ключевой трюк: level_size = len(queue) ПЕРЕД циклом',
       content: [
         { type: 'text', value: 'Паттерн Tree BFS использует очередь для обхода дерева по уровням. Идеален для задач "найти ширину уровня", "правое значение каждого уровня", "зигзаг-обход".\n\nПрименять когда: обход по уровням, кратчайший путь, минимальная глубина.' },
         { type: 'heading', value: 'Задача 1: обход по уровням (Level Order Traversal)' },
@@ -112,6 +126,8 @@ export default {
       id: 8,
       title: 'Паттерн: Tree DFS (обход в глубину)',
       type: 'practice',
+      description: 'Tree DFS рекурсивно: функция возвращает частичный результат вверх (высота, сумма пути), обновляет глобальный максимум внутри. Применения: path sum, диаметр, max path sum, BST валидация.',
+      solution: '# Существует ли путь с суммой target:\ndef has_path_sum(root, target):\n    if not root: return False\n    if not root.left and not root.right: return root.val == target\n    r = target - root.val\n    return has_path_sum(root.left, r) or has_path_sum(root.right, r)\n\n# Диаметр дерева:\ndef diameter(root):\n    res = [0]\n    def dfs(node):\n        if not node: return 0\n        l, r = dfs(node.left), dfs(node.right)\n        res[0] = max(res[0], l+r)\n        return 1 + max(l, r)\n    dfs(root); return res[0]\n\n# Паттерн: внутри — обновляем global max, возвращаем частичный результат',
       content: [
         { type: 'text', value: 'Паттерн Tree DFS обходит дерево в глубину: preorder (корень первым), inorder (корень между), postorder (корень последним). Естественно реализуется рекурсивно.\n\nПрименять когда: пути в дереве, сумма пути, валидация BST, сериализация.' },
         { type: 'heading', value: 'Задача 1: существует ли путь с заданной суммой' },
@@ -127,6 +143,8 @@ export default {
       id: 9,
       title: 'Паттерн: Two Heaps (медиана потока)',
       type: 'practice',
+      description: 'Two Heaps: MaxHeap (левая половина, меньшие) + MinHeap (правая, большие). Медиана: если размеры равны — среднее двух вершин, иначе — вершина большей кучи. O(log n) добавление, O(1) медиана.',
+      solution: 'import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.max_heap = []  # левая половина, инвертируем знак\n        self.min_heap = []  # правая половина\n\n    def add_num(self, num):\n        heapq.heappush(self.max_heap, -num)\n        if self.max_heap and self.min_heap and -self.max_heap[0] > self.min_heap[0]:\n            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))\n        if len(self.max_heap) > len(self.min_heap) + 1:\n            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))\n        elif len(self.min_heap) > len(self.max_heap):\n            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))\n\n    def find_median(self):\n        if len(self.max_heap) == len(self.min_heap):\n            return (-self.max_heap[0] + self.min_heap[0]) / 2.0\n        return float(-self.max_heap[0])\n# Python MaxHeap: heappush(h, -x)',
       content: [
         { type: 'text', value: 'Паттерн Two Heaps использует MaxHeap (левая половина) и MinHeap (правая половина). Гарантирует O(log n) для добавления и O(1) для медианы.\n\nПрименять когда: медиана скользящего окна, планировщик задач по приоритету.' },
         { type: 'heading', value: 'Задача 1: медиана потока данных (Find Median from Data Stream)' },
@@ -140,6 +158,8 @@ export default {
       id: 10,
       title: 'Паттерн: Topological Sort',
       type: 'practice',
+      description: 'Topological Sort для DAG (зависимости). BFS Kahn: убирать вершины с in_degree=0, если не все убраны — цикл. DFS: postorder добавление, реверс = topological order. O(V+E).',
+      solution: 'from collections import defaultdict, deque\n\n# BFS Kahn:\ndef find_order(num_courses, prerequisites):\n    graph = defaultdict(list)\n    in_degree = [0] * num_courses\n    for course, prereq in prerequisites:\n        graph[prereq].append(course); in_degree[course] += 1\n    queue = deque([i for i in range(num_courses) if in_degree[i] == 0])\n    order = []\n    while queue:\n        c = queue.popleft(); order.append(c)\n        for nc in graph[c]:\n            in_degree[nc] -= 1\n            if in_degree[nc] == 0: queue.append(nc)\n    return order if len(order) == num_courses else []\n\n# DFS: postorder → реверс = topological order\n# state: 0=unvisited, 1=visiting(цикл!), 2=done',
       content: [
         { type: 'text', value: 'Паттерн Topological Sort для задач с зависимостями (DAG — Directed Acyclic Graph). Два алгоритма: BFS Kahn (in-degree) и DFS с постордером.\n\nПрименять когда: порядок задач, зависимости пакетов, порядок компиляции.' },
         { type: 'heading', value: 'Задача 1: топологический порядок курсов' },

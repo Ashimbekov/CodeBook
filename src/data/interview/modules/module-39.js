@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Mock #1: Google Phone Screen (Medium Algo)',
       type: 'practice',
+      description: 'Google phone screen: вычисление строки с "3+2-1" без eval(). Думать вслух каждую секунду. Переменные: result, current_num, sign. Follow-up: добавить скобки через стек.',
+      solution: 'def calculate(s):\n    result = current_num = 0\n    sign = 1\n    for char in s:\n        if char.isdigit():\n            current_num = current_num * 10 + int(char)\n        elif char == "+":\n            result += sign * current_num; current_num = 0; sign = 1\n        elif char == "-":\n            result += sign * current_num; current_num = 0; sign = -1\n    result += sign * current_num\n    return result\n\n# O(n) время, O(1) память\n# Follow-up: скобки → стек (result, sign)\n# Думать вслух = Google успех. Молчание = красный флаг.',
       content: [
         { type: 'text', value: 'Симуляция телефонного скрининга в Google. 45 минут, один алгоритмический вопрос уровня Medium. Интервьюер: "Привет! У нас 45 минут. Я дам задачу, ожидаю что вы будете думать вслух."' },
         { type: 'heading', value: 'Задача (первые 5 минут — читаем и уточняем)' },
@@ -22,6 +24,8 @@ export default {
       id: 2,
       title: 'Mock #2: Amazon Behavioral (Leadership Principles)',
       type: 'practice',
+      description: 'Amazon Behavioral через 14 Leadership Principles. Метод STAR: Situation/Task/Action/Result. Подготовить банк из 5-7 историй покрывающих несколько LP. Говорить "Я", не "мы".',
+      solution: 'Топ-5 LP вопросов Amazon:\n1. Customer Obsession: превзошли ожидания клиента?\n2. Ownership: взяли проблему вне своей роли?\n3. Disagree and Commit: не соглашались с решением команды?\n4. Dive Deep: данные противоречили анализу?\n5. Deliver Results: преодолели серьёзные препятствия?\n\nФормат ответа STAR (2-3 мин):\nS: ситуация (кратко)\nT: задача/проблема\nA: конкретные ДЕЙСТВИЯ которые я предпринял (НЕ "мы")\nR: измеримый результат\n\nБанк историй (5-7):\n- Каждая покрывает 2-3 LP\n- Ownership + Bias for Action + Deliver Results\n\nAmazon смотрит на конкретные действия, не на "мы решили".',
       content: [
         { type: 'text', value: 'Amazon Behavioral интервью — 45 минут, 4-5 вопросов по Leadership Principles. Каждый ответ по методу STAR: Situation, Task, Action, Result.\n\nИнтервьюер: "Расскажите о случае когда вам пришлось принять сложное решение с недостаточными данными."' },
         { type: 'heading', value: 'LP: Bias for Action (Склонность к действию)' },
@@ -37,6 +41,8 @@ export default {
       id: 3,
       title: 'Mock #3: Meta Coding (2 Medium за 45 минут)',
       type: 'practice',
+      description: 'Meta: две задачи за 45 минут. Задача 1: Subarray Sum = k через prefix sum + HashMap. Задача 2: Decode Ways через DP. Meta ценит скорость + чистый код.',
+      solution: '# Задача 1: Subarray Sum = k\ndef subarray_sum(nums, k):\n    count = prefix = 0; seen = {0: 1}\n    for num in nums:\n        prefix += num\n        count += seen.get(prefix - k, 0)\n        seen[prefix] = seen.get(prefix, 0) + 1\n    return count\n\n# Задача 2: Decode Ways\ndef num_decodings(s):\n    if not s or s[0] == "0": return 0\n    n = len(s); dp = [0]*(n+1); dp[0] = dp[1] = 1\n    for i in range(2, n+1):\n        if int(s[i-1]) != 0: dp[i] += dp[i-1]\n        if 10 <= int(s[i-2:i]) <= 26: dp[i] += dp[i-2]\n    return dp[n]\n\n# Meta: быстрый переход после первой задачи.\n# Качество > количество. Чистый код с осмысленными именами.',
       content: [
         { type: 'text', value: 'Meta coding интервью: две задачи за 45 минут (~20 минут на каждую). Темп быстрее чем в Google. Интервьюер сразу переходит ко второй задаче.\n\nЗадача 1 (минуты 0-20): "Найдите все задачи кратных по сумме k в подмассиве."' },
         { type: 'heading', value: 'Задача 1: Subarray Sum Equals K' },
@@ -52,6 +58,8 @@ export default {
       id: 4,
       title: 'Mock #4: Apple System Design (iMessage)',
       type: 'practice',
+      description: 'Apple SD: iMessage с E2EE. Каждое устройство — пара ключей Ed25519 (приватный в Secure Enclave). Отправка: шифровать публичным ключом получателя. Мультиустройство: шифровать каждому устройству отдельно.',
+      solution: 'E2EE архитектура iMessage:\n1. Генерация ключей: Ed25519 пара на устройстве\n   - Публичный → Apple Key Server\n   - Приватный → Secure Enclave (только устройство)\n\n2. Отправка Алисы Бобу:\n   - Алиса запрашивает публичный ключ Боба\n   - Шифрует сообщение публичным ключом Боба\n   - Сервер передаёт зашифрованный blob (НЕ может расшифровать)\n   - Боб расшифровывает своим приватным ключом\n\n3. Мультиустройство (iPhone + iPad + Mac):\n   - Алиса шифрует отдельную копию для каждого устройства Боба\n\n4. Синхронизация через iCloud:\n   - Ключ iCloud Keychain (только у пользователя)\n   - Apple не может прочитать\n\nApple: privacy-first. Знать: Secure Enclave, differential privacy, Key Transparency.',
       content: [
         { type: 'text', value: 'Apple System Design интервью: 45-60 минут, один дизайн-вопрос. Apple особенно ценит privacy, безопасность и UX-ориентированность решений.\n\nИнтервьюер: "Спроектируйте iMessage. Особый акцент на End-to-End шифровании."' },
         { type: 'heading', value: 'Требования и scope (10 минут)' },
@@ -67,6 +75,8 @@ export default {
       id: 5,
       title: 'Mock #5: Netflix Coding (Streaming-Related)',
       type: 'practice',
+      description: 'Netflix coding: топ-k фильмов по рейтингу за O(k log n). MaxHeap с lazy deletion (устаревшие записи пропускаем при извлечении). Follow-up: шардирование + global top-k merge.',
+      solution: 'import heapq\n\nclass ContentRatingSystem:\n    def __init__(self):\n        self.ratings = {}  # movie_id -> current_rating\n        self.heap = []     # (-rating, movie_id)\n\n    def add_or_update(self, movie_id, rating):\n        self.ratings[movie_id] = rating\n        heapq.heappush(self.heap, (-rating, movie_id))  # O(log n)\n\n    def top_k(self, k):\n        result = []; temp = []\n        while self.heap and len(result) < k:\n            neg_r, mid = heapq.heappop(self.heap)\n            if self.ratings.get(mid) == -neg_r:  # не устаревшее\n                result.append((mid, -neg_r))\n            temp.append((neg_r, mid))\n        for item in temp: heapq.heappush(self.heap, item)\n        return result\n\n# Lazy deletion: обновление = новая запись в heap, старые игнорируем\n# Распределённый вариант: local top-k на каждом шарде → merge',
       content: [
         { type: 'text', value: 'Netflix coding интервью: задачи часто связаны с реальными проблемами Netflix — рекомендации, битрейт, сортировки, очереди.\n\nИнтервьюер: "Реализуйте систему рейтингов контента. Нужно получать топ-k фильмов за O(k log n)."' },
         { type: 'heading', value: 'Задача: система рейтингов' },
@@ -80,6 +90,8 @@ export default {
       id: 6,
       title: 'Mock #6: Microsoft Behavioral + Coding Mix',
       type: 'practice',
+      description: 'Microsoft: behavioral (15 мин) + coding (25 мин). Задача Design Tic-Tac-Toe O(1) через счётчики строк/столбцов/диагоналей. Microsoft ценит collaboration и growth mindset.',
+      solution: 'class TicTacToe:\n    def __init__(self, n):\n        self.n = n\n        self.rows = [[0]*n for _ in range(2)]\n        self.cols = [[0]*n for _ in range(2)]\n        self.diag = [0, 0]\n        self.anti = [0, 0]\n\n    def move(self, row, col, player):\n        p = player - 1; n = self.n\n        self.rows[p][row] += 1; self.cols[p][col] += 1\n        if row == col: self.diag[p] += 1\n        if row + col == n - 1: self.anti[p] += 1\n        if max(self.rows[p][row], self.cols[p][col],\n               self.diag[p], self.anti[p]) == n:\n            return player\n        return 0\n\n# O(1) на ход, O(n) память\n# Вместо проверки всей доски — счётчики на каждую линию\n# Behavioral: "что бы изменил" = саморефлексия, не ловушка',
       content: [
         { type: 'text', value: 'Microsoft интервью часто совмещает behavioral и coding в одном раунде. Первые 15-20 минут — поведенческие вопросы, затем задача.\n\nИнтервьюер: "Расскажите о самом сложном техническом проекте. Что вы взяли бы обратно если бы делали снова?"' },
         { type: 'heading', value: 'Behavioral часть (15 минут)' },
@@ -93,6 +105,8 @@ export default {
       id: 7,
       title: 'Mock #7: Startup Full-Stack Live Coding',
       type: 'practice',
+      description: 'Стартап live coding: Rate Limiter (100 req/мин). Sliding Window Log (точный) vs Token Bucket (позволяет burst). Распределённый вариант: Redis ZADD + Lua script для атомарности.',
+      solution: 'import time\nfrom collections import deque\n\nclass RateLimiter:\n    """Sliding Window Log: точный, O(N) память"""\n    def __init__(self, max_requests, window_seconds):\n        self.max_requests = max_requests\n        self.window = window_seconds\n        self.user_logs = {}\n\n    def is_allowed(self, user_id):\n        now = time.time()\n        log = self.user_logs.setdefault(user_id, deque())\n        while log and log[0] <= now - self.window:\n            log.popleft()\n        if len(log) < self.max_requests:\n            log.append(now); return True\n        return False\n\n# Распределённый (Redis):\n# ZADD user:{id}:requests {ts} {uuid}\n# ZREMRANGEBYSCORE ... 0 (now - window)\n# ZCARD user:{id}:requests\n# Всё в Lua script для атомарности\n\n# Стартап: pragmatism > perfection. Показывайте гибкость.',
       content: [
         { type: 'text', value: 'Стартап интервью: более свободный формат, может быть live coding в IDE, pair programming или take-home задание. Интервьюеры ищут продуктивность, не перфекционизм.\n\nИнтервьюер: "Давайте сделаем вместе мини-задачу: реализуйте простой Rate Limiter."' },
         { type: 'heading', value: 'Задача: Rate Limiter (100 запросов в минуту на пользователя)' },
@@ -106,6 +120,8 @@ export default {
       id: 8,
       title: 'Mock #8: Final Boss — 4 раунда FAANG симуляция',
       type: 'practice',
+      description: 'Финальная симуляция 4 раундов onsite FAANG: Data Structures (NestedIterator), DP/Graphs (Unique Paths), System Design (Google Docs с OT/CRDT), Behavioral Bar Raiser.',
+      solution: 'Раунд 1 — Data Structures (NestedIterator):\nПодход: stack для lazy evaluation или рекурсивное выравнивание\nВопросы: бесконечная вложенность? пустые списки? сложность?\n\nРаунд 2 — DP/Graphs (Unique Paths с препятствиями):\ndp[i][j] = dp[i-1][j] + dp[i][j-1] если не препятствие\nO(mn) время, O(mn) память (оптимизировать до O(n))\n\nРаунд 3 — System Design (Google Docs):\nOT или CRDT для conflict resolution\nWebSocket → Document Server → OT Engine → Cassandra (ops log) + Redis\nОффлайн editing + merge при reconnect\nВерсионирование: история операций\n\nРаунд 4 — Bar Raiser:\nОшибка: реальная + урок (не катастрофа)\nКонфликт: попробовал убедить → приняли → поддержал\nУход: рост и новые вызовы (не критика работодателя)\n\nЧеклист за 48 ч: 5 Medium задач без подсказок + 3 STAR истории + сон',
       content: [
         { type: 'text', value: 'Финальная симуляция: 4 раунда как на onsite FAANG. Каждый раунд 45-50 минут. Используйте этот урок как шпаргалку для подготовки к финальному дню.' },
         { type: 'heading', value: 'Раунд 1: Coding 1 (Data Structures)' },

@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Вертикальное vs горизонтальное масштабирование',
       type: 'theory',
+      description: 'Scale Up (добавить ресурсы одному серверу) vs Scale Out (добавить серверы): trade-offs, ограничения и правило — API серверы горизонтально, БД начинай вертикально.',
+      solution: 'Вертикальное (Scale Up):\n+ Простота, без изменений архитектуры\n- Предел: ~448 CPU, 6 TB RAM (самый большой в облаке)\n- Single Point of Failure\n- Дорого, downtime при upgrade\n\nГоризонтальное (Scale Out):\n+ Теоретически неограниченно, High Availability\n- Нужен Load Balancer, stateless дизайн\n\nПравило:\nAPI серверы: горизонтально (stateless, легко)\nБД: 1) вертикально → 2) read replicas → 3) шардирование\n\nНе начинай с шардирования!',
       content: [
         { type: 'text', value: 'Масштабирование — способность системы обрабатывать возросшую нагрузку. Два основных подхода: вертикальное (больше ресурсов на один сервер) и горизонтальное (больше серверов).' },
         { type: 'heading', value: 'Вертикальное масштабирование (Scale Up)' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'Stateless сервисы: ключ к горизонтальному масштабированию',
       type: 'theory',
+      description: 'Stateless сервис не хранит состояние между запросами — любой инстанс обрабатывает любой запрос. Всё состояние выносится во внешние хранилища: Redis, S3, БД.',
+      solution: 'Stateful (проблема):\nСервер А хранит сессию в памяти\n→ Запрос на сервер Б: пользователь не авторизован!\n\nStateless (решение):\nВсё состояние → внешние хранилища:\nСессии → Redis\nКеш → Redis\nФайлы → S3\nОчереди → Kafka\nКонфиги → ENV / Config Service\nЛоги → ELK / Datadog\n\nПосле этого:\n- Docker: один образ для всех инстансов\n- Kubernetes: автоматическое масштабирование и health checks\n- Любой инстанс = любой запрос = свободное масштабирование\n\nПравило: "Где хранится состояние?" → если в памяти сервиса = проблема.',
       content: [
         { type: 'text', value: 'Stateless сервис — сервис, который не хранит состояние между запросами. Любой инстанс может обработать любой запрос. Это фундаментальное условие для горизонтального масштабирования.' },
         { type: 'heading', value: 'Stateful vs Stateless' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Балансировка нагрузки: стратегии',
       type: 'theory',
+      description: 'Алгоритмы балансировки нагрузки (Round Robin, Least Connections, IP Hash) и уровни (L4 TCP vs L7 HTTP). Load Balancer — обязательный компонент в SD-интервью.',
+      solution: 'Алгоритмы:\nRound Robin: по очереди 1→2→3→1\nWeighted RR: мощный сервер получает больше трафика\nLeast Connections: к серверу с наименьшим числом активных соединений\n  → лучший для длинных запросов (streaming, uploads)\nIP Hash: один клиент → всегда один сервер (sticky sessions)\nHealth Check: автоматически убирает упавшие серверы\n\nУровни LB:\nL4 (TCP/UDP): AWS NLB — быстро, но не видит HTTP\nL7 (HTTP): AWS ALB, Nginx — видит URL/headers:\n  /api → API серверы\n  /images → Media серверы\n\nВ SD-интервью: всегда добавляй LB + health checks + automatic failover.',
       content: [
         { type: 'text', value: 'Load Balancer распределяет входящие запросы между серверами. Без LB горизонтальное масштабирование бессмысленно.' },
         { type: 'heading', value: 'Алгоритмы балансировки' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'Слои кеширования: CDN, Redis, Application',
       type: 'theory',
+      description: 'Многоуровневое кеширование: CDN для статики и медиа, Redis для application cache. Стратегии: Cache-Aside, Write-Through, Write-Behind — trade-offs каждой.',
+      solution: 'CDN (Cloudflare, CloudFront):\n- Кешировать: JS/CSS, изображения, видео, редко меняющиеся API\n- Пользователь → CDN edge (близко) → hit: быстро, miss: origin\n\nRedis Cache-Aside (самый частый):\n1. GET "user:123" → hit? вернуть\n2. Miss → SELECT FROM users WHERE id=123\n3. SET "user:123" {data} EX 3600 → вернуть\n\nWrite-Through: запись в БД → сразу в Redis\n+ Кеш актуален, - пишем даже редко читаемые данные\n\nWrite-Behind: пишем в Redis → асинхронно в БД\n+ Быстрая запись, - риск потери данных при сбое\n\nКешируй: дорогие JOIN-запросы, горячие данные.\nНЕ кешируй: простые PK lookup (БД сам кеширует).',
       content: [
         { type: 'text', value: 'Кеширование — самый эффективный способ улучшить производительность. Кеш существует на нескольких уровнях: от браузера до базы данных.' },
         { type: 'heading', value: 'CDN (Content Delivery Network)' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Message Queues: async decoupling',
       type: 'theory',
+      description: 'Message Queue для асинхронной обработки и decoupling сервисов: буферизация пиковой нагрузки, fan-out событий. Kafka vs RabbitMQ — когда что использовать.',
+      solution: 'Когда использовать Queue:\n- Тяжёлые async задачи: email, thumbnail, платежи\n- Пиковая нагрузка: Queue буферизует, workers обрабатывают плавно\n- Decoupling: User Service публикует "user.registered" → Email, Analytics, Recommendation подписаны независимо\n\nKafka:\n- Retained log: сообщения хранятся дни/недели\n- Consumer Groups: разные группы читают одну тему независимо\n- Throughput: миллионы сообщений/сек\n- Использовать: event streaming, аналитика, audit log, fan-out\n\nRabbitMQ:\n- Сообщение удаляется после обработки\n- Flexible routing (fanout, topic, direct)\n- Использовать: job queues, work distribution, простые задачи',
       content: [
         { type: 'text', value: 'Message Queue (очередь сообщений) позволяет компонентам системы взаимодействовать асинхронно. Отправитель не ждёт, пока получатель обработает сообщение.' },
         { type: 'heading', value: 'Когда использовать Message Queue' },
@@ -72,6 +82,8 @@ export default {
       id: 6,
       title: 'Микросервисы: декомпозиция монолита',
       type: 'theory',
+      description: 'Монолит vs микросервисы: trade-offs сложности и масштабируемости. Правило: начни с монолита, декомпозируй когда конкретный компонент стал узким местом.',
+      solution: 'Монолит:\n+ Прост в разработке, отладке, деплое\n- Масштабируется только целиком, один баг роняет всё\n\nМикросервисы:\n+ Масштабировать только нагруженный компонент\n+ Независимые деплои, разные технологии\n- Distributed systems complexity, сетевые вызовы, distributed tracing\n\nКогда декомпозировать:\n1. Конкретный компонент — узкое место\n2. Команды мешают друг другу в одной кодовой базе\n3. Компоненты требуют разных технологий\n\nDDD паттерн: User Service, Order Service, Payment Service, Inventory Service\n\nAPI Gateway: единая точка входа, auth, rate limiting, routing, BFF\n\nНа интервью: "Начнём с монолита, декомпозируем по мере роста."',
       content: [
         { type: 'text', value: 'Микросервисы — архитектурный паттерн, при котором система разбивается на небольшие независимые сервисы. Каждый сервис отвечает за одну функциональную область.' },
         { type: 'heading', value: 'Монолит vs Микросервисы' },
@@ -85,6 +97,7 @@ export default {
       id: 7,
       title: 'Практика: масштабирование монолита',
       type: 'practice',
+      description: 'Поэтапная эволюция архитектуры социальной сети от 1K до 10M DAU: на каждом шаге определить узкое место и применить конкретное решение.',
       requirements: [
         'Описать стартовую архитектуру монолита для социальной сети (1 сервер, 1 БД)',
         'Пройти эволюцию по шагам: 1K → 100K → 1M → 10M DAU',

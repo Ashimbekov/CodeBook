@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Репликация: master-slave архитектура',
       type: 'theory',
+      description: 'Master-Slave репликация: write только на Master, read на Replicas. Синхронная vs асинхронная (задержка 10–100мс). Автоматический failover за 10–60 секунд.',
+      solution: 'Master-Slave: write → Master, read → Replicas. Синхронная: нет потери данных, но медленнее. Асинхронная: быстро, риск потери при падении Master. Failover: monitor → detect → promote Replica → redirect трафик. Решает: read scalability + DR, но НЕ write scalability.',
       content: [
         { type: 'text', value: 'Репликация — создание копий данных на нескольких серверах. Цель: отказоустойчивость и масштабирование чтения.' },
         { type: 'heading', value: 'Master-Slave (Primary-Replica)' },
@@ -22,6 +24,8 @@ export default {
       id: 2,
       title: 'Multi-Master репликация',
       type: 'theory',
+      description: 'Active-Active: несколько Masters принимают записи одновременно. Главная проблема — конфликты записей из разных регионов и стратегии их разрешения.',
+      solution: 'Конфликт: DC1 SET email="a@gmail", DC2 SET email="b@gmail" одновременно. Стратегии: LWW (последний timestamp побеждает), Application-level merge, CRDTs (счётчики/sets). Использовать только при: гео-распределённые записи обязательны. Сложно в эксплуатации — избегать без необходимости.',
       content: [
         { type: 'text', value: 'В Multi-Master (Active-Active) конфигурации несколько узлов принимают записи одновременно. Сложнее, но иногда необходимо.' },
         { type: 'heading', value: 'Когда нужен Multi-Master' },
@@ -39,6 +43,8 @@ export default {
       id: 3,
       title: 'Шардирование: горизонтальное разделение данных',
       type: 'theory',
+      description: 'Sharding: разделение данных по нескольким серверам. Зачем нужно, Shard Key — правила выбора (высокая кардинальность, равномерное распределение, частые WHERE).',
+      solution: 'Шардирование нужно: 10 ТБ, 100K write/sec на один сервер не помещается. Shard Key выбирать: высокая кардинальность + равномерность (нет hotspot) + часто в WHERE. Плохой пример: shard by status (только 3 значения). Хороший: shard by user_id или chat_id. Изменить Shard Key потом = миграция всех данных.',
       content: [
         { type: 'text', value: 'Шардирование (Sharding) — разделение данных между несколькими серверами БД. Каждый сервер хранит только часть данных.' },
         { type: 'heading', value: 'Зачем шардирование' },
@@ -52,6 +58,8 @@ export default {
       id: 4,
       title: 'Range Sharding vs Hash Sharding',
       type: 'theory',
+      description: 'Range Sharding (по диапазону дат): эффективные range-запросы, но Hot Spot на текущем шарде. Hash Sharding (hash(key)%N): равномерно, но range-запросы по всем шардам.',
+      solution: 'Range: сhard по created_at диапазонам → range-запросы быстры, но новые записи только в один шард (hotspot). Hash: shard = hash(user_id)%N → равномерно, нет hotspot, но диапазоны → all shards. Решение hotspot: Consistent Hashing. Используют в: Cassandra, DynamoDB.',
       content: [
         { type: 'text', value: 'Два основных подхода к тому, как распределять данные по шардам.' },
         { type: 'heading', value: 'Range Sharding (шардирование по диапазону)' },
@@ -65,6 +73,8 @@ export default {
       id: 5,
       title: 'Проблемы шардирования',
       type: 'theory',
+      description: 'Cross-Shard Queries (scatter-gather медленно), Cross-Shard Transactions (2PC сложно). Решения: правильный Shard Key, денормализация, очереди для eventual consistency.',
+      solution: 'Cross-Shard Query: параллельный scatter-gather по всем шардам → медленно. Решение: Shard Key так чтобы связанные данные на одном шарде. Cross-Shard Transaction: 2PC (Two-Phase Commit) → сложно и медленно. Решение: очереди + eventual consistency вместо распределённых транзакций.',
       content: [
         { type: 'text', value: 'Шардирование — мощный инструмент, но с серьёзными сложностями, которые нужно учитывать.' },
         { type: 'heading', value: 'Cross-Shard Queries (Кросс-шардные запросы)' },
@@ -85,6 +95,8 @@ export default {
       id: 6,
       title: 'Resharding: что делать при росте данных',
       type: 'theory',
+      description: 'Resharding без downtime: добавить шарды → скопировать данные → синхронизировать дельту → переключить трафик. Consistent Hashing: перемещается только ~1/N данных.',
+      solution: 'Resharding 4→8 шардов: добавить 4 пустых → частичный роутинг → copy + sync дельты → switch трафик → delete старые. Consistent Hashing упрощает: ~1/N данных переезжает vs весь массив. Best practice: 256 виртуальных шардов на 8 физических = добавление сервера без миграции.',
       content: [
         { type: 'text', value: 'Со временем данные растут. Один шард перегружается. Нужно добавить новые шарды и перераспределить данные.' },
         { type: 'heading', value: 'Resharding: пошаговый процесс' },
@@ -98,6 +110,7 @@ export default {
       id: 7,
       title: 'Практика: проектируем шардирование для мессенджера',
       type: 'practice',
+      description: 'Практика шардирования WhatsApp-масштаба: 1B пользователей, 100B сообщений/день, 36 ПБ за 5 лет. Shard Key = chat_id, Cassandra с partition+clustering ключами.',
       requirements: [
         'Оценить объём данных и обосновать необходимость шардирования',
         'Выбрать ключ шардирования с обоснованием',

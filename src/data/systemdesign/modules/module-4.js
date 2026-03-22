@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Зачем нужен кеш: базовые концепции',
       type: 'theory',
+      description: 'Иерархия хранилищ по скорости (L1 Cache → HDD → сеть), принцип Pareto для кеша (20% данных = 80% запросов) и что стоит кешировать.',
+      solution: 'Иерархия: in-memory ~50нс, Redis ~1мс, SSD ~100мкс, HDD ~10мс, сеть ~0.5-150мс. Кешировать: дорогие SQL JOIN, внешние API, сессии, конфигурации, агрегаты. Не кешировать: часто меняющиеся данные, уникальные per-user данные с требованием актуальности.',
       content: [
         { type: 'text', value: 'Кеш — это быстрое хранилище промежуточных результатов. Вместо повторного выполнения дорогой операции (запрос к БД, HTTP-вызов) — берём из кеша.' },
         { type: 'heading', value: 'Иерархия хранилищ по скорости' },
@@ -29,6 +31,8 @@ export default {
       id: 2,
       title: 'Redis: возможности и структуры данных',
       type: 'theory',
+      description: 'Шесть структур данных Redis: String, Hash, List, Set, Sorted Set, Bitmap — с паттернами использования, TTL и политиками вытеснения (LRU/LFU).',
+      solution: 'String → кеш/счётчики; Hash → профили объектов; List → очереди (LPUSH/RPOP); Set → уникальные теги/лайки; Sorted Set → рейтинги/приоритеты; Bitmap → компактные флаги активности. TTL: SET key val EX 3600. Eviction: LRU (давно не читали) или LFU (редко читали). Redis: ~100K RPS однопоточно.',
       content: [
         { type: 'text', value: 'Redis (Remote Dictionary Server) — in-memory хранилище данных с богатым набором структур данных. Самый популярный кеш в индустрии.' },
         { type: 'heading', value: 'Структуры данных Redis' },
@@ -42,6 +46,8 @@ export default {
       id: 3,
       title: 'Стратегия Cache-Aside (Lazy Loading)',
       type: 'theory',
+      description: 'Cache-Aside: приложение само управляет кешем — при промахе загружает из БД, при записи инвалидирует кеш. Алгоритм чтения и записи с race condition.',
+      solution: 'Read: redis.get(key) → hit → return; miss → db.query() → redis.setex(key, 3600, val) → return. Write: db.update() → redis.del(key) (инвалидировать, не обновлять!). Плюсы: только нужное кешируется, устойчив к падению кеша. Минус: cold start, race condition.',
       content: [
         { type: 'text', value: 'Cache-Aside — самая распространённая стратегия. Приложение само управляет кешем: читает из кеша, при промахе идёт в БД и обновляет кеш.' },
         { type: 'heading', value: 'Алгоритм Cache-Aside (чтение)' },
@@ -62,6 +68,8 @@ export default {
       id: 4,
       title: 'Write-Through и Write-Back стратегии',
       type: 'theory',
+      description: 'Write-Through: запись в кеш и БД одновременно (всегда актуально, но медленнее). Write-Back: только в кеш + асинхронный flush в БД (быстро, но риск потери данных).',
+      solution: 'Write-Through: db.write() + cache.write() → кеш актуален, задержка = БД+кеш, лишние write. Write-Back: cache.write() + queue → асинхронный db.write() → быстро, батчинг. Применение: Write-Through → финансовые данные; Write-Back → счётчики просмотров, метрики (допустима потеря).',
       content: [
         { type: 'text', value: 'Два подхода к синхронизации кеша и базы данных при записи.' },
         { type: 'heading', value: 'Write-Through: запись в кеш и БД одновременно' },
@@ -75,6 +83,8 @@ export default {
       id: 5,
       title: 'CDN: Content Delivery Network',
       type: 'theory',
+      description: 'CDN (POP Edge-серверы по всему миру): Pull CDN (lazy, при первом запросе) vs Push CDN (заранее загружаем). Снижение latency с 200мс до 10мс и нагрузки на origin на 60–90%.',
+      solution: 'Pull CDN (CloudFront, Cloudflare): кеш при первом запросе → origin. Подходит: много файлов, нечасто запрашиваемых. Push CDN: загружаем заранее, редко меняемый контент. Кешировать: JS/CSS/шрифты/изображения/видео. Бонус: DDoS-защита (CDN поглощает трафик).',
       content: [
         { type: 'text', value: 'CDN — сеть серверов, распределённых по всему миру, которые хранят копии статического контента рядом с пользователями.' },
         { type: 'heading', value: 'Как работает CDN' },
@@ -95,6 +105,8 @@ export default {
       id: 6,
       title: 'Проблемы кеширования: thundering herd, cache penetration, hotspots',
       type: 'theory',
+      description: 'Четыре классические проблемы: Thundering Herd (все в БД при истечении кеша), Cache Penetration (несуществующие ключи), Cache Avalanche (массовое истечение TTL), Hot Key.',
+      solution: 'Thundering Herd: distributed lock или TTL jitter (+random(0,300)с). Cache Penetration: Bloom Filter (нет → сразу 404) или кешировать NULL на 60с. Cache Avalanche: TTL = base + random(0, base*0.1). Hot Key: реплицировать ключ на несколько нод или local in-memory cache для топ-N ключей.',
       content: [
         { type: 'text', value: 'Кеш — мощный инструмент, но с рядом классических проблем, которые нужно знать.' },
         { type: 'heading', value: 'Thundering Herd (Стадо буйволов)' },
@@ -111,6 +123,8 @@ export default {
       id: 7,
       title: 'Инвалидация кеша: сложнейшая задача',
       type: 'theory',
+      description: 'Три стратегии инвалидации: TTL, Event-driven (удалить при обновлении), Version-based (добавить версию в ключ). Race condition при параллельной записи и её решение.',
+      solution: 'TTL: auto-expire, просто но stale data. Event-driven: при update → DEL ключ, актуально но нужно не забыть инвалидировать везде. Version-based: "user:123:v5" → старые ключи умрут по TTL. Race condition: всегда DEL после write (не до). Допустимая "свежесть" = 1–24ч для большинства данных.',
       content: [
         { type: 'text', value: 'Известная цитата Фила Карлтона: "В computer science есть только две сложные задачи: инвалидация кеша и именование вещей."' },
         { type: 'heading', value: 'Стратегии инвалидации' },
@@ -124,6 +138,7 @@ export default {
       id: 8,
       title: 'Практика: спроектируй систему кеширования',
       type: 'practice',
+      description: 'Практика проектирования многоуровневой системы кеширования для e-commerce каталога (10M товаров, 50M запросов/день) с инвалидацией через Kafka.',
       requirements: [
         'Описать многоуровневую стратегию кеширования',
         'Выбрать стратегию записи (cache-aside, write-through, write-back)',

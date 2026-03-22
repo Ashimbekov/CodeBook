@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования',
       type: 'practice',
+      description: 'Определение требований WhatsApp и оценка масштаба: 100B сообщений/день = 1.2M сообщений/сек, 100M+ одновременных WebSocket соединений.',
       requirements: [
         'Определить функциональные требования (1-to-1, группы, медиа)',
         'Указать нефункциональные требования (масштаб, latency)',
@@ -46,6 +47,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Real-Time доставка — WebSocket',
       type: 'practice',
+      description: 'WebSocket vs HTTP polling, маршрутизация между Chat Servers через Redis service registry: полный message flow User 1 → User 2 с Kafka для надёжной доставки.',
       requirements: [
         'Объяснить разницу HTTP polling, Long Polling и WebSocket',
         'Описать проблему доставки между разными Chat Servers',
@@ -71,6 +73,7 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных и хранение сообщений',
       type: 'practice',
+      description: 'Cassandra-схема таблицы messages с chat_id как partition key и Snowflake message_id как clustering key; Redis Sorted Set для User Inbox.',
       requirements: [
         'Спроектировать таблицу messages (Cassandra)',
         'Объяснить выбор chat_id как partition key',
@@ -96,6 +99,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Online Presence и статус',
       type: 'practice',
+      description: 'Heartbeat механизм через Redis TTL: 100M онлайн-пользователей × heartbeat каждые 5 сек = 20M Redis ops/сек; Kafka pub/sub для доставки изменений статуса контактам.',
       requirements: [
         'Описать heartbeat механизм с Redis TTL',
         'Объяснить выбор TTL=30 сек и интервала 5 сек',
@@ -119,6 +123,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Push уведомления и оффлайн',
       type: 'practice',
+      description: 'Архитектура push уведомлений через APNs/FCM, sync пропущенных сообщений при reconnect, три статуса доставки (галочки WhatsApp) и ограничения E2E шифрования.',
       requirements: [
         'Описать архитектуру push уведомлений (APNs, FCM)',
         'Объяснить механизм sync пропущенных сообщений при reconnect',
@@ -144,6 +149,7 @@ export default {
       id: 6,
       title: 'Шаг 6: End-to-End Encryption и медиа',
       type: 'practice',
+      description: 'Signal Protocol и Diffie-Hellman обмен ключами для E2E шифрования; медиа шифруется локально и загружается напрямую в S3 — сервер никогда не видит содержимое.',
       requirements: [
         'Описать Signal Protocol на высоком уровне',
         'Объяснить обмен ключами через Diffie-Hellman',
@@ -167,6 +173,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Групповые чаты и масштабирование',
       type: 'practice',
+      description: 'Оптимизированная доставка групповых сообщений через Kafka, расчёт 1540 Chat Servers для 100M соединений, sticky sessions и failover при падении сервера.',
       requirements: [
         'Описать оптимизированную доставку групповых сообщений через Kafka',
         'Рассчитать количество Chat Servers для 100M соединений',

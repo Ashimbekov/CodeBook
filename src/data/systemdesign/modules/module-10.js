@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'REST API: принципы и best practices',
       type: 'theory',
+      description: 'REST: ресурсы (существительные в URL), HTTP методы (GET/POST/PUT/PATCH/DELETE), статус-коды. Хорошие vs плохие URL. Ключевые коды: 201, 204, 401, 403, 429.',
+      solution: 'Ресурсы: /users/123, /users/123/orders. Методы: GET-читать, POST-создать, PUT-заменить, PATCH-обновить, DELETE-удалить. Коды: 200 OK, 201 Created (POST), 204 No Content (DELETE), 400 Bad Request, 401 Unauthenticated, 403 Forbidden, 404 Not Found, 429 Rate Limit. 401 = не залогинен, 403 = нет прав.',
       content: [
         { type: 'text', value: 'REST (Representational State Transfer) — архитектурный стиль для создания веб-API. Основан на ресурсах, HTTP методах и статус-кодах.' },
         { type: 'heading', value: 'Принципы REST' },
@@ -28,6 +30,8 @@ export default {
       id: 2,
       title: 'GraphQL: гибкие запросы данных',
       type: 'theory',
+      description: 'GraphQL решает over-fetching и under-fetching REST. Клиент указывает нужные поля. REST vs GraphQL: когда что выбирать (мобильные клиенты, BFF, сложные вложенные данные).',
+      solution: 'REST проблемы: over-fetching (20 полей, нужны 2), under-fetching (3 запроса вместо 1). GraphQL: один запрос → ровно нужные данные. GraphQL лучше: мобилка (трафик), вложенные данные, несколько клиентов, BFF. REST лучше: простое CRUD, публичное API, CDN кеш, файловые операции.',
       content: [
         { type: 'text', value: 'GraphQL — язык запросов для API, где клиент сам указывает, какие данные ему нужны. Разработан в Facebook.' },
         { type: 'heading', value: 'Проблема REST, которую решает GraphQL' },
@@ -42,6 +46,8 @@ export default {
       id: 3,
       title: 'gRPC: высокопроизводительный RPC',
       type: 'theory',
+      description: 'gRPC: Protocol Buffers (бинарный, 3–10x компактнее JSON) + HTTP/2 (мультиплексирование, streaming). .proto-файл → генерация кода. Применение: внутренние микросервисы.',
+      solution: 'gRPC: .proto → код → вызов как функции. Протоколы: Protobuf (бинарный) + HTTP/2. Быстрее REST/JSON: сжатие 3–10x, мультиплексирование, server streaming. Типичная архитектура: [Браузер] → REST/GraphQL → [API Gateway] → gRPC → [Microservices]. Браузеры не поддерживают gRPC напрямую → gRPC-Web.',
       content: [
         { type: 'text', value: 'gRPC — RPC фреймворк от Google. Использует Protocol Buffers для сериализации и HTTP/2 для транспорта. Идеален для внутреннего inter-service взаимодействия.' },
         { type: 'heading', value: 'Как работает gRPC' },
@@ -62,6 +68,8 @@ export default {
       id: 4,
       title: 'Версионирование API',
       type: 'theory',
+      description: 'Три стратегии: URL (/api/v1/, популярно), Header (Accept: vnd.v2+json), Query param (?version=2). Breaking changes требуют новой версии. Sunsetting: 6–12 месяцев на миграцию.',
+      solution: 'Breaking change → новая версия: удаление поля, изменение типа, изменение семантики, удаление endpoint. Не breaking: добавить необязательное поле/параметр/endpoint. URL версионирование /api/v1/ — популярно и просто. Sunsetting: добавить Deprecation + Sunset заголовки, дать 6–12 месяцев, отключить.',
       content: [
         { type: 'text', value: 'API живёт долго. Клиенты не обновляются мгновенно. Нужно поддерживать обратную совместимость и версионирование.' },
         { type: 'heading', value: 'Стратегии версионирования' },
@@ -81,6 +89,8 @@ export default {
       id: 5,
       title: 'Пагинация: cursor, offset, keyset',
       type: 'theory',
+      description: 'Offset/Limit: просто, но медленно на больших offset и race condition при вставках. Cursor-based: быстро даже на млрд записей, нет race condition, но нельзя прыгать на страницу.',
+      solution: 'Offset: GET /posts?offset=0&limit=20 → медленно при offset=10M. Cursor: GET /posts?limit=20&cursor=eyJpZCI6MTAwfQ → SQL: WHERE id > 100 LIMIT 20. Cursor = base64(last_id). Ответ: {data, next_cursor}. Twitter/Instagram/Facebook используют cursor для бесконечного скролла. Offset → только для маленьких наборов данных.',
       content: [
         { type: 'text', value: 'Когда данных много (миллионы записей), отдавать всё сразу нельзя. Пагинация — разбивка на страницы.' },
         { type: 'heading', value: 'Offset/Limit пагинация' },
@@ -94,6 +104,8 @@ export default {
       id: 6,
       title: 'Аутентификация и авторизация API',
       type: 'theory',
+      description: 'JWT: Header.Payload.Signature, stateless проверка, отзыв через Redis blacklist. OAuth 2.0 flows: Authorization Code (web), PKCE (mobile/SPA), Client Credentials (server-to-server).',
+      solution: 'JWT: декодировать Payload → проверить Signature → проверить exp → проверить role. Stateless (не нужна БД). Отзыв: Redis blacklist до истечения. OAuth: Authorization Code + PKCE для SPA/mobile (нет client secret), Client Credentials для M2M. Публичное API: API Keys проще JWT.',
       content: [
         { type: 'text', value: 'Безопасность API: аутентификация (кто ты?) и авторизация (что тебе разрешено?).' },
         { type: 'heading', value: 'JWT (JSON Web Token)' },
@@ -107,6 +119,7 @@ export default {
       id: 7,
       title: 'Практика: спроектируй API для Twitter',
       type: 'practice',
+      description: 'Практика проектирования REST API для Twitter: tweets CRUD, лайки, лента с cursor-based пагинацией, социальный граф (follow/unfollow/followers), поиск.',
       requirements: [
         'Спроектировать RESTful эндпоинты для твитов (CRUD)',
         'Реализовать API для социального графа (follow/unfollow/followers)',

@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Что такое балансировщик нагрузки и зачем он нужен',
       type: 'theory',
+      description: 'Load Balancer: распределение трафика, health checks, SSL termination, DDoS-защита. L4 (TCP/UDP) vs L7 (HTTP/headers) балансировщики и их применение.',
+      solution: 'L4 (AWS NLB, HAProxy): работает с TCP/UDP, быстрее, меньше возможностей. L7 (Nginx, AWS ALB): видит URL/заголовки, маршрутизирует /api/* → API, /static/* → Files. Для modern архитектуры — L7. LB также: health checks, SSL termination, rate limiting.',
       content: [
         { type: 'text', value: 'Load Balancer (балансировщик нагрузки) — компонент, который принимает входящие запросы и распределяет их между несколькими серверами. Без него горизонтальное масштабирование невозможно.' },
         { type: 'heading', value: 'Что делает Load Balancer' },
@@ -27,6 +29,8 @@ export default {
       id: 2,
       title: 'Round Robin и взвешенный Round Robin',
       type: 'theory',
+      description: 'Round Robin: поочерёдное распределение запросов между серверами. Взвешенный Round Robin: пропорционально мощности сервера (вес 1 vs вес 4).',
+      solution: 'Round Robin: запрос 1→S1, 2→S2, 3→S3, 4→S1... Каждый сервер = 1/N нагрузки. Weighted RR: S1 вес=1 (4CPU), S2 вес=4 (16CPU) → S2 получает 80% трафика. Применять при: homogeneous серверы + однородные запросы по длительности.',
       content: [
         { type: 'text', value: 'Round Robin — самый простой алгоритм балансировки. Запросы распределяются по серверам по кругу, поровну.' },
         { type: 'heading', value: 'Как работает Round Robin' },
@@ -42,6 +46,8 @@ export default {
       id: 3,
       title: 'Least Connections и Least Response Time',
       type: 'theory',
+      description: 'Least Connections: новый запрос → сервер с наименьшим числом активных соединений. Least Response Time: учитывает активные соединения × среднее время ответа.',
+      solution: 'Least Connections: S1=100, S2=30, S3=50 → новый запрос к S2. Применять при: WebSocket, long-polling, streaming, запросы разные по длительности. Least Response Time = min(active_connections × avg_latency) — лучше отражает реальную загрузку.',
       content: [
         { type: 'text', value: 'Round Robin не учитывает, насколько занят сервер. Least Connections исправляет это: новый запрос идёт на сервер с наименьшим числом активных соединений.' },
         { type: 'heading', value: 'Least Connections' },
@@ -62,6 +68,8 @@ export default {
       id: 4,
       title: 'IP Hash и Sticky Sessions',
       type: 'theory',
+      description: 'Session Affinity: hash(client_ip) % N — один пользователь всегда на одном сервере. Проблемы IP Hash и правильное решение через stateless + Redis.',
+      solution: 'IP Hash: hash(client_ip) % N = номер сервера. Проблемы: падение сервера → потеря сессий; NAT → один IP = тысячи юзеров; добавление сервера меняет маппинг всех. Правильно: stateless серверы + сессии в Redis → sticky sessions не нужны.',
       content: [
         { type: 'text', value: 'Иногда нужно, чтобы один пользователь всегда попадал на один и тот же сервер. Это называется Session Affinity или Sticky Sessions.' },
         { type: 'heading', value: 'IP Hash' },
@@ -85,6 +93,8 @@ export default {
       id: 5,
       title: 'Consistent Hashing: решение проблемы перераспределения',
       type: 'theory',
+      description: 'Кольцо хешей (0..2^32): при добавлении/удалении сервера перераспределяется только ~1/N ключей вместо ~75%. Применение в Cassandra, Redis Cluster, CDN.',
+      solution: 'Обычный hash(key)%N: добавление сервера → 75% ключей меняют место. Consistent Hashing: кольцо → hash(key) → идти по часовой → первый сервер. Добавление S4: переезжает только ~1/N ключей. Применение: Cassandra, Redis Cluster, Kafka partitions, CDN.',
       content: [
         { type: 'text', value: 'Обычный хеш (hash(key) % N) имеет критическую проблему: при добавлении или удалении сервера почти все ключи перераспределяются. Consistent Hashing решает это.' },
         { type: 'heading', value: 'Проблема обычного хеша' },
@@ -100,6 +110,8 @@ export default {
       id: 6,
       title: 'Health Checks и отказоустойчивость балансировщика',
       type: 'theory',
+      description: 'Active vs Passive health checks, что проверять в /health эндпоинте, и как обеспечить отказоустойчивость самого Load Balancer (Active-Passive, Active-Active, Anycast).',
+      solution: 'Active health check: GET /health каждые 10–30с → 200 OK = живой. Проверять: приложение, БД соединение, Redis соединение. LB High Availability: Active-Passive (Virtual IP failover), Active-Active (DNS round-robin), Anycast. В cloud (AWS ALB) — HA из коробки.',
       content: [
         { type: 'text', value: 'Load Balancer должен знать, какие серверы живые. Для этого используются health checks.' },
         { type: 'heading', value: 'Типы Health Checks' },
@@ -120,6 +132,7 @@ export default {
       id: 7,
       title: 'Практика: выбор алгоритма балансировки',
       type: 'practice',
+      description: 'Практика выбора алгоритма балансировки для 4 сценариев: REST API, видео-транскодирование, distributed cache и серверы с разной мощностью.',
       requirements: [
         'Проанализировать характеристики нагрузки каждого сценария',
         'Выбрать алгоритм балансировки с обоснованием',

@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Уточнение требований',
       type: 'practice',
+      description: 'Уточнение scope для URL Shortener: функциональные требования (создать ссылку, редирект), нефункциональные (latency < 50ms, 99.9% uptime) и что не входит в scope.',
       requirements: [
         'Задать интервьюеру вопросы для уточнения scope системы',
         'Сформулировать функциональные требования (3-4 пункта)',
@@ -22,6 +23,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Оценка нагрузки',
       type: 'practice',
+      description: 'Расчёт QPS (10 write/сек, 500 read/сек), объёма хранилища (50 GB за 5 лет) и размера кеша (10 GB). Вывод: один PostgreSQL + Redis достаточно при данном масштабе.',
       requirements: [
         'Рассчитать write QPS и read QPS (дано: 100M URLs, 500 read/сек)',
         'Оценить объём хранилища за 5 лет',
@@ -37,6 +39,7 @@ export default {
       id: 3,
       title: 'Шаг 3: API Design',
       type: 'practice',
+      description: 'REST API для URL Shortener и Pastebin: POST /urls, GET /{short_code} (302 vs 301), GET /stats. Обоснование 302 Temporary Redirect для сохранения аналитики кликов.',
       requirements: [
         'Спроектировать REST API для URL Shortener (3 эндпоинта)',
         'Спроектировать REST API для Pastebin (3 эндпоинта)',
@@ -52,6 +55,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Модель данных',
       type: 'practice',
+      description: 'Схема PostgreSQL для URL Shortener (short_code PK, индексы) и Pastebin (метаданные в SQL, контент в S3). Обоснование разделения данных по типу хранилища.',
       requirements: [
         'Спроектировать схему БД для URL Shortener',
         'Спроектировать схему для Pastebin (с учётом больших текстов)',
@@ -67,6 +71,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Генерация хеша (Base62 и коллизии)',
       type: 'practice',
+      description: 'Генерация short_code через Base62 (62^7 = 3.5 триллиона кодов): сравнение MD5+truncate, Auto-increment+Base62 и Pre-generated pool. Рекомендация: Auto-increment + Base62.',
       requirements: [
         'Описать алгоритм генерации short_code через Base62 encoding',
         'Объяснить проблему коллизий и как её решить',
@@ -82,6 +87,7 @@ export default {
       id: 6,
       title: 'Шаг 6: Высокоуровневый дизайн',
       type: 'practice',
+      description: 'Архитектура URL Shortener: Client → CDN → LB → API Servers → Redis → PostgreSQL. Write path (генерация short_code) и read path (redirect с cache-aside).',
       requirements: [
         'Нарисовать (описать текстом) высокоуровневую архитектуру',
         'Описать write path: создание короткой ссылки',
@@ -97,6 +103,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Deep Dive — кеширование и аналитика',
       type: 'practice',
+      description: 'Cache-Aside паттерн для redirect. Решение проблемы click_count hotspot: Redis INCR + периодический flush в PostgreSQL вместо UPDATE на каждый запрос.',
       requirements: [
         'Углублённо разобрать стратегию кеширования: что кешировать, TTL, eviction',
         'Описать Cache-Aside паттерн для redirect',
@@ -112,6 +119,7 @@ export default {
       id: 8,
       title: 'Шаг 8: Узкие места и follow-up вопросы',
       type: 'practice',
+      description: 'Узкие места системы (PostgreSQL SPOF, Redis SPOF) и ответы на follow-up: рост до 50K QPS, 99.99% availability, защита от abuse и удаление истёкших ссылок.',
       requirements: [
         'Выявить потенциальные узкие места в спроектированной системе',
         'Ответить на follow-up: что если система вырастет до 50K QPS?',

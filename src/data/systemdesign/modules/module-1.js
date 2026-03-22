@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Что такое System Design и зачем он нужен',
       type: 'theory',
+      description: 'Введение в System Design-интервью: что оценивают интервьюеры, типовые вопросы (URL-сокращатель, Twitter, Dropbox) и ключевые принципы подхода к задаче.',
+      solution: 'SD-интервью оценивает мышление, а не единственный правильный ответ. Последовательность: уточнить требования → оценить масштаб → high-level дизайн → deep dive в детали. Никогда не рисовать схемы без уточнения scope.',
       content: [
         { type: 'text', value: 'System Design — это процесс проектирования архитектуры программных систем: как разбить большую задачу на компоненты, как они взаимодействуют, как система справляется с нагрузкой. На собеседованиях в крупные компании (Google, Amazon, Meta) это отдельный раунд на 45–60 минут.' },
         { type: 'heading', value: 'Почему это важно?' },
@@ -31,6 +33,8 @@ export default {
       id: 2,
       title: 'Ключевые метрики: латентность и пропускная способность',
       type: 'theory',
+      description: 'Latency (время одной операции) vs Throughput (операций в секунду): числа для запоминания и связь между показателями при проектировании.',
+      solution: 'Latency ориентиры: RAM ~100нс, SSD ~0.1мс, HDD ~10мс, сеть внутри ДЦ ~0.5мс, между ДЦ ~150мс. Throughput = RPS/TPS. Цель: минимизировать latency И максимизировать throughput одновременно.',
       content: [
         { type: 'text', value: 'Прежде чем проектировать систему, нужно понять, что значит "хорошо работает". Два главных показателя: латентность (latency) и пропускная способность (throughput).' },
         { type: 'heading', value: 'Латентность (Latency)' },
@@ -44,6 +48,8 @@ export default {
       id: 3,
       title: 'Доступность, надёжность и отказоустойчивость',
       type: 'theory',
+      description: 'Availability (% uptime в "девятках"), Reliability (корректность) и Fault Tolerance (работа при сбоях): отличия и механизмы достижения.',
+      solution: 'Availability: 99%=3.65 дня/год, 99.9%=8.76ч, 99.99%=52.6мин, 99.999%=5.26мин. Fault Tolerance: репликация + failover + Circuit Breaker. На интервью сразу уточнять SLA — от него зависит вся архитектура.',
       content: [
         { type: 'text', value: 'Три ключевых свойства production-системы, которые часто путают.' },
         { type: 'heading', value: 'Доступность (Availability)' },
@@ -59,6 +65,8 @@ export default {
       id: 4,
       title: 'Горизонтальное vs вертикальное масштабирование — первый взгляд',
       type: 'theory',
+      description: 'Scale Up (больше ресурсов на один сервер) vs Scale Out (больше серверов): плюсы, минусы и когда применять каждый подход.',
+      solution: 'Scale Up: просто, но дорого и есть физический предел. Scale Out: безграничное масштабирование, но сложная архитектура + нужен балансировщик. Стратегия: начинать с Scale Up, переходить на Scale Out при росте. Stateless-сервисы → Scale Out.',
       content: [
         { type: 'text', value: 'Когда система перестаёт справляться с нагрузкой, её нужно масштабировать. Есть два принципиально разных подхода.' },
         { type: 'heading', value: 'Вертикальное масштабирование (Scale Up)' },
@@ -72,6 +80,8 @@ export default {
       id: 5,
       title: 'Фреймворк RESHADED для интервью',
       type: 'theory',
+      description: 'Структурированный фреймворк RESHADED для прохождения System Design интервью: 8 шагов от требований до финального резюме.',
+      solution: 'RESHADED: R-Requirements, E-Estimation, S-Storage Schema, H-High-level Design, A-API Design, D-Deep Dives, E-Edge Cases, D-Done/Summary. Следовать не строго, а как навигатор — думать вслух, показывать trade-offs.',
       content: [
         { type: 'text', value: 'На System Design интервью важно иметь структурированный подход. Один из популярных фреймворков — RESHADED.' },
         { type: 'heading', value: 'R-E-S-H-A-D-E-D' },
@@ -92,6 +102,7 @@ export default {
       id: 6,
       title: 'Оценка масштаба: back-of-the-envelope расчёты',
       type: 'practice',
+      description: 'Практика быстрой оценки нагрузки: DAU → RPS → read/write ratio → объём хранилища за 5 лет на примере Twitter-подобной системы.',
       requirements: [
         'Определить DAU и MAU системы',
         'Рассчитать RPS для записи и чтения',
@@ -116,6 +127,7 @@ export default {
       id: 7,
       title: 'Практика: уточнение требований',
       type: 'practice',
+      description: 'Практика уточнения функциональных и нефункциональных требований на примере URL-сокращателя: шаблон вопросов и разграничение scope.',
       requirements: [
         'Сформулировать функциональные требования',
         'Определить нефункциональные требования (масштаб, SLA, latency)',

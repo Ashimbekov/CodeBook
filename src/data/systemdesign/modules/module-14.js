@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Три столпа Observability: метрики, логи, трассировка',
       type: 'theory',
+      description: 'Observability: Metrics (Counter/Gauge/Histogram в Prometheus), Logs (структурированный JSON + ELK), Traces (Span + trace_id через все сервисы + Jaeger). Correlation ID для сквозного поиска.',
+      solution: 'Metrics: Counter (запросы растут), Gauge (активные соединения сейчас), Histogram (p95/p99 latency). Logs: JSON структурированный + trace_id → grep по одному ID. Traces: входящий запрос → trace_id → Span в каждом сервисе → Jaeger визуализирует дерево. OpenTelemetry → один стандарт для всех трёх.',
       content: [
         { type: 'text', value: 'Observability (наблюдаемость) — способность понять внутреннее состояние системы по внешним сигналам. Три столпа: Metrics, Logs, Traces.' },
         { type: 'heading', value: 'Metrics (Метрики)' },
@@ -22,6 +24,8 @@ export default {
       id: 2,
       title: 'SLI, SLO, SLA: договорённости об уровне сервиса',
       type: 'theory',
+      description: 'SLI (измеримая метрика), SLO (внутренняя цель, амбициознее SLA), SLA (юридический договор с компенсацией). Примеры: availability SLI, p95 latency SLO, AWS EC2 99.99% SLA.',
+      solution: 'SLI: successful_requests / total × 100%. SLO: 99.9% availability (43.2 мин downtime/месяц), p95 < 200мс. SLA: юридически обязывает, AWS: < 99.99% → 10% кредит, < 99.5% → 30%. SLA всегда слабее SLO (буфер). SLO не должен быть 100% — дорого, нельзя деплоить.',
       content: [
         { type: 'text', value: 'SLI, SLO, SLA — иерархия договорённостей между командой и пользователями о надёжности.' },
         { type: 'heading', value: 'SLI (Service Level Indicator)' },
@@ -37,6 +41,8 @@ export default {
       id: 3,
       title: 'Error Budget: бюджет ошибок',
       type: 'theory',
+      description: 'Error Budget = 100% - SLO. SLO 99.9% → 43.2 мин downtime/месяц. Правило Google SRE: > 50% бюджета → деплоим freely; < 10% → freeze deployments; = 0 → никаких изменений.',
+      solution: 'Error Budget = (1 - SLO) × период. 99.9% SLO × 30 дней = 43.2 мин. Использование бюджета: плановые деплои + инциденты + эксперименты. > 50% остатка → свободный деплой. < 10% → фокус надёжности. = 0 → заморозить до конца периода. Объединяет интересы Dev и Ops.',
       content: [
         { type: 'text', value: 'Error Budget — допустимое количество "плохих событий" за период. Это баланс между надёжностью и скоростью разработки.' },
         { type: 'heading', value: 'Расчёт Error Budget' },
@@ -50,6 +56,8 @@ export default {
       id: 4,
       title: 'Алертинг: умные оповещения',
       type: 'theory',
+      description: 'Symptom-based vs cause-based алерты. Принципы: Actionable, Rare, Precise. Severity: P1 (разбудить) / P2 / P3. Burn Rate алерты для SLO: Burn Rate > 14.4 за 1ч → расходуем дневной бюджет за час.',
+      solution: 'Плохие алерты (причина): CPU > 80%, Free disk < 20%. Хорошие (симптом): Error rate > 1%, p99 > 2с, Payment failures > 0.5%. Burn Rate = фактический error rate / allowed. Burn Rate=5 → тратим бюджет в 5× быстрее. P1: Burn Rate > 14.4 за 1ч. Alert fatigue = 100 алертов/день → команда перестаёт реагировать.',
       content: [
         { type: 'text', value: 'Alert fatigue — усталость от алертов. Если каждый день 100 алертов и 90 ложных — команда перестаёт реагировать. Хороший алертинг — редкий, точный, actionable.' },
         { type: 'heading', value: 'Принципы хорошего алерта' },
@@ -70,6 +78,8 @@ export default {
       id: 5,
       title: 'Distributed Tracing: отслеживание запросов',
       type: 'theory',
+      description: 'Distributed Tracing: trace_id через все сервисы, Span = один шаг обработки, Jaeger/Zipkin визуализируют дерево span для нахождения bottleneck. OpenTelemetry — vendor-neutral стандарт.',
+      solution: 'Tracing: входящий запрос → генерируем trace_id → каждый сервис читает/передаёт trace_id → создаёт Span → отправляет в Jaeger. Результат: видим дерево с временем каждого шага → находим bottleneck. OpenTelemetry: один коллектор → Jaeger (traces) + Prometheus (metrics) + Loki (logs). Авто-инструментация без изменения кода.',
       content: [
         { type: 'text', value: 'В микросервисной архитектуре один запрос проходит через 5–20 сервисов. Найти проблему без distributed tracing — как искать иголку в стоге сена.' },
         { type: 'heading', value: 'Как работает Distributed Tracing' },
@@ -83,6 +93,7 @@ export default {
       id: 6,
       title: 'Практика: Dashboard и Runbook',
       type: 'practice',
+      description: 'Практика: Golden Signals dashboard (Rate/Errors/Duration/Saturation с PromQL), symptom-based алерты P1/P2/P3, Runbook для "API Error Rate > 1%" с пошаговой диагностикой.',
       requirements: [
         'Определить Golden Signals (Rate, Errors, Duration, Saturation)',
         'Описать метрики и PromQL запросы для Grafana dashboard',

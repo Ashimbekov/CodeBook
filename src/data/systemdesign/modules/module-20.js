@@ -7,6 +7,7 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и особенности',
       type: 'practice',
+      description: 'Определение требований Uber и оценка масштаба: 1.25M location updates/сек, matching < 1 сек, проблема double matching — чем Uber отличается от CRUD-систем.',
       requirements: [
         'Определить функциональные требования (геолокация, матчинг, поездка)',
         'Указать нефункциональные требования (latency, consistency)',
@@ -46,6 +47,7 @@ export default {
       id: 2,
       title: 'Шаг 2: Геолокация — работа с координатами',
       type: 'practice',
+      description: 'Проблема поиска ближайших из 5M водителей, принцип Geohash и Redis GEO API (GEOADD, GEOSEARCH) — O(N+log M) вместо O(N) brute force, шардирование по городам.',
       requirements: [
         'Объяснить проблему наивного поиска по 5M водителям',
         'Описать принцип Geohash',
@@ -71,6 +73,7 @@ export default {
       id: 3,
       title: 'Шаг 3: Location Service — 1.25M updates/sec',
       type: 'practice',
+      description: 'Архитектура Location Service: Driver App → WebSocket → Kafka → Location Processor → Redis GEO; роль Kafka как буфера и TTL для определения оффлайн-водителя.',
       requirements: [
         'Описать архитектуру Location Service через Kafka',
         'Объяснить роль Location Gateway',
@@ -94,6 +97,7 @@ export default {
       id: 4,
       title: 'Шаг 4: Matching Service — найти водителя',
       type: 'practice',
+      description: 'Алгоритм матчинга пассажира с водителем: GEOSEARCH → ранжирование → таймаут; distributed lock через Redis NX для предотвращения double matching; Ride State Machine.',
       requirements: [
         'Описать алгоритм поиска и ранжирования водителей',
         'Объяснить distributed lock через Redis NX',
@@ -119,6 +123,7 @@ export default {
       id: 5,
       title: 'Шаг 5: Отображение водителя в реальном времени',
       type: 'practice',
+      description: 'Redis Pub/Sub для трансляции позиции водителя пассажиру в реальном времени; клиентская интерполяция для плавного движения маркера между дискретными обновлениями каждые 4 сек.',
       requirements: [
         'Описать push обновлений позиции водителя пассажиру',
         'Объяснить Redis Pub/Sub для трансляции позиции',
@@ -142,6 +147,7 @@ export default {
       id: 6,
       title: 'Шаг 6: Surge Pricing и аналитика',
       type: 'practice',
+      description: 'Surge pricing через Kafka Streams (demand/supply ratio в geohash-ячейке) с Redis TTL; Lambda Architecture — real-time (Kafka Streams) + batch (Spark) для полной аналитики.',
       requirements: [
         'Описать формулу surge pricing через demand/supply',
         'Объяснить вычисление через Kafka Streams',
@@ -165,6 +171,7 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура и масштабирование',
       type: 'practice',
+      description: 'Итоговая архитектура Uber: 9 сервисов, шардирование Location Service по городам, 5 ключевых решений (Redis GEO, Kafka, distributed lock, Geohash sharding, surge pricing).',
       requirements: [
         'Перечислить все сервисы Uber',
         'Описать шардирование Location Service по городам',

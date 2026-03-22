@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'SQL vs NoSQL: матрица решений',
       type: 'theory',
+      description: 'Критерии выбора между SQL и NoSQL на SD-интервью: ACID vs масштаб, схема vs гибкость. SQL достаточен для 99% приложений до десятков миллионов пользователей.',
+      solution: 'Выбирай SQL (PostgreSQL/MySQL) если:\n- Нужны JOIN, ACID-транзакции (финансы, заказы)\n- Стабильная структурированная схема\n- Объём < 1 TB на одном узле\n\nВыбирай NoSQL если:\n- Write throughput 100K+ write/сек\n- Гибкая схема (документы с переменной структурой)\n- Горизонтальное масштабирование критично\n- Простые key-value или document операции без JOIN\n\nМатрица:\nMongoDB: документы, гибкая схема, средний масштаб\nCassandra: write-heavy, временные ряды, большой масштаб\nRedis: кеш, сессии, rate limiting\nDynamoDB: managed key-value, serverless\n\nПравило: не выбирай NoSQL "потому что масштабируемо".',
       content: [
         { type: 'text', value: 'Выбор между SQL и NoSQL — один из ключевых вопросов в SD-интервью. Нет универсального ответа: нужно знать trade-offs и уметь обосновать выбор.' },
         { type: 'heading', value: 'Когда выбирать SQL (PostgreSQL, MySQL)' },
@@ -20,6 +22,8 @@ export default {
       id: 2,
       title: 'CAP-теорема и её применение',
       type: 'theory',
+      description: 'CAP-теорема: распределённая система гарантирует только 2 из 3 свойств (Consistency, Availability, Partition Tolerance). Практический выбор CP vs AP.',
+      solution: 'CAP: в распределённой системе P (partition) неизбежен.\nПоэтому реальный выбор: CP или AP.\n\nCP (Consistency + Partition):\n- PostgreSQL с синхронной репликацией, HBase, Zookeeper\n- При сбое: откажи запросу, но не верни устаревшие данные\n- Использовать: банки, медицина, inventory\n\nAP (Availability + Partition):\n- Cassandra, DynamoDB, CouchDB\n- Eventual Consistency: данные рано или поздно синхронизируются\n- При сбое: вернуть устаревшие данные, но остаться доступным\n- Использовать: соцсети, e-commerce (кроме оплаты), IoT\n\nПример: лайки в Instagram — AP (eventual consistency нормально)\nПример: снятие денег — CP (нельзя допустить расхождение)',
       content: [
         { type: 'text', value: 'CAP-теорема (Brewer, 2000): распределённая система может обеспечить только 2 из 3 гарантий: Consistency, Availability, Partition Tolerance.' },
         { type: 'heading', value: 'Компоненты CAP' },
@@ -33,6 +37,8 @@ export default {
       id: 3,
       title: 'Redis: когда и как использовать',
       type: 'theory',
+      description: 'Паттерны использования Redis: Cache-Aside, сессии, rate limiting, leaderboard на Sorted Set, distributed lock. Ограничения: всё в RAM, нет JOIN.',
+      solution: 'Паттерны:\n\n1. Cache-Aside:\nSET "user:123" {data} EX 3600\nGET → hit? вернуть : DB → SET → вернуть\n\n2. Rate Limiting (sliding window):\nINCR "ratelimit:{user}:{minute}" → EXPIRE 60\nIf count > limit → HTTP 429\n\n3. Leaderboard (Sorted Set):\nZADD "scores" 1500 "user:123"\nZRANGE "scores" 0 9 WITHSCORES → топ-10\n\n4. Distributed Lock:\nSET "lock:{res}" uuid NX EX 30\nRelease: DEL если uuid совпадает\n\n5. Pub/Sub для уведомлений:\nPUBLISH "notifications:{user}" {message}\nSUBSCRIBE "notifications:{user}"\n\nОграничения: всё в RAM (дорого), без PRIMARY данных, при restart без AOF — потеря данных.',
       content: [
         { type: 'text', value: 'Redis — in-memory хранилище данных. Используется как кеш, очередь задач, хранилище сессий, rate limiter и многое другое.' },
         { type: 'heading', value: 'Паттерны использования Redis' },
@@ -46,6 +52,8 @@ export default {
       id: 4,
       title: 'Cassandra: write-heavy и временные ряды',
       type: 'theory',
+      description: 'Cassandra оптимизирована для write-heavy нагрузки и временных рядов. Модель: Partition Key определяет узел, Clustering Key задаёт сортировку внутри партиции.',
+      solution: 'Когда использовать Cassandra:\n- Write throughput 100K+ write/сек\n- Временные ряды (IoT, метрики, логи событий)\n- Append-only данные (история действий)\n- Multi-datacenter, географическое распределение\n\nМодель данных (чат):\nCREATE TABLE messages (\n  chat_id UUID,         -- Partition Key\n  created_at TIMESTAMP, -- Clustering Key DESC\n  message_id UUID,\n  content TEXT,\n  PRIMARY KEY (chat_id, created_at)\n) WITH CLUSTERING ORDER BY (created_at DESC);\n\nЗапрос: SELECT * FROM messages WHERE chat_id=? LIMIT 20;\n→ один узел, отсортировано, быстро\n\nПравило: сначала запросы, потом схема.\nДублирование данных — норма.\nNO JOINS, NO COMPLEX WHERE.',
       content: [
         { type: 'text', value: 'Apache Cassandra — распределённая NoSQL БД, оптимизированная для высокого write throughput и горизонтального масштабирования.' },
         { type: 'heading', value: 'Когда использовать Cassandra' },
@@ -59,6 +67,8 @@ export default {
       id: 5,
       title: 'Партиционирование (Sharding)',
       type: 'theory',
+      description: 'Шардирование БД: стратегии (range, hash, geographic, consistent hashing) и проблемы (cross-shard JOIN, hot spots, resharding). Последнее средство масштабирования.',
+      solution: 'Стратегии:\n1. Range sharding: A-М → шард 1, Н-Я → шард 2\n   Минус: hot spots\n2. Hash sharding: shard = hash(user_id) % N\n   Плюс: равномерно. Минус: range запросы медленные\n3. Geographic: EU → EU шард, US → US шард\n4. Consistent Hashing: виртуальное кольцо, минимальное перераспределение при добавлении узла\n\nПроблемы шардирования:\n- Cross-shard JOIN: решение — денормализация, application-layer JOIN\n- Hot spots: добавить replica для горячего шарда\n- Resharding: consistent hashing снижает перераспределение\n\nПорядок масштабирования:\n1. Вертикальное масштабирование\n2. Индексы и оптимизация запросов\n3. Read replicas\n4. Redis кеш\n5. Шардирование — только в крайнем случае',
       content: [
         { type: 'text', value: 'Шардирование — разбиение данных между несколькими узлами БД. Нужно когда объём данных или write QPS превышает возможности одного сервера.' },
         { type: 'heading', value: 'Стратегии шардирования' },
@@ -72,6 +82,8 @@ export default {
       id: 6,
       title: 'Репликация и модели согласованности',
       type: 'theory',
+      description: 'Master-Slave репликация для high availability и read scaling. Модели согласованности: Strong, Eventual, Read-Your-Writes, Monotonic Reads — когда что применять.',
+      solution: 'Master-Slave репликация:\n- Master: все writes\n- Slaves (read replicas): только reads\n\nSync vs Async:\nСинхронная: write подтверждается когда все slaves сохранили\n  → нет потери данных, высокая latency\nАсинхронная: write подтверждается сразу\n  → низкая latency, возможна потеря последних данных\n\nМодели согласованности:\nStrong: всегда читаешь самые свежие данные\n  → финансы, медицина, inventory\nEventual: данные синхронизируются в конечном счёте\n  → соцсети, аналитика, настройки\nRead-Your-Writes: после своей записи всегда её видишь\n  → решение: читать с primary после своей записи\nMonotonic Reads: никогда не видишь более старые данные\n  → решение: sticky sessions (один пользователь → один slave)',
       content: [
         { type: 'text', value: 'Репликация — копирование данных на несколько узлов для высокой доступности и распределения read нагрузки.' },
         { type: 'heading', value: 'Master-Slave репликация' },
@@ -85,6 +97,7 @@ export default {
       id: 7,
       title: 'Практика: выбор БД для сценариев',
       type: 'practice',
+      description: 'Выбор подходящей БД для 5 сценариев: банковские транзакции, лента активности, профили пользователей, поиск постов и кеш сессий.',
       requirements: [
         'Для каждого из 5 сценариев выбрать подходящую БД и объяснить почему',
         'Сценарий 1: банковские транзакции между счетами (ACID, consistency)',

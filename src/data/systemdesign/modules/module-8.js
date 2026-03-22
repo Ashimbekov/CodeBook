@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Зачем нужны очереди сообщений',
       type: 'theory',
+      description: 'Message Queue: decoupling, асинхронная обработка, буферизация пиков, надёжность при сбоях. Сравнение: без очереди (750мс+сбои) vs с очередью (105мс + фоновые воркеры).',
+      solution: 'Без очереди: синхронный chain БД(100мс)+email(300мс)+SMS(200мс)+аналитика(150мс)=750мс, один сбой = всё упало. С очередью: БД(100мс)+publish(5мс)=105мс, email/SMS/аналитика асинхронно в фоне. Плюсы: decoupling, буферизация, надёжность, масштабирование workers.',
       content: [
         { type: 'text', value: 'Очередь сообщений (Message Queue) — промежуточный компонент, который позволяет сервисам общаться асинхронно. Producer отправляет сообщение, Consumer обрабатывает его независимо.' },
         { type: 'heading', value: 'Проблемы без очереди' },
@@ -28,6 +30,8 @@ export default {
       id: 2,
       title: 'RabbitMQ: традиционный брокер сообщений',
       type: 'theory',
+      description: 'RabbitMQ: AMQP-брокер с умным роутингом через Exchange (Direct, Fanout, Topic, Headers). Гарантии доставки: at-most-once, at-least-once, exactly-once.',
+      solution: 'RabbitMQ: Producer → Exchange → Queue → Consumer. Exchange типы: Direct (точный ключ), Fanout (broadcast), Topic (паттерн "user.*"), Headers. Гарантии: At-most-once (потеря допустима), At-least-once (consumer idempotent), Exactly-once (ACKs). Лучше RabbitMQ: task queues, work distribution, приоритеты.',
       content: [
         { type: 'text', value: 'RabbitMQ — классический AMQP (Advanced Message Queuing Protocol) брокер. Реализует "умный" роутинг сообщений.' },
         { type: 'heading', value: 'Архитектура RabbitMQ' },
@@ -41,6 +45,8 @@ export default {
       id: 3,
       title: 'Apache Kafka: распределённый лог событий',
       type: 'theory',
+      description: 'Kafka: append-only distributed log, Topics+Partitions+Offsets, Consumer Groups (партиция → один consumer в группе). Kafka vs RabbitMQ: выбор по throughput и сценарию.',
+      solution: 'Kafka: Topic→Partitions→Offset. 3 партиции + 3 consumers = параллельно. Разные Consumer Groups читают одни данные независимо. Kafka лучше: млн сообщений/сек, долгосрочное хранение (7 дней), event streaming, аналитика. RabbitMQ лучше: сложный роутинг, task queues, приоритеты, небольшой объём.',
       content: [
         { type: 'text', value: 'Kafka — распределённый лог событий с очень высоким throughput. Изначально создан в LinkedIn для обработки миллиардов событий в день.' },
         { type: 'heading', value: 'Концепция: Distributed Log' },
@@ -55,6 +61,8 @@ export default {
       id: 4,
       title: 'Pub/Sub паттерн',
       type: 'theory',
+      description: 'Pub/Sub vs Point-to-Point: один топик → все subscribers получают копию. Event-driven архитектура: ORDER_PLACED → Inventory+Payment+Email+Warehouse+Analytics независимо.',
+      solution: 'Point-to-Point: Sender → Queue → один Receiver (сообщение потребляется). Pub/Sub: Publisher → Topic → ВСЕ Subscribers получают копию (каждый читает независимо). Open/Closed Principle: новый subscriber — просто подписка на существующий топик, publisher не меняется.',
       content: [
         { type: 'text', value: 'Pub/Sub (Publish/Subscribe) — паттерн, где publishers отправляют сообщения в топик, а все subscribers получают копию.' },
         { type: 'heading', value: 'Отличие от Point-to-Point' },
@@ -68,6 +76,8 @@ export default {
       id: 5,
       title: 'Dead Letter Queue (DLQ)',
       type: 'theory',
+      description: 'DLQ: очередь для необработанных сообщений (ошибка N раз / TTL истёк / переполнена). Retry с exponential backoff: 1с, 2с, 4с. Алерты при появлении сообщений в DLQ.',
+      solution: 'DLQ попадают: consumer nack + нет requeue, max retry exceeded, TTL истёк. Retry стратегия: TransientError → retryCount < 3 → requeue с backoff (2^n * 1000мс); PermanentError → сразу DLQ. Работа с DLQ: алерт → анализ причин → fix → replay. Обязательный элемент production.',
       content: [
         { type: 'text', value: 'Что происходит, если consumer не может обработать сообщение? Ошибка? Некорректные данные? Dead Letter Queue решает эту проблему.' },
         { type: 'heading', value: 'Что такое DLQ' },
@@ -88,6 +98,8 @@ export default {
       id: 6,
       title: 'Идемпотентность и гарантии доставки',
       type: 'theory',
+      description: 'Почему дубликаты неизбежны при at-least-once. Idempotency: операция безопасна при повторном выполнении. Реализация через idempotency_key проверку в Redis/БД.',
+      solution: 'Дубликаты: consumer обработал но упал до ack → broker повторно отправляет. Idempotency: credit(userId, 100, txId="abc") → проверить Redis "уже обработан?" → skip. Реализация: извлечь message_id → Redis GET → если есть skip → обработать → Redis SET. Правило: at-least-once + idempotency > exactly-once (проще и надёжнее).',
       content: [
         { type: 'text', value: 'В распределённых системах сообщения могут быть доставлены дважды. Idempotency — защита от дублирования.' },
         { type: 'heading', value: 'Почему дубликаты неизбежны' },
@@ -101,6 +113,7 @@ export default {
       id: 7,
       title: 'Практика: проектируем систему обработки заказов',
       type: 'practice',
+      description: 'Практика проектирования e-commerce обработки заказов с Kafka: синхронный путь (100мс) + 5 Consumer Groups + DLQ + idempotency через Redis.',
       requirements: [
         'Разделить синхронный и асинхронный пути обработки',
         'Описать pub/sub архитектуру с Kafka топиком и consumer groups',
