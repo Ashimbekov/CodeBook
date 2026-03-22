@@ -16,10 +16,7 @@ export default {
       ],
       hint: 'Сначала проверяйте делимость на 15 (кратно и 3 и 5), затем на 3, затем на 5. Используйте цикл for от 1 до n и оператор остатка %.',
       expectedOutput: 'fizzBuzz(15) -> ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]\nfizzBuzz(1) -> ["1"]\nfizzBuzz(5) -> ["1","2","Fizz","4","Buzz"]',
-      solution: {
-        code: 'function fizzBuzz(n) {\n  const result = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) result.push("FizzBuzz");\n    else if (i % 3 === 0) result.push("Fizz");\n    else if (i % 5 === 0) result.push("Buzz");\n    else result.push(String(i));\n  }\n  return result;\n}\n\nconsole.log(fizzBuzz(15));',
-        language: 'javascript'
-      },
+      solution: 'function fizzBuzz(n) {\n  const result = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) result.push("FizzBuzz");\n    else if (i % 3 === 0) result.push("Fizz");\n    else if (i % 5 === 0) result.push("Buzz");\n    else result.push(String(i));\n  }\n  return result;\n}\n\nconsole.log(fizzBuzz(15));',
       explanation: 'Ключевой момент: проверять кратность 15 (и 3 и 5) нужно первой, иначе числа вроде 15 попадут в ветку Fizz или Buzz. Оператор % (остаток от деления) возвращает 0 когда число делится нацело. String(i) явно преобразует число в строку, что важно для единообразного типа элементов массива.'
     },
     {
@@ -36,10 +33,7 @@ export default {
       ],
       hint: 'Приведите строку к нижнему регистру и удалите все символы кроме букв через replace(/[^a-zа-я]/gi, ""). Затем сравните строку с её реверсом.',
       expectedOutput: 'isPalindrome("racecar") -> true\nisPalindrome("Madam") -> true\nisPalindrome("hello") -> false\nisPalindrome("А роза упала на лапу Азора") -> true',
-      solution: {
-        code: 'function isPalindrome(str) {\n  const cleaned = str.toLowerCase().replace(/\\s/g, "");\n  let left = 0;\n  let right = cleaned.length - 1;\n  while (left < right) {\n    if (cleaned[left] !== cleaned[right]) return false;\n    left++;\n    right--;\n  }\n  return true;\n}\n\nconsole.log(isPalindrome("racecar"));          // true\nconsole.log(isPalindrome("A man a plan a canal Panama")); // true\nconsole.log(isPalindrome("hello"));            // false',
-        language: 'javascript'
-      },
+      solution: 'function isPalindrome(str) {\n  const cleaned = str.toLowerCase().replace(/\\s/g, "");\n  let left = 0;\n  let right = cleaned.length - 1;\n  while (left < right) {\n    if (cleaned[left] !== cleaned[right]) return false;\n    left++;\n    right--;\n  }\n  return true;\n}\n\nconsole.log(isPalindrome("racecar"));          // true\nconsole.log(isPalindrome("A man a plan a canal Panama")); // true\nconsole.log(isPalindrome("hello"));            // false',
       explanation: 'Подход двух указателей: left движется слева направо, right — справа налево, сходясь к центру. Это O(n) по времени и O(1) по памяти. Нормализация через toLowerCase() и replace убирает пробелы и делает проверку нечувствительной к регистру. Если в любой момент символы не совпадают — строка не палиндром.'
     },
     {
@@ -56,10 +50,7 @@ export default {
       ],
       hint: 'Рекурсивная версия: factorial(n) = n * factorial(n-1), базовый случай factorial(0) = 1. Итеративная: цикл от 1 до n с умножением. Для n < 0 возвращайте null или бросайте ошибку.',
       expectedOutput: 'factorial(0) -> 1\nfactorial(5) -> 120\nfactorial(10) -> 3628800\nfactorial(-1) -> null или Error\nОба способа (рекурсия и итерация) дают одинаковый результат',
-      solution: {
-        code: '// Рекурсивный\nfunction factorialRecursive(n) {\n  if (n < 0) throw new Error("n должно быть >= 0");\n  if (n === 0) return 1;\n  return n * factorialRecursive(n - 1);\n}\n\n// Итеративный\nfunction factorialIterative(n) {\n  if (n < 0) throw new Error("n должно быть >= 0");\n  let result = 1;\n  for (let i = 2; i <= n; i++) result *= i;\n  return result;\n}\n\nconsole.log(factorialRecursive(5)); // 120\nconsole.log(factorialIterative(5)); // 120\nconsole.log(factorialRecursive(0)); // 1',
-        language: 'javascript'
-      },
+      solution: '// Рекурсивный\nfunction factorialRecursive(n) {\n  if (n < 0) throw new Error("n должно быть >= 0");\n  if (n === 0) return 1;\n  return n * factorialRecursive(n - 1);\n}\n\n// Итеративный\nfunction factorialIterative(n) {\n  if (n < 0) throw new Error("n должно быть >= 0");\n  let result = 1;\n  for (let i = 2; i <= n; i++) result *= i;\n  return result;\n}\n\nconsole.log(factorialRecursive(5)); // 120\nconsole.log(factorialIterative(5)); // 120\nconsole.log(factorialRecursive(0)); // 1',
       explanation: 'Рекурсия — естественное описание факториала: n! = n * (n-1)!. Базовый случай — 0! = 1. Итеративная версия предпочтительнее в JavaScript из-за отсутствия оптимизации хвостовой рекурсии — при больших n рекурсия вызовет переполнение стека. Оба варианта начинают с проверки n < 0 чтобы выбросить ошибку для недопустимых входных данных.'
     },
     {
@@ -76,10 +67,7 @@ export default {
       ],
       hint: 'Приведите обе строки к нижнему регистру, отсортируйте символы и сравните. Или подсчитайте частоту символов через Map и сравните карты.',
       expectedOutput: 'isAnagram("listen", "silent") -> true\nisAnagram("hello", "world") -> false\nisAnagram("Astronomer", "Moon starer") -> true\nisAnagram("abc", "ab") -> false',
-      solution: {
-        code: 'function isAnagram(str1, str2) {\n  const normalize = (s) => s.toLowerCase().split("").sort().join("");\n  return normalize(str1) === normalize(str2);\n}\n\n// Без sort — через Map\nfunction isAnagramMap(str1, str2) {\n  const s1 = str1.toLowerCase();\n  const s2 = str2.toLowerCase();\n  if (s1.length !== s2.length) return false;\n  const count = new Map();\n  for (const ch of s1) count.set(ch, (count.get(ch) || 0) + 1);\n  for (const ch of s2) {\n    if (!count.get(ch)) return false;\n    count.set(ch, count.get(ch) - 1);\n  }\n  return true;\n}\n\nconsole.log(isAnagram("listen", "silent")); // true\nconsole.log(isAnagram("hello", "world"));   // false',
-        language: 'javascript'
-      },
+      solution: 'function isAnagram(str1, str2) {\n  const normalize = (s) => s.toLowerCase().split("").sort().join("");\n  return normalize(str1) === normalize(str2);\n}\n\n// Без sort — через Map\nfunction isAnagramMap(str1, str2) {\n  const s1 = str1.toLowerCase();\n  const s2 = str2.toLowerCase();\n  if (s1.length !== s2.length) return false;\n  const count = new Map();\n  for (const ch of s1) count.set(ch, (count.get(ch) || 0) + 1);\n  for (const ch of s2) {\n    if (!count.get(ch)) return false;\n    count.set(ch, count.get(ch) - 1);\n  }\n  return true;\n}\n\nconsole.log(isAnagram("listen", "silent")); // true\nconsole.log(isAnagram("hello", "world"));   // false',
       explanation: 'Первый подход — сортировка букв: анаграммы дают одинаковую отсортированную строку. Это O(n log n). Второй подход через Map — O(n): подсчитываем частоту букв первой строки, затем уменьшаем счётчики по второй строке. Если хоть один счётчик станет нулём до конца или встретится незнакомая буква — строки не анаграммы. Проверка длин в начале ускоряет очевидные случаи.'
     },
     {
@@ -97,10 +85,7 @@ export default {
       ],
       hint: 'Рекурсия без мемоизации имеет сложность O(2^n) — очень медленно. Мемоизация кэширует уже вычисленные значения. Итерация с двумя переменными — самый эффективный O(n) способ.',
       expectedOutput: 'fibonacci(0) -> 0\nfibonacci(1) -> 1\nfibonacci(10) -> 55\nfibonacci(20) -> 6765\nМемоизированная версия в 1000x быстрее рекурсивной для n=40',
-      solution: {
-        code: '// Итеративная (оптимальная)\nfunction fibonacci(n) {\n  if (n < 0) throw new Error("n >= 0");\n  if (n <= 1) return n;\n  let prev = 0, curr = 1;\n  for (let i = 2; i <= n; i++) {\n    [prev, curr] = [curr, prev + curr];\n  }\n  return curr;\n}\n\n// Мемоизированная\nconst fibMemo = (() => {\n  const cache = new Map([[0, 0], [1, 1]]);\n  return function fib(n) {\n    if (cache.has(n)) return cache.get(n);\n    const result = fib(n - 1) + fib(n - 2);\n    cache.set(n, result);\n    return result;\n  };\n})();\n\nconsole.log(fibonacci(10));  // 55\nconsole.log(fibMemo(50));    // 12586269025 (быстро)',
-        language: 'javascript'
-      },
+      solution: '// Итеративная (оптимальная)\nfunction fibonacci(n) {\n  if (n < 0) throw new Error("n >= 0");\n  if (n <= 1) return n;\n  let prev = 0, curr = 1;\n  for (let i = 2; i <= n; i++) {\n    [prev, curr] = [curr, prev + curr];\n  }\n  return curr;\n}\n\n// Мемоизированная\nconst fibMemo = (() => {\n  const cache = new Map([[0, 0], [1, 1]]);\n  return function fib(n) {\n    if (cache.has(n)) return cache.get(n);\n    const result = fib(n - 1) + fib(n - 2);\n    cache.set(n, result);\n    return result;\n  };\n})();\n\nconsole.log(fibonacci(10));  // 55\nconsole.log(fibMemo(50));    // 12586269025 (быстро)',
       explanation: 'Наивная рекурсия fib(n) = fib(n-1) + fib(n-2) работает за O(2^n) — экспоненциально, так как повторно вычисляет одни и те же значения. Итеративный подход хранит только два последних числа (O(1) памяти) и работает за O(n). Мемоизация через Map кэширует уже вычисленные значения, превращая рекурсию в O(n) по времени. Деструктурирующее присваивание [prev, curr] = [curr, prev + curr] обновляет оба значения одновременно.'
     },
     {
@@ -117,10 +102,7 @@ export default {
       ],
       hint: 'Приведите текст к нижнему регистру, удалите пунктуацию через replace(/[^\w\s]/g, ""), разбейте по пробелам через split. Для каждого слова увеличивайте счётчик в объекте.',
       expectedOutput: 'wordCount("кот пёс кот кот пёс рыба") -> { кот: 3, пёс: 2, рыба: 1 }\nwordCount("Hello, hello! HELLO") -> { hello: 3 }\nwordCount("") -> {}',
-      solution: {
-        code: 'function wordCount(text) {\n  const words = text.toLowerCase().replace(/[^a-zа-яё\\s]/gi, "").split(/\\s+/).filter(Boolean);\n  const count = words.reduce((acc, word) => {\n    acc[word] = (acc[word] || 0) + 1;\n    return acc;\n  }, {});\n  return count;\n}\n\nfunction wordCountSorted(text) {\n  const count = wordCount(text);\n  return Object.entries(count)\n    .sort((a, b) => b[1] - a[1])\n    .reduce((acc, [word, cnt]) => ({ ...acc, [word]: cnt }), {});\n}\n\nconst text = "hello world hello JavaScript world hello";\nconsole.log(wordCountSorted(text));\n// { hello: 3, world: 2, javascript: 1 }',
-        language: 'javascript'
-      },
+      solution: 'function wordCount(text) {\n  const words = text.toLowerCase().replace(/[^a-zа-яё\\s]/gi, "").split(/\\s+/).filter(Boolean);\n  const count = words.reduce((acc, word) => {\n    acc[word] = (acc[word] || 0) + 1;\n    return acc;\n  }, {});\n  return count;\n}\n\nfunction wordCountSorted(text) {\n  const count = wordCount(text);\n  return Object.entries(count)\n    .sort((a, b) => b[1] - a[1])\n    .reduce((acc, [word, cnt]) => ({ ...acc, [word]: cnt }), {});\n}\n\nconst text = "hello world hello JavaScript world hello";\nconsole.log(wordCountSorted(text));\n// { hello: 3, world: 2, javascript: 1 }',
       explanation: 'Регулярное выражение /[^a-zа-яё\\s]/gi удаляет всё кроме букв и пробелов — это покрывает латиницу и кириллицу. split(/\\s+/) разбивает по любым пробельным символам. filter(Boolean) убирает пустые строки от множественных пробелов. reduce строит объект-счётчик за один проход O(n). Для сортировки по частоте используем Object.entries + sort + Object.fromEntries — паттерн трансформации объектов.'
     },
     {
@@ -138,10 +120,7 @@ export default {
       ],
       hint: 'Для каждого правила проверьте соответствующее поле данных. Собирайте все ошибки в массив. Поддержите правила: required, minLength, maxLength, pattern (regex), min, max для чисел.',
       expectedOutput: 'validate({ name: "" }, { name: { required: true } }) -> ["name: обязательное поле"]\nvalidate({ age: 200 }, { age: { max: 150 } }) -> ["age: максимум 150"]\nvalidate({ email: "valid@test.com" }, emailRules) -> [] (пустой массив = OK)',
-      solution: {
-        code: 'const rules = {\n  required: (value) => (value !== undefined && value !== null && value !== "") || "поле обязательно",\n  email: (value) => !value || /\\S+@\\S+\\.\\S+/.test(value) || "некорректный email",\n  number: (value) => !value || !isNaN(Number(value)) || "должно быть числом",\n  positive: (value) => !value || Number(value) > 0 || "должно быть положительным",\n  minLength: (min) => (value) => !value || value.length >= min || `минимум ${min} символов`,\n  maxLength: (max) => (value) => !value || value.length <= max || `максимум ${max} символов`,\n};\n\nfunction validate(data, schema) {\n  const errors = [];\n  for (const [field, fieldRules] of Object.entries(schema)) {\n    for (const rule of fieldRules) {\n      const result = rule(data[field]);\n      if (result !== true) errors.push(`${field}: ${result}`);\n    }\n  }\n  return errors;\n}\n\nconst errors = validate(\n  { name: "Al", email: "not-email", age: -5 },\n  {\n    name: [rules.required, rules.minLength(3)],\n    email: [rules.required, rules.email],\n    age: [rules.number, rules.positive]\n  }\n);\nconsole.log(errors);\n// ["name: минимум 3 символа", "email: некорректный email", "age: должно быть положительным"]',
-        language: 'javascript'
-      },
+      solution: 'const rules = {\n  required: (value) => (value !== undefined && value !== null && value !== "") || "поле обязательно",\n  email: (value) => !value || /\\S+@\\S+\\.\\S+/.test(value) || "некорректный email",\n  number: (value) => !value || !isNaN(Number(value)) || "должно быть числом",\n  positive: (value) => !value || Number(value) > 0 || "должно быть положительным",\n  minLength: (min) => (value) => !value || value.length >= min || `минимум ${min} символов`,\n  maxLength: (max) => (value) => !value || value.length <= max || `максимум ${max} символов`,\n};\n\nfunction validate(data, schema) {\n  const errors = [];\n  for (const [field, fieldRules] of Object.entries(schema)) {\n    for (const rule of fieldRules) {\n      const result = rule(data[field]);\n      if (result !== true) errors.push(`${field}: ${result}`);\n    }\n  }\n  return errors;\n}\n\nconst errors = validate(\n  { name: "Al", email: "not-email", age: -5 },\n  {\n    name: [rules.required, rules.minLength(3)],\n    email: [rules.required, rules.email],\n    age: [rules.number, rules.positive]\n  }\n);\nconsole.log(errors);\n// ["name: минимум 3 символа", "email: некорректный email", "age: должно быть положительным"]',
       explanation: 'Каждое правило — функция: принимает значение, возвращает true или строку с ошибкой. minLength/maxLength — фабрики правил: возвращают функцию с замыканием над параметром. validate собирает все ошибки не останавливаясь на первой. Паттерн "правило возвращает true или сообщение об ошибке" позволяет добавлять новые правила без изменения логики валидации. Условие !value в большинстве правил означает "пропустить проверку для пустого поля" — это дополняет required.'
     },
     {
@@ -158,10 +137,7 @@ export default {
       ],
       hint: 'Создайте массив пар [[1000,"M"],[900,"CM"],...,[1,"I"]] от большего к меньшему. Жадно вычитайте наибольшее возможное значение и добавляйте символ. Для fromRoman суммируйте значения слева направо, вычитая если меньший стоит перед большим.',
       expectedOutput: 'toRoman(1) -> "I"\ntoRoman(4) -> "IV"\ntoRoman(9) -> "IX"\ntoRoman(2024) -> "MMXXIV"\nfromRoman("XIV") -> 14\nfromRoman("MMXXIV") -> 2024',
-      solution: {
-        code: 'function toRoman(num) {\n  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];\n  const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];\n  let result = "";\n  for (let i = 0; i < vals.length; i++) {\n    while (num >= vals[i]) {\n      result += syms[i];\n      num -= vals[i];\n    }\n  }\n  return result;\n}\n\nfunction fromRoman(str) {\n  const map = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 };\n  return str.split("").reduce((acc, ch, i, arr) => {\n    const curr = map[ch];\n    const next = map[arr[i + 1]];\n    return acc + (next > curr ? -curr : curr);\n  }, 0);\n}\n\nconsole.log(toRoman(1994));   // "MCMXCIV"\nconsole.log(fromRoman("XIV")); // 14',
-        language: 'javascript'
-      },
+      solution: 'function toRoman(num) {\n  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];\n  const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];\n  let result = "";\n  for (let i = 0; i < vals.length; i++) {\n    while (num >= vals[i]) {\n      result += syms[i];\n      num -= vals[i];\n    }\n  }\n  return result;\n}\n\nfunction fromRoman(str) {\n  const map = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 };\n  return str.split("").reduce((acc, ch, i, arr) => {\n    const curr = map[ch];\n    const next = map[arr[i + 1]];\n    return acc + (next > curr ? -curr : curr);\n  }, 0);\n}\n\nconsole.log(toRoman(1994));   // "MCMXCIV"\nconsole.log(fromRoman("XIV")); // 14',
       explanation: 'toRoman использует жадный алгоритм: берём наибольший символ который влезает в число и вычитаем его значение — повторяем до нуля. Важно включить субтрактивные пары (CM=900, CD=400, XC=90 и т.д.) в таблицу. fromRoman: правило вычитания — если следующий символ больше текущего, текущий вычитается, иначе прибавляется. Например IV: I(1) < V(5), поэтому -1 + 5 = 4.'
     },
     {
@@ -178,10 +154,7 @@ export default {
       ],
       hint: 'Создайте строки-алфавиты для каждого типа символов. Формируйте итоговый алфавит из активных типов. Затем выбирайте случайные символы через Math.random(). Убедитесь, что минимум по одному символу каждого типа включён.',
       expectedOutput: 'generatePassword({ length: 8 }) -> строка из 8 символов\ngeneratePassword({ length: 12, uppercase: true, numbers: true }) -> "aB3dEf7gHi2k"\ngeneratePassword({ length: 6, symbols: true }) -> содержит спецсимволы\nДлина всегда равна length',
-      solution: {
-        code: 'function generatePassword({ length = 12, uppercase = true, lowercase = true, numbers = true, symbols = false } = {}) {\n  const sets = {\n    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",\n    lowercase: "abcdefghijklmnopqrstuvwxyz",\n    numbers: "0123456789",\n    symbols: "!@#$%^&*"\n  };\n\n  const enabled = Object.entries({ uppercase, lowercase, numbers, symbols })\n    .filter(([, v]) => v)\n    .map(([k]) => sets[k]);\n\n  if (!enabled.length) throw new Error("Хотя бы один тип символов должен быть включён");\n\n  const allChars = enabled.join("");\n  const required = enabled.map(set => set[Math.floor(Math.random() * set.length)]);\n  const remaining = Array.from({ length: length - required.length }, () =>\n    allChars[Math.floor(Math.random() * allChars.length)]\n  );\n\n  return [...required, ...remaining].sort(() => Math.random() - 0.5).join("");\n}\n\nconsole.log(generatePassword({ length: 16, symbols: true }));\nconsole.log(generatePassword({ length: 8, numbers: true, uppercase: false }));',
-        language: 'javascript'
-      },
+      solution: 'function generatePassword({ length = 12, uppercase = true, lowercase = true, numbers = true, symbols = false } = {}) {\n  const sets = {\n    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",\n    lowercase: "abcdefghijklmnopqrstuvwxyz",\n    numbers: "0123456789",\n    symbols: "!@#$%^&*"\n  };\n\n  const enabled = Object.entries({ uppercase, lowercase, numbers, symbols })\n    .filter(([, v]) => v)\n    .map(([k]) => sets[k]);\n\n  if (!enabled.length) throw new Error("Хотя бы один тип символов должен быть включён");\n\n  const allChars = enabled.join("");\n  const required = enabled.map(set => set[Math.floor(Math.random() * set.length)]);\n  const remaining = Array.from({ length: length - required.length }, () =>\n    allChars[Math.floor(Math.random() * allChars.length)]\n  );\n\n  return [...required, ...remaining].sort(() => Math.random() - 0.5).join("");\n}\n\nconsole.log(generatePassword({ length: 16, symbols: true }));\nconsole.log(generatePassword({ length: 8, numbers: true, uppercase: false }));',
       explanation: 'Деструктуризация параметров с дефолтными значениями — удобный способ принять опциональные настройки. Гарантия минимум одного символа каждого типа: сначала берём по одному символу из каждого включённого набора, затем дополняем до нужной длины. Финальное sort(() => Math.random() - 0.5) перемешивает символы случайно (алгоритм Фишера-Йейтса через sort — простой, но не криптографически стойкий вариант).'
     },
     {
@@ -199,10 +172,7 @@ export default {
       ],
       hint: 'Создайте объект с методами calculate(a, op, b) и getHistory(). История хранится в массиве, ограниченном 10 элементами. Используйте switch или Map операторов к функциям. Для деления проверяйте на 0.',
       expectedOutput: 'calc.calculate(5, "+", 3) -> 8\ncalc.calculate(10, "/", 0) -> Error "Деление на ноль"\ncalc.getHistory() -> [{a:5, op:"+", b:3, result:8}, ...]\nИстория содержит не более 10 последних операций',
-      solution: {
-        code: 'function createCalculator() {\n  const history = [];\n\n  const evaluate = (expression) => {\n    // Используем Function для парсинга выражения (только цифры и операторы)\n    const sanitized = expression.replace(/[^0-9+\\-*/.%()\\s]/g, "");\n    try {\n      // eslint-disable-next-line no-new-func\n      const result = new Function(`return (${sanitized})`)();\n      if (!isFinite(result)) throw new Error("Деление на ноль");\n      history.push({ expression, result, time: new Date().toISOString() });\n      if (history.length > 10) history.shift();\n      return result;\n    } catch (err) {\n      throw new Error(`Ошибка вычисления: ${err.message}`);\n    }\n  };\n\n  return {\n    evaluate,\n    history: () => [...history],\n    clear: () => { history.length = 0; }\n  };\n}\n\nconst calc = createCalculator();\nconsole.log(calc.evaluate("2 + 3 * 4")); // 14\nconsole.log(calc.evaluate("10 / 2"));    // 5\nconsole.log(calc.evaluate("2 ** 10"));   // 1024\nconsole.log(calc.history());',
-        language: 'javascript'
-      },
+      solution: 'function createCalculator() {\n  const history = [];\n\n  const evaluate = (expression) => {\n    // Используем Function для парсинга выражения (только цифры и операторы)\n    const sanitized = expression.replace(/[^0-9+\\-*/.%()\\s]/g, "");\n    try {\n      // eslint-disable-next-line no-new-func\n      const result = new Function(`return (${sanitized})`)();\n      if (!isFinite(result)) throw new Error("Деление на ноль");\n      history.push({ expression, result, time: new Date().toISOString() });\n      if (history.length > 10) history.shift();\n      return result;\n    } catch (err) {\n      throw new Error(`Ошибка вычисления: ${err.message}`);\n    }\n  };\n\n  return {\n    evaluate,\n    history: () => [...history],\n    clear: () => { history.length = 0; }\n  };\n}\n\nconst calc = createCalculator();\nconsole.log(calc.evaluate("2 + 3 * 4")); // 14\nconsole.log(calc.evaluate("10 / 2"));    // 5\nconsole.log(calc.evaluate("2 ** 10"));   // 1024\nconsole.log(calc.history());',
       explanation: 'Паттерн фабричной функции (closure): createCalculator возвращает объект с методами, которые имеют доступ к приватному массиву history через замыкание. Санитизация выражения через regex — мера безопасности перед передачей в new Function. history.length = 0 — стандартный способ очистить массив без создания нового. history: () => [...history] возвращает копию, предотвращая прямое изменение внутреннего состояния снаружи.'
     }
   ]
