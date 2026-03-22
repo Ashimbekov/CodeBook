@@ -20,7 +20,9 @@ const courseImports = {
   react: () => import('../data/react/index.js'),
   python: () => import('../data/python/index.js'),
   javascript: () => import('../data/javascript/index.js'),
-  interview: () => import('../data/interview/index.js')
+  interview: () => import('../data/interview/index.js'),
+  fullstack: () => import('../data/fullstack/index.js'),
+  cheatsheets: () => import('../data/cheatsheets/index.js')
 }
 
 const moduleImports = {
@@ -42,7 +44,9 @@ const moduleImports = {
   react: (moduleId) => import(`../data/react/modules/module-${moduleId}.js`),
   python: (moduleId) => import(`../data/python/modules/module-${moduleId}.js`),
   javascript: (moduleId) => import(`../data/javascript/modules/module-${moduleId}.js`),
-  interview: (moduleId) => import(`../data/interview/modules/module-${moduleId}.js`)
+  interview: (moduleId) => import(`../data/interview/modules/module-${moduleId}.js`),
+  fullstack: (moduleId) => import(`../data/fullstack/modules/module-${moduleId}.js`),
+  cheatsheets: (moduleId) => import(`../data/cheatsheets/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {
