@@ -98,6 +98,8 @@ export default {
       id: 7,
       title: 'Практика: проектируем шардирование для мессенджера',
       type: 'practice',
+      solution: 'Система сообщений WhatsApp-масштаба (1B пользователей, 100B сообщений/день):\n\nОценка хранилища:\n100B × 365 × 5 × 200 байт = 36 ПБ за 5 лет → шардирование обязательно\n\nВыбор Shard Key: chat_id\nПочему: все сообщения одного чата на одном шарде → "история чата" = один шард, нет кросс-шардных запросов\n\nРоутинг: shard = consistent_hash(chat_id) % N_shards\n\nБД на каждом шарде — Cassandra:\nтаблица messages:\n  partition key: chat_id\n  clustering key: message_id DESC (Snowflake ID)\n  columns: sender_id, text, timestamp, type\n\nЗапрос последних 100 сообщений:\nSELECT * FROM messages WHERE chat_id = ? LIMIT 100\n→ один шард, один partition key, мгновенно\n\nРепликация: replication_factor = 3 для отказоустойчивости',
+      explanation: 'Ключевое решение — shard key = chat_id, а не message_id. При message_id сообщения одного чата оказываются на разных шардах, и каждый запрос истории требует scatter-gather по всем шардам. Cassandra оптимальна для append-only данных с высоким write throughput. Consistent Hashing позволяет добавлять шарды без полного перераспределения.',
       content: [
         { type: 'text', value: 'Спроектируем шардирование для системы сообщений, похожей на WhatsApp.' },
         { type: 'heading', value: 'Требования' },

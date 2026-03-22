@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и масштаб',
       type: 'practice',
+      solution: 'Функциональные требования:\n- Создание твита (280 символов, опционально медиа)\n- Подписка на пользователей (follow/unfollow)\n- Домашняя лента: последние твиты от подписок\n- Лайк, ретвит, ответ\n- Поиск по твитам и пользователям\n\nНефункциональные требования:\n- 300M DAU, 500M твитов/день\n- Доступность: 99.99%\n- Лента < 200 мс\n- Eventual consistency ленты (задержка 1–2 сек допустима)\n\nОценка нагрузки:\n- Write: 500M / 86,400 ≈ 6,000 RPS\n- Read: 300M × 30 загрузок / 86,400 ≈ 100,000 RPS\n- Read/Write = 17:1 (read-heavy, но write тоже существен)\n- Хранилище: 500M × 1КБ = 500 ГБ/день',
+      explanation: 'Twitter — система с умеренным write (6K RPS) и высоким read (100K RPS). Read/Write 17:1 означает кеширование лент обязательно. 500 ГБ хранилища в день → Cassandra для горизонтального масштабирования. Eventual consistency ленты — правильный выбор: задержка 1–2 сек незаметна для пользователя.',
       content: [
         { type: 'text', value: 'Определяем что строим и какой масштаб планируем.' },
         { type: 'heading', value: 'Функциональные требования (Core)' },
@@ -34,6 +36,8 @@ export default {
       id: 2,
       title: 'Шаг 2: API Design',
       type: 'practice',
+      solution: 'Tweets API:\n- POST /api/v1/tweets → 201 {tweet_id, text, author, created_at}\n- GET /api/v1/tweets/{tweet_id} → 200 {tweet_id, text, likes, retweets}\n- DELETE /api/v1/tweets/{tweet_id} → 204\n- POST /api/v1/tweets/{tweet_id}/likes → 201\n- DELETE /api/v1/tweets/{tweet_id}/likes → 204\n- POST /api/v1/tweets/{tweet_id}/retweets → 201\n\nFeed API (cursor-based пагинация):\n- GET /api/v1/timeline/home?limit=20&cursor={cursor}\n  Response: {tweets: [...], next_cursor, refresh_cursor}\n- GET /api/v1/timeline/user/{user_id}?limit=20&cursor={cursor}\n\nSocial Graph API:\n- POST /api/v1/users/{user_id}/follow → 201\n- DELETE /api/v1/users/{user_id}/follow → 204\n- GET /api/v1/users/{user_id}/followers?limit=20&cursor={cursor}\n- GET /api/v1/users/{user_id}/following?limit=20&cursor={cursor}',
+      explanation: 'Cursor-based пагинация обязательна для лент — offset-based ломается при вставке новых твитов (дубликаты или пропуски при скролле). refresh_cursor позволяет подгружать только новые твиты при pull-to-refresh без потери позиции скролла.',
       content: [
         { type: 'text', value: 'Ключевые API для основных функций Twitter.' },
         { type: 'heading', value: 'Tweets API' },
@@ -48,6 +52,8 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      solution: 'Таблица tweets (Cassandra, шардирование по user_id):\ntweet_id BIGINT PK (Snowflake ID — содержит timestamp)\nuser_id BIGINT, text VARCHAR(280), media_ids ARRAY, reply_to BIGINT\nlike_count INT, retweet_cnt INT, created_at TIMESTAMP\nИндексы: (user_id, created_at DESC), (created_at DESC)\n\nТаблица user_follows (Cassandra или PostgreSQL):\nfollower_id BIGINT, followee_id BIGINT, created_at TIMESTAMP\nPK: (follower_id, followee_id)\nДоп. индекс: (followee_id, follower_id)\n\nFeed кеш (Redis Sorted Set):\n"feed:{user_id}" → {tweet_id: timestamp_score}\nХранить последние 1000 твитов ленты\n\nВыбор хранилищ:\n- Tweets: Cassandra (high write throughput)\n- User data: PostgreSQL (ACID, небольшой объём)\n- Social Graph: отдельный сервис / PostgreSQL\n- Feed: Redis Sorted Set\n- Media: S3 + CloudFront CDN',
+      explanation: 'Snowflake ID в tweet_id содержит timestamp — это позволяет сортировать по времени без отдельного поля created_at в индексе. Два индекса для user_follows (follower→followee и followee→follower) нужны для разных запросов: "кто я фоллоую" и "кто фоллоует меня". Redis Sorted Set — идеальная структура для ленты с сортировкой по времени.',
       content: [
         { type: 'text', value: 'Схема данных для ключевых сущностей.' },
         { type: 'heading', value: 'Таблица tweets' },
@@ -64,6 +70,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Алгоритм ленты — Fan-Out',
       type: 'practice',
+      solution: 'Fan-Out on Write (Push): при публикации твита → записать tweet_id в ленту каждого подписчика в Redis.\nПлюсы: чтение ленты мгновенное. Минусы: знаменитость с 100M подписчиков → 100M операций записи.\n\nFan-Out on Read (Pull): при загрузке ленты → запросить твиты всех подписок.\nПлюсы: нет проблемы celebrities. Минусы: 2000 подписок → 2000 запросов к БД.\n\nГибридный подход Twitter:\n- Обычные пользователи (< 10K подписчиков): Fan-Out on Write → пишем в Redis ленты подписчиков\n- Celebrities (> 10K подписчиков): Fan-Out on Read → при загрузке ленты подмешать их твиты\n\nПри GET feed:\n1. precomputed_tweets = Redis "feed:{user_id}" (обычные пользователи)\n2. celebrity_ids = Social Graph Service\n3. celebrity_tweets = Cassandra последние твиты знаменитостей\n4. merge + sort by timestamp → топ-20',
+      explanation: 'Гибридный подход — образцовое решение trade-off. Fan-out on write эффективен для большинства пользователей (быстрое чтение). Для celebrities (< 0.01% пользователей, но > 50% write нагрузки) — pull при чтении. Граница 10K подписчиков — настраиваемый параметр под реальные метрики.',
       content: [
         { type: 'text', value: 'Самая сложная часть: как доставить твит всем подписчикам быстро?' },
         { type: 'heading', value: 'Подход 1: Fan-Out on Write (Push)' },
@@ -78,6 +86,8 @@ export default {
       id: 5,
       title: 'Шаг 5: High-Level архитектура',
       type: 'practice',
+      solution: 'Сервисы:\n- Tweet Service: создание/получение/удаление твитов → Cassandra\n- Feed Service: генерация и чтение ленты → Redis Cluster (Sorted Sets)\n- Social Graph Service: follow/unfollow, followers/following → PostgreSQL\n- User Service: профили, аутентификация → PostgreSQL\n- Media Service: загрузка медиа → S3 + CloudFront\n- Notification Service: push/email → Kafka consumer\n- Search Service: индексирование и поиск → Elasticsearch\n\nData Flow (публикация твита):\n[Client] → POST /tweets → [API Gateway]\n→ [Tweet Service]: сохранить в Cassandra\n→ Kafka event: {tweet_id, user_id}\n→ [Feed Fanout Worker]: получить followers → Redis ZADD для каждого\n→ [Notification Service]: уведомить упомянутых\n→ [Search Worker]: индексировать в Elasticsearch',
+      explanation: 'Kafka декаплирует Tweet Service от Fan-out Worker — tweet создаётся быстро (100 мс), fan-out происходит асинхронно (секунды). Это обеспечивает eventual consistency ленты, приемлемую для Twitter. Каждый сервис имеет свою БД (Database per Service) — независимое масштабирование.',
       content: [
         { type: 'text', value: 'Собираем все сервисы в единую архитектуру.' },
         { type: 'heading', value: 'Сервисы' },
@@ -90,6 +100,8 @@ export default {
       id: 6,
       title: 'Шаг 6: Поиск и тренды',
       type: 'practice',
+      solution: 'Полнотекстовый поиск (Elasticsearch):\n- Search Worker читает Kafka "new_tweets" → индексирует в ES\n- Индекс: {tweet_id, text, user_id, created_at, like_count}\n- GET /search/tweets?q=openai → ES match query + сортировка по relevance/дате\n- Поиск пользователей: отдельный ES индекс по name/username/bio\n\nTrending Topics (хештеги):\n- Kafka Consumer извлекает хештеги из каждого твита\n- Redis ZINCRBY "trends:{date}:{hour}" 1 "#openai" → Sorted Set\n- GET /trends → ZREVRANGE топ-10 за последний час\n- Учитывать velocity (скорость роста), не только абсолютный счётчик\n- Персонализация: тренды в регионе пользователя (отдельные ключи по геолокации)',
+      explanation: 'Elasticsearch — стандарт для full-text search в масштабных системах: инвертированный индекс, scoring по TF-IDF, горизонтальное масштабирование. Redis Sorted Set для трендов — O(log N) операции, естественная сортировка по count. Velocity важнее абсолютного числа: быстро растущий хештег — тренд, а не просто популярный.',
       content: [
         { type: 'text', value: 'Функционал поиска и вычисление трендов.' },
         { type: 'heading', value: 'Полнотекстовый поиск' },
@@ -102,6 +114,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Масштабирование и bottlenecks',
       type: 'practice',
+      solution: 'Bottleneck 1 (Fan-out для celebrities, 150M подписчиков):\nПараллельный fan-out батчами по 1000 + 100 параллельных батчей = 100K ops/сек\nНо 150M / 100K = 1500 сек = 25 мин → слишком долго!\nРешение: celebrities (> 10K followers) не делают fan-out → pull при чтении ленты.\n\nBottleneck 2 (Redis Memory):\n300M пользователей × 1000 tweet_ids × 8 байт = 2.4 ТБ — слишком много!\nРешение: хранить только для активных (DAU). Инактивные пользователи → удалить ленту из Redis. При следующем входе → перегенерировать (slow first load, допустимо).\n\nBottleneck 3 (Cassandra Hot Partition):\nЗнаменитости на одном шарде → перегрузка.\nРешение: составной partition key (user_id, bucket) где bucket = random(0, N).\nЗапись распределяется по нодам, чтение агрегируется из всех buckets.',
+      explanation: 'Все три bottleneck — следствие "hot spots" (знаменитости). Их решения: изменить алгоритм (pull вместо push), ограничить кеш (только активные пользователи), рандомизировать шардирование (bucket). Каждое решение вводит дополнительную сложность — правильный trade-off обосновывается метриками.',
       content: [
         { type: 'text', value: 'Идентифицируем и решаем узкие места системы.' },
         { type: 'heading', value: 'Bottleneck 1: Fan-out для celebrities' },
@@ -117,6 +131,8 @@ export default {
       id: 8,
       title: 'Шаг 8: Reliability и Edge Cases',
       type: 'practice',
+      solution: 'Geo-Distribution (4 региона: US-East, US-West, EU, Asia):\n- Reads → ближайший датацентр (данные реплицированы)\n- Writes → ближайший регион, асинхронная репликация в другие\n- GeoDNS: пользователи автоматически направляются в ближайший регион\n- Global CDN (Cloudflare/Fastly) для статики\n\nPartial Failures:\n- Feed Service недоступен → показать cached версию ленты или user timeline\n- Cassandra нода упала → replication factor=3, quorum reads с 2 из 3 нод\n- Redis нода упала → Redis Cluster автоматический failover к replica (секунды)\n\nЗащита от спама/abuse:\n- Rate limiting: 300 твитов/день с одного аккаунта\n- ML модель: обнаружение spam/hate speech в реальном времени\n- Shadow banning: злоупотребители не блокируются, но контент не виден\n- IP блокировка при признаках ботов',
+      explanation: 'Отказоустойчивость строится на нескольких уровнях: репликация данных (replication factor=3), автоматический failover (Redis Cluster, Cassandra), graceful degradation (показывать что-то вместо ошибки). Защита от abuse — критично для социальных платформ: shadow ban предпочтительнее блокировки (не предупреждает ботов).',
       content: [
         { type: 'text', value: 'Обеспечиваем надёжность и обрабатываем граничные случаи.' },
         { type: 'heading', value: 'Geo-Distribution' },

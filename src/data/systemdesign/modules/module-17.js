@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и оценка',
       type: 'practice',
+      solution: 'Функциональные требования:\n- Загрузка видео (до 10 ГБ)\n- Adaptive bitrate streaming (качество адаптируется к скорости)\n- Поиск по видео\n- Лайки, комментарии, подписки\n- Рекомендации (главная страница)\n\nНефункциональные:\n- 2.5B пользователей, 800M DAU\n- 500 часов видео загружается в минуту\n- Начало воспроизведения < 2 сек\n- Доступность: 99.99%\n\nОценка нагрузки:\n- Upload: 500 часов/мин = 4.3M видео/день × 1 ГБ raw = 4.3 ПБ сырых данных/день\n- Streaming: 800M × 1 Мбит × 30 мин / 86,400 ≈ 277 Тбит/сек пикового bandwidth\n- Это требует мощной CDN инфраструктуры по всему миру',
+      explanation: '4.3 ПБ raw данных в день после транскодинга превращается в 20+ ПБ (несколько форматов и качеств). Это исключает хранение на одном кластере — нужна объектная система типа GCS/S3. 277 Тбит/сек bandwidth — только CDN может справиться с доставкой такого объёма.',
       content: [
         { type: 'text', value: 'YouTube — одна из крупнейших платформ. Определим что строим.' },
         { type: 'heading', value: 'Функциональные требования' },
@@ -33,6 +35,8 @@ export default {
       id: 2,
       title: 'Шаг 2: Video Upload и Transcode Pipeline',
       type: 'practice',
+      solution: 'Upload Flow (3 шага):\n1. POST /api/v1/uploads → pre-signed S3 URL (upload_id)\n2. Клиент загружает напрямую в S3 chunked upload (минуя серверы)\n3. S3 Event → SNS → SQS → Transcode Service\n\nTranscode Pipeline (DAG обработка, параллельно):\nRaw video из S3 →\n├→ Inspect (формат, длина, разрешение)\n├→ Thumbnail generation (несколько вариантов)\n├→ Audio normalization\n├→ Transcode 360p / 720p / 1080p / 4K (параллельно, GPU instances)\n├→ HLS сегменты (по 10 сек для adaptive bitrate)\n└→ Content moderation (ML)\n\nВсе результаты → S3 + обновить metadata в БД\nОркестрация: Kafka "videos_to_transcode" → Transcode Workers (AWS EC2 GPU)',
+      explanation: 'Прямая загрузка в S3 (bypass серверов) — ключевое решение: серверы не являются bottleneck для загрузки. DAG параллельной обработки минимизирует время публикации — все форматы транскодируются одновременно. GPU инстансы для транскодинга — специализированные ресурсы масштабируются независимо.',
       content: [
         { type: 'text', value: 'Загрузка и обработка видео — сложнейший компонент YouTube.' },
         { type: 'heading', value: 'Upload Flow' },
@@ -47,6 +51,8 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных',
       type: 'practice',
+      solution: 'Таблица videos (Cassandra, шардирование по video_id):\nvideo_id VARCHAR(11) PK (YouTube-style: "dQw4w9WgXcQ")\nuser_id BIGINT, title VARCHAR(100), description TEXT\nstatus ENUM(UPLOADING/PROCESSING/PUBLISHED/PRIVATE)\nthumbnail_url, view_count BIGINT, like_count INT, duration_sec INT, created_at\n\nТаблица video_transcodes:\nPK: (video_id, quality, format)\nquality: "360p"/"720p"/"1080p"/"4K", format: "mp4"/"hls"\nurl VARCHAR(500) — S3/CDN URL, size_bytes BIGINT\nstatus ENUM(PENDING/PROCESSING/DONE/FAILED)\n\nВыбор хранилищ:\n- Videos metadata: Cassandra (write-heavy, шардирование по video_id)\n- User data: MySQL/PostgreSQL\n- Comments: Cassandra (partition: video_id, clustering: created_at DESC)\n- View counts: Redis INCR + periodic flush\n- Search: Elasticsearch\n- Video files: GCS/S3 + CDN',
+      explanation: 'Разделение таблиц videos и video_transcodes важно: обработка видео — асинхронный процесс с несколькими статусами. video_id в стиле YouTube (11 символов base64) генерируется как уникальный ID. Cassandra для комментариев — append-only паттерн с высоким write throughput, запросы только по video_id.',
       content: [
         { type: 'text', value: 'Схема данных для видеосервиса.' },
         { type: 'heading', value: 'Таблица videos' },
@@ -61,6 +67,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Видео стриминг и CDN',
       type: 'practice',
+      solution: 'HLS Adaptive Bitrate Streaming:\n- Видео разбито на сегменты по 10 сек в нескольких качествах\n- Манифест playlist.m3u8 указывает доступные bitrate\n- Плеер измеряет скорость загрузки → выбирает оптимальное качество\n- Буфер снижается → автоматически переключается на меньшее качество\n\nТрёхуровневая CDN:\nOrigin (S3, несколько регионов: US/EU/Asia)\n  ↓ репликация популярных видео заранее\nRegional CDN PoP (~50 точек) → кешируют сегменты для региона\n  ↓ трафик к пользователю\nEdge Cache (~1000 серверов близко к ISP) → топ-10% контента = 90% просмотров\n\nDynamic Routing:\n- Выбрать ближайший CDN edge при воспроизведении\n- Failover: перегруженный edge → региональный PoP\n- Cache-Control: max-age=86400 для видео сегментов',
+      explanation: 'HLS с адаптивным bitrate решает ключевую проблему: разные пользователи с разной скоростью интернета смотрят одно видео без буферизации. Трёхуровневый CDN оптимизирован под принцип Pareto: 20% контента = 80% просмотров кешируются на самых быстрых edge узлах.',
       content: [
         { type: 'text', value: 'Как доставлять видео миллиардам пользователей быстро.' },
         { type: 'heading', value: 'Adaptive Bitrate Streaming (HLS/DASH)' },
@@ -74,6 +82,8 @@ export default {
       id: 5,
       title: 'Шаг 5: Счётчики просмотров и метрики',
       type: 'practice',
+      solution: 'Проблема: 1B просмотров/день = 11,574 UPDATE/сек на одну строку → не масштабируется.\n\nРешение: Redis INCR + Batch Write\n- При просмотре: INCR "views:{video_id}" в Redis (~1M ops/сек)\n- Batch flush каждые 5 минут: UPDATE videos SET view_count += {delta} WHERE video_id = ...\n- Результат: 11K UPDATE/сек → 1 UPDATE в 5 мин на видео\n\nДедупликация просмотров:\n- YouTube считает уникальным: >30 сек просмотра, один пользователь за 24ч\n- HyperLogLog: PFADD "unique_views:{video_id}:{date}" {user_id}\n- PFCOUNT → оценка уникальных просмотров\n- Точность: ±1%, память: 12 КБ на любой объём данных\n- 500M пользователей × 12 КБ = 6 ГБ (vs 500M × 8 байт = 4 ГБ точного подсчёта)',
+      explanation: 'Redis INCR — стандартный паттерн для высокочастотных счётчиков. Batch flush снижает нагрузку на основную БД с тысяч до единиц операций в минуту. HyperLogLog — образцовое применение probabilistic data structure: ±1% погрешность неощутима для пользователя, но память константна вместо линейной.',
       content: [
         { type: 'text', value: 'Подсчёт просмотров при миллиарде воспроизведений в день — нетривиальная задача.' },
         { type: 'heading', value: 'Проблема наивного подхода' },
@@ -88,6 +98,8 @@ export default {
       id: 6,
       title: 'Шаг 6: Поиск и рекомендации',
       type: 'practice',
+      solution: 'Поиск видео (Elasticsearch):\n- Индексирование: title, description, tags, transcript (субтитры)\n- Search Worker читает Kafka "video_published" → ES индексирование\n- Re-ranking: просмотры + дата + релевантность\n- Автодополнение: Redis Sorted Set популярных запросов\n  ZRANGEBYLEX "suggestions" "[openai" "(openaiz" → топ-5\n\nРекомендации (два уровня):\nОнлайн (реальное время): контекст текущего просмотра\n- Collaborative filtering: "похожие пользователи смотрели..."\n\nОффлайн (batch, раз в несколько часов):\n- Two-Tower Neural Network: user embedding ≈ video embedding\n- Предвычислить топ-100 рекомендаций для каждого пользователя\n- Сохранить в Redis: "recs:{user_id}" → [video_ids]\n- При запросе: Redis lookup (< 5 мс) + real-time корректировка',
+      explanation: 'Разделение на онлайн и оффлайн компоненты — стандарт ML систем. Оффлайн (batch): тяжёлые модели на всём датасете. Онлайн (реальное время): лёгкие скоринговые модели на уже отобранных кандидатах. Elasticsearch для поиска, а не для рекомендаций — разные задачи требуют разных инструментов.',
       content: [
         { type: 'text', value: 'Поиск по миллиардам видео и персонализированные рекомендации.' },
         { type: 'heading', value: 'Поиск видео' },
@@ -100,6 +112,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура',
       type: 'practice',
+      solution: 'Сервисы YouTube:\n- Upload Service: chunked upload → S3 raw\n- Transcode Service: DAG обработка на GPU instances → несколько форматов\n- Metadata Service: CRUD видео информации → Cassandra\n- Stream Service: генерация signed URL для HLS стриминга\n- Search Service: Elasticsearch + автодополнение\n- Recommendation Service: Two-Tower NN + Redis кеш\n- Comment Service: Cassandra (partition: video_id)\n- Analytics Service: просмотры (Redis INCR + batch flush)\n- Notification Service: новые видео от подписок → Kafka + APNs/FCM\n\nКлючевые архитектурные решения:\n1. Прямая загрузка в S3 — серверы не bottleneck\n2. Параллельный DAG транскодинг — быстрая публикация\n3. HLS Adaptive Bitrate — качество на любой скорости\n4. Трёхуровневая CDN — 277 Тбит/сек доставка\n5. Redis HyperLogLog — масштабируемые уникальные просмотры',
+      explanation: 'YouTube — одна из наиболее технически сложных систем: петабайты хранилища, сотни терабит в секунду доставки, миллиарды просмотров. Каждый сервис независимо масштабируется: Transcode (GPU), Stream (CPU/сеть), Recommendation (ML inference). Ключевой принцип: специализированная инфраструктура для каждого типа нагрузки.',
       content: [
         { type: 'text', value: 'Собираем полную картину системы YouTube.' },
         { type: 'heading', value: 'Сервисы' },

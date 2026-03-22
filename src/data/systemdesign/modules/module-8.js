@@ -101,6 +101,8 @@ export default {
       id: 7,
       title: 'Практика: проектируем систему обработки заказов',
       type: 'practice',
+      solution: 'Система обработки заказов e-commerce с Kafka:\n\nСинхронный путь (критичный):\nPOST /orders → Order Service → сохранить в PostgreSQL → ответ пользователю "Заказ принят" (100 мс)\n\nАсинхронный путь (Kafka topic "orders"):\nOrder Service публикует event: {order_id, user_id, items, total}\n\nConsumer Groups:\n- Inventory Consumer: зарезервировать товары → при нехватке: event "ORDER_FAILED"\n- Payment Consumer: обработать платёж → "PAYMENT_SUCCESS" или "PAYMENT_FAILED"\n- Email Consumer: при PAYMENT_SUCCESS → отправить подтверждение\n- Warehouse Consumer: при PAYMENT_SUCCESS → задание на сборку\n- Analytics Consumer: обновить статистику\n\nОбработка ошибок:\n- Retry: 3 попытки с exponential backoff (1с, 2с, 4с)\n- DLQ: после 3 неудач → dead_letter_queue топик + PagerDuty алерт\n\nIdempotency:\n- Inventory и Payment проверяют order_id в Redis перед обработкой',
+      explanation: 'Ключевой trade-off: синхронно только то, без чего нельзя ответить пользователю (сохранить заказ). Всё остальное — асинхронно через Kafka. Это даёт: быстрый ответ (100 мс), изоляцию сбоев (email упал — заказ не сломан), независимое масштабирование consumers. Idempotency обязательна для at-least-once delivery.',
       content: [
         { type: 'text', value: 'Применим очереди для проектирования надёжной системы обработки заказов e-commerce.' },
         { type: 'heading', value: 'Задача' },

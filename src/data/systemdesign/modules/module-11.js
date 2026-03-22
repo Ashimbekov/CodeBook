@@ -135,6 +135,8 @@ export default {
       id: 7,
       title: 'Практика: декомпозиция монолита',
       type: 'practice',
+      solution: 'Декомпозиция e-commerce монолита на микросервисы (Strangler Fig pattern):\n\nВыделяемые сервисы:\n- User Service: аутентификация, профили → PostgreSQL (users)\n- Product Catalog Service: каталог, поиск → PostgreSQL + Elasticsearch\n- Order Service: заказы, история → PostgreSQL (orders)\n- Payment Service: платежи → PostgreSQL (строгий ACID)\n- Notification Service: email/SMS/push → stateless, Kafka consumer\n- Analytics Service: события, статистика → ClickHouse (OLAP)\n\nКоммуникация:\n- Синхронная (gRPC): User Service → получить профиль (< 5 мс)\n- Асинхронная (Kafka): "order_created" → Payment + Notification + Analytics\n\nAPI Gateway (Kong): внешний трафик → роутинг + JWT проверка → X-User-ID в заголовке\n\nПорядок выделения: сначала Notification и Analytics (независимы, только читают события), затем Product Catalog (read-heavy, отдельно масштабируется), затем Payment (изоляция финансов).',
+      explanation: 'Strangler Fig: не переписывать с нуля, а постепенно выделять сервисы из монолита. Сначала — наименее связанные. Notification Service идеален: только потребляет события, ничего не требует от других сервисов. Каждый сервис — своя БД (Database per Service). API Gateway централизует аутентификацию — сервисы доверяют заголовку от Gateway.',
       content: [
         { type: 'text', value: 'Разберём, как декомпозировать монолит e-commerce на микросервисы.' },
         { type: 'heading', value: 'Исходный монолит' },

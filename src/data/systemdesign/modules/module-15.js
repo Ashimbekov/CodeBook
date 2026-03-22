@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования',
       type: 'practice',
+      solution: 'Функциональные требования URL Shortener:\n- POST /shorten: длинный URL → короткий код (7 символов, base62)\n- GET /{code}: редирект 302 на оригинальный URL\n- Кастомные aliases (опционально)\n- Срок жизни ссылки по умолчанию 5 лет\n\nНефункциональные требования:\n- Масштаб: 100M новых ссылок/день, 10B redirects/день\n- Доступность: 99.99% (redirect никогда не должен падать)\n- Latency redirect: < 10 мс\n- Хранение: 5 лет\n- Аутентификация: не нужна (анонимный сервис)\n- Аналитика: только счётчик переходов\n\nOut of scope: пользовательские аккаунты, custom domains, детальная аналитика',
+      explanation: 'Уточнение требований за 5–7 минут — фундамент всего дизайна. Функциональные требования определяют API; нефункциональные (масштаб, SLA, latency) — выбор технологий. Разделение in-scope/out-of-scope защищает от расширения задачи и экономит время интервью.',
       content: [
         { type: 'text', value: 'Начинаем проектирование с уточнения требований. Никогда не пропускайте этот шаг!' },
         { type: 'heading', value: 'Функциональные требования' },
@@ -38,6 +40,8 @@ export default {
       id: 2,
       title: 'Шаг 2: Оценка нагрузки',
       type: 'practice',
+      solution: 'Write (создание ссылок):\n100M / 86,400 ≈ 1,200 write RPS\nХранилище: 100M × 500 байт × 365 × 5 = ~91 ТБ за 5 лет\n\nRead (redirects):\n10B / 86,400 ≈ 120,000 read RPS\nRead/Write = 100:1 → система read-heavy\n\nПространство кодов (base62):\n7 символов: 62^7 = 3.5 трлн комбинаций\n3.5 трлн / 100M в день = 34,000 дней = 95 лет → достаточно\n\nВыводы:\n- Система read-heavy (100:1) → кеш критически важен\n- 91 ТБ хранилища → нужна NoSQL БД с горизонтальным масштабированием\n- Пространство кодов → 7 символов base62 достаточно на 95 лет',
+      explanation: 'Расчёт read/write ratio определяет архитектурные решения: 100:1 означает, что 99% нагрузки — это redirect, а не создание. Кеш снимет 98% этой нагрузки. Хранилище 91 ТБ исключает обычный SQL на одном сервере — нужен NoSQL с шардированием.',
       content: [
         { type: 'text', value: 'Back-of-the-envelope расчёты для понимания масштаба системы.' },
         { type: 'heading', value: 'Write (создание ссылок)' },
@@ -53,6 +57,8 @@ export default {
       id: 3,
       title: 'Шаг 3: API Design',
       type: 'practice',
+      solution: 'Два ключевых эндпоинта:\n\nСоздание короткой ссылки:\nPOST /api/v1/urls\nBody: {original_url, custom_alias?, expires_at?}\nResponse 201: {short_url, short_code, original_url, created_at, expires_at}\nОшибки: 400 (невалидный URL), 409 (alias занят), 422 (URL заблокирован)\n\nRedirect:\nGET /{short_code}\nResponse 302 Found: Location: {original_url}\n301 vs 302: выбираем 302 (временный) — браузер не кеширует, каждый переход проходит через наш сервер → можно считать клики.\n301 (постоянный) — браузер кеширует → меньше нагрузки, но нет аналитики.',
+      explanation: 'Выбор 301 vs 302 — реальный trade-off. 301 снижает нагрузку на 80–90% (браузер кеширует и ходит напрямую), но ломает аналитику. 302 позволяет считать каждый клик — ценно для бизнеса. Для bit.ly логика = 302, т.к. аналитика — ключевая функция продукта.',
       content: [
         { type: 'text', value: 'Проектируем два ключевых API эндпоинта.' },
         { type: 'heading', value: 'Создание короткой ссылки' },
@@ -66,6 +72,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Модель данных',
       type: 'practice',
+      solution: 'Таблица url_mappings:\n- short_code VARCHAR(7) PRIMARY KEY (hash index)\n- original_url VARCHAR(2048) NOT NULL\n- created_at TIMESTAMP\n- expires_at TIMESTAMP (nullable)\n- hit_count BIGINT DEFAULT 0\n\nИндекс на expires_at — для очистки устаревших записей.\n\nВыбор БД: Cassandra или DynamoDB\nПочему не PostgreSQL:\n- 91 ТБ за 5 лет → горизонтальное масштабирование обязательно\n- Все запросы по primary key (short_code) → нет JOIN, нет сложных запросов\n- Key-Value паттерн = идеальный fit для NoSQL\n- DynamoDB/Cassandra: auto-sharding, высокий throughput\n\nПочему не Redis как основная БД: 91 ТБ не помещается в память.',
+      explanation: 'Выбор NoSQL обоснован паттерном доступа (только по primary key) и масштабом (91 ТБ). SQL был бы правильным при сложных запросах или транзакциях, но здесь их нет. DynamoDB предпочтительнее Cassandra для managed решения без операционных сложностей. Индекс на expires_at — для batch-очистки, не для поиска.',
       content: [
         { type: 'text', value: 'Проектируем схему хранения данных.' },
         { type: 'heading', value: 'Таблица url_mappings' },
@@ -79,6 +87,8 @@ export default {
       id: 5,
       title: 'Шаг 5: Алгоритм генерации коротких кодов',
       type: 'practice',
+      solution: 'Рекомендуемый подход: Range-based Counter + Base62\n\n1. Централизованный счётчик (atomically incremented)\n2. ID Generator выдаёт диапазоны инстансам (Range-based):\n   - Сервер 1: IDs 1–10,000\n   - Сервер 2: IDs 10,001–20,000\n3. Конвертация числа в base62: 12345678 → "FPucN" (дополнить до 7 символов)\n\nАльтернативы:\n- Random + проверка коллизий: прост, но коллизии растут с заполненностью пространства\n- MD5(URL) + первые 7 символов: коллизии при разных URL → дополнительная логика\n\nПочему Range-based Counter лучше:\n- Гарантированная уникальность без проверки БД\n- Нет centralized bottleneck (каждый инстанс использует свой диапазон)\n- Snowflake ID (Twitter) использует аналогичный подход\n- Масштабируется горизонтально',
+      explanation: 'Range-based Counter устраняет два bottleneck: проверку коллизий (дополнительный round-trip к БД) и центральный счётчик (единая точка записи). Каждый инстанс работает независимо со своим диапазоном, запрашивая новый лишь когда тот исчерпан (~10,000 операций).',
       content: [
         { type: 'text', value: 'Как генерировать уникальные 7-символьные коды для миллионов ссылок?' },
         { type: 'heading', value: 'Вариант 1: Random + проверка коллизий' },
@@ -94,6 +104,8 @@ export default {
       id: 6,
       title: 'Шаг 6: High-Level архитектура',
       type: 'practice',
+      solution: 'Компоненты URL Shortener:\n\nWrite Path (создание, 1,200 RPS):\n[Client] → POST /api/v1/urls → [API Gateway (rate limit)] → [URL Service] → [ID Generator (range counter)] → [Cassandra/DynamoDB]\n\nRead Path (redirect, 120,000 RPS):\n[Client] → GET /{code} → [CDN/Redirect Service (L1 кеш)] → [Redis Cache L2 (TTL 24ч)] → [Cassandra] → HTTP 302\n\nРаспределение нагрузки:\n- CDN/in-memory: 80% запросов (96K RPS) — популярные ссылки\n- Redis: 18% запросов (21.6K RPS)\n- Cassandra: 2% запросов (2.4K RPS) — только промахи\n\nRedis настройка:\n- Политика: LFU (самые редкие удаляются)\n- Размер: ~10 ГБ (топ-5M ссылок × 2 КБ)\n- TTL: 24 часа',
+      explanation: 'Трёхуровневый кеш снижает нагрузку на Cassandra с 120K до 2.4K RPS — в 50 раз. Ключевое решение: redirect path полностью оптимизирован (98% из кеша), write path намного проще. LFU лучше LRU для URL shortener — популярные ссылки должны оставаться в кеше дольше.',
       content: [
         { type: 'text', value: 'Собираем все компоненты в единую архитектуру.' },
         { type: 'heading', value: 'Компоненты системы' },
@@ -107,6 +119,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Deep Dives и Edge Cases',
       type: 'practice',
+      solution: 'Очистка истёкших ссылок:\n- Lazy Deletion: при redirect проверить expires_at → если истекло → 410 Gone\n- Batch Cleanup (ночью): DELETE WHERE expires_at < NOW() LIMIT 10,000 батчами\n\nЗащита от злоупотреблений:\n- Rate limiting: 100 ссылок/день с одного IP\n- URL валидация: проверить реальность URL, исключить localhost/private\n- Google Safe Browsing API: проверить на malware/фишинг\n\nАналитика кликов:\n- Простой счётчик: Redis INCR "hits:{code}" → периодический flush в БД\n- Детальная аналитика (асинхронно): при redirect → Kafka event → Analytics Service\n  - Уникальные посетители: HyperLogLog (±1%, 12 КБ на любой объём)\n  - Гео-распределение: IP → GeoIP →City\n  - Referrer, время переходов\n\nИтог системы: NoSQL (key-value) + Redis кеш (снимает 98% нагрузки) + distributed ID generator + CDN для redirect.',
+      explanation: 'Lazy Deletion + Batch Cleanup разделяют корректность (пользователь не видит устаревшие ссылки) и производительность (нет дорогого сканирования при каждом запросе). HyperLogLog — образцовый пример trade-off: точность ±1% за константную память 12 КБ вместо O(N) для точного подсчёта.',
       content: [
         { type: 'text', value: 'Рассмотрим важные детали и граничные случаи.' },
         { type: 'heading', value: 'Очистка истёкших ссылок' },

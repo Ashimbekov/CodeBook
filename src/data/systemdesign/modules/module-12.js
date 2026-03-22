@@ -62,6 +62,8 @@ export default {
       id: 5,
       title: 'Применение consensus алгоритмов на практике',
       type: 'practice',
+      solution: 'Где используются consensus алгоритмы в реальных системах:\n\netcd (Kubernetes): Raft-консенсус, хранит весь cluster state (pods, configmaps, secrets). CP система — при потере quorum Kubernetes "замораживается". Типичный кластер: 3 или 5 нод.\n\nApache ZooKeeper (ZAB протокол): Leader Election в Kafka и HDFS, Distributed Locks, Service Discovery, конфигурации. До Kafka 3.x — обязательная зависимость.\n\nKafka KRaft (с версии 2.8): собственный Raft-like consensus вместо ZooKeeper, упрощает deployment.\n\nGoogle Chubby (Paxos): distributed lock service для leader election в Google internal systems.\n\nGoogle Spanner: Paxos для репликации + TrueTime API для глобальной согласованности транзакций через несколько датацентров.\n\nВывод: CP задачи (конфигурация кластера, distributed locks, leader election) → etcd/ZooKeeper с consensus алгоритмами.',
+      explanation: 'На System Design интервью достаточно знать: etcd/ZooKeeper используют consensus и дают strong consistency (CP). Для Kubernetes state и distributed locks — единственный правильный выбор. Детали Raft (election timeout, log replication) нужны только если прямо спрашивают про алгоритм.',
       content: [
         { type: 'text', value: 'Где в реальных системах используются consensus алгоритмы.' },
         { type: 'heading', value: 'etcd и Kubernetes' },

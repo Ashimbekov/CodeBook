@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования',
       type: 'practice',
+      solution: 'Функциональные требования:\n- Личные сообщения (1-to-1)\n- Групповые чаты (до 500 участников)\n- Медиа: фото, видео, голосовые сообщения\n- Статус доставки: отправлено/доставлено/прочитано\n- Online/Offline статус\n- Push уведомления оффлайн\n- End-to-end шифрование\n\nНефункциональные:\n- 2B пользователей, 100B сообщений/день\n- Latency доставки: < 100 мс\n- Доступность: 99.99%\n- Хранить последние 30 дней\n\nОценка нагрузки:\n- 100B / 86,400 = 1.2M сообщений/сек\n- 1.2M × 1 КБ = 1.2 ГБ/сек write throughput\n- 100M+ одновременных WebSocket соединений',
+      explanation: '1.2M сообщений/сек — один из самых высоких write throughput в индустрии. Это исключает любую реляционную БД в single-master конфигурации. Cassandra с шардированием по chat_id — единственный практичный выбор. 100M WebSocket соединений требуют специализированных Chat Servers с sticky sessions.',
       content: [
         { type: 'text', value: 'Проектируем систему мгновенных сообщений уровня WhatsApp.' },
         { type: 'heading', value: 'Функциональные требования' },
@@ -35,6 +37,8 @@ export default {
       id: 2,
       title: 'Шаг 2: Real-Time доставка — WebSocket',
       type: 'practice',
+      solution: 'Почему WebSocket: постоянное двустороннее соединение, сервер push без polling.\nHTTP polling → 100M × запрос/сек = огромная нагрузка.\nWebSocket → постоянное соединение, сервер инициирует отправку.\n\nWebSocket Connection Management:\n[User 1] ←WS→ [Chat Server 1]\n[User 2] ←WS→ [Chat Server 3]\n\nДоставка сообщения User 1 → User 2:\n1. Chat Server 1 получает сообщение\n2. Redis: GET "ws:{user_2_id}" → "chat-server-3"\n3. Kafka: публикует сообщение для Chat Server 3\n4. Chat Server 3 → доставляет User 2 через WebSocket\n5. ACK обратно → статус "доставлено"\n\nPresence Service хранит: {user_id → server_id} маппинг в Redis\nTTL: 30 сек (обновляется heartbeat каждые 5 сек)',
+      explanation: 'Redis как service registry для WebSocket соединений — ключевое решение. Без него Chat Server 1 не знает, где подключён User 2. Kafka между Chat Servers обеспечивает надёжную доставку даже при временной недоступности сервера-получателя. Sticky sessions (IP hash) необходимы — WebSocket соединение должно оставаться на одном сервере.',
       content: [
         { type: 'text', value: 'Ключевой компонент мессенджера — мгновенная доставка сообщений.' },
         { type: 'heading', value: 'Почему WebSocket, а не HTTP polling' },
@@ -49,6 +53,8 @@ export default {
       id: 3,
       title: 'Шаг 3: Модель данных и хранение сообщений',
       type: 'practice',
+      solution: 'Таблица messages (Cassandra):\nchat_id UUID — PARTITION KEY (все сообщения чата на одном шарде)\nmessage_id BIGINT — CLUSTERING KEY DESC (Snowflake ID, содержит timestamp)\nsender_id UUID, text TEXT, media_url VARCHAR\nstatus TINYINT (0=sent, 1=delivered, 2=read)\ncreated_at TIMESTAMP\n\nЗапрос последних 50 сообщений:\nSELECT * FROM messages WHERE chat_id = ? LIMIT 50\n→ один шард, O(1) по partition key, быстро\n\nТаблица chats: chat_id, type (DIRECT/GROUP), name, created_by, participants LIST\n\nUser Inbox (Redis Sorted Set):\n"inbox:{user_id}" → score: timestamp, member: chat_id\nПри новом сообщении: ZADD для каждого участника\nСписок чатов: ZREVRANGE "inbox:{user_id}" 0 19',
+      explanation: 'Partition key = chat_id — фундаментальное решение: все сообщения одного чата на одном узле Cassandra. Clustering key = message_id DESC — сортировка новых сначала без ORDER BY. Redis Sorted Set для inbox позволяет за O(log N) обновлять и читать список чатов. Snowflake message_id содержит timestamp — уникальность + сортировка в одном поле.',
       content: [
         { type: 'text', value: 'Схема хранения сообщений для огромного объёма.' },
         { type: 'heading', value: 'Таблица messages (Cassandra)' },
@@ -63,6 +69,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Online Presence и статус',
       type: 'practice',
+      solution: 'Heartbeat механизм:\n- Клиент отправляет heartbeat каждые 5 сек через WebSocket\n- Сервер: Redis SET "presence:{user_id}" {timestamp} EX 30\n- Ключ истекает через 30 сек без обновления = offline\n- При отключении WebSocket: Redis DEL + обновить last_seen в БД\n\nМасштабирование Presence:\n100M онлайн × 1 heartbeat/5 сек = 20M Redis ops/сек\n→ Presence Service кластер: 20 нод Redis, каждая 1M ops/сек\n\nДоставка изменений статуса подписчикам:\n- При изменении статуса → Kafka event\n- Kafka consumers → отправить через WebSocket контактам пользователя\n- Подписка только для 200 контактов (не для всех пользователей)',
+      explanation: 'TTL 30 сек с heartbeat каждые 5 сек — баланс: достаточно частые обновления для актуальности статуса, достаточный запас TTL для network hiccups. 20M Redis ops/сек требует кластеризации — это одна из самых высоконагруженных подсистем мессенджера. Pub/sub через Kafka для статусов избегает N×M проблемы подписок.',
       content: [
         { type: 'text', value: 'Отображение онлайн-статуса пользователей в реальном времени.' },
         { type: 'heading', value: 'Heartbeat механизм' },
@@ -75,6 +83,8 @@ export default {
       id: 5,
       title: 'Шаг 5: Push уведомления и оффлайн',
       type: 'practice',
+      solution: 'Push Notifications архитектура:\n- iOS → Apple Push Notification Service (APNs)\n- Android → Firebase Cloud Messaging (FCM)\n- Device Token Store (Cassandra): user_id → [{device_id, platform, token}]\n\nFlow:\n1. Пользователь установил приложение → зарегистрировал push token\n2. При сообщении и адресат оффлайн (нет WebSocket записи в Redis):\n   → Notification Service → APNs/FCM API\n   → Текст при E2E шифровании: "Новое сообщение" (без контента!)\n\nOffline Message Queue:\n- Сообщения хранятся в Cassandra (обычно)\n- При reconnect: клиент запрашивает все сообщения с last_seen_timestamp\n- Сервер доставляет пропущенные → ACK\n\nRead Receipts (галочки):\n- User 2 открывает чат → WebSocket: {read_up_to: message_id}\n- Chat Server → уведомить User 1 → обновить статус на "прочитано"',
+      explanation: 'При E2E шифровании сервер не может читать содержимое → push уведомление содержит только "Новое сообщение". Это компромисс между приватностью и UX. Механизм sync при reconnect критичен — мессенджер должен доставить все пропущенные сообщения без дублирования. ACK-основанная доставка гарантирует надёжность.',
       content: [
         { type: 'text', value: 'Доставка сообщений когда пользователь оффлайн.' },
         { type: 'heading', value: 'Архитектура Push Notifications' },
@@ -89,6 +99,8 @@ export default {
       id: 6,
       title: 'Шаг 6: End-to-End Encryption и медиа',
       type: 'practice',
+      solution: 'Signal Protocol (E2E шифрование):\n1. Каждый клиент генерирует пару ключей (публичный/приватный)\n2. Публичный ключ регистрируется на сервере\n3. При первом сообщении: получить публичный ключ получателя → Diffie-Hellman → session key\n4. Шифровать session key-ом → сервер хранит только зашифрованные данные\n5. Только получатель расшифровывает (знает приватный ключ)\n\nЗагрузка медиа:\n1. Клиент шифрует медиа локально (AES-256)\n2. POST /media/upload → pre-signed S3 URL\n3. Загрузить зашифрованный файл напрямую в S3\n4. Отправить сообщение: {media_url + encryption_key}\n5. Получатель: скачать с CDN → расшифровать локально\n\nСервер никогда не видит содержимое сообщений и медиа.',
+      explanation: 'E2E шифрование через Signal Protocol — золотой стандарт приватности: даже взлом серверов не раскрывает содержимое переписки. Медиа шифруется и загружается напрямую в S3 (bypass серверов) — сервер хранит только зашифрованный blob и URL. Это масштабируемо: серверы не являются bottleneck для медиа.',
       content: [
         { type: 'text', value: 'Обеспечиваем приватность через E2E шифрование.' },
         { type: 'heading', value: 'Signal Protocol (E2E Encryption)' },
@@ -101,6 +113,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Групповые чаты и масштабирование',
       type: 'practice',
+      solution: 'Групповые сообщения (до 500 участников):\nОптимизированный подход через Kafka:\n1. Сохранить сообщение в Cassandra\n2. Publish в Kafka topic группы\n3. Chat Servers с онлайн-участниками читают Kafka\n4. Каждый Chat Server доставляет своим подключённым участникам\n→ Нет прямого fan-out к каждому — только к активным серверам\n\nМасштабирование Chat Servers:\n- Один Chat Server: ~65,000 WebSocket соединений\n- 100M активных / 65,000 = 1,540 Chat Servers\n- Sticky Sessions (IP Hash или Cookie): WebSocket остаётся на одном сервере\n\nFailover:\n- Chat Server упал → клиенты reconnect за 1–5 сек\n- Redis обновляется: {user_id → new_server_id}\n- Пропущенные сообщения получают при reconnect через sync механизм',
+      explanation: 'Kafka для групповых сообщений элегантнее прямого fan-out: Chat Servers подписываются на топик группы и доставляют только своим локальным соединениям. Это масштабируется лучше, чем 500 прямых push операций. 1,540 Chat Servers — реалистичная оценка: Facebook Messenger и WhatsApp использовали аналогичные масштабы.',
       content: [
         { type: 'text', value: 'Групповые чаты и финальные решения по масштабированию.' },
         { type: 'heading', value: 'Групповые сообщения' },

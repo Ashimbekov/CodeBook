@@ -65,6 +65,8 @@ export default {
       id: 5,
       title: 'Распределённый Rate Limiting с Redis',
       type: 'practice',
+      solution: 'Распределённый Rate Limiter для нескольких инстансов API-сервера:\n\nПроблема: локальный счётчик на каждом инстансе позволяет 100 × N_instances RPS вместо 100 RPS.\n\nРешение: Redis как единый счётчик для всех инстансов\n\nАрхитектура:\n[Clients] → [Load Balancer] → [API Servers (3 инстанса)] → [Redis Cluster (Rate Limit)]\n\nАлгоритм Sliding Window Log на Redis (атомарный Lua скрипт):\n1. ZREMRANGEBYSCORE — удалить записи старше окна\n2. ZCARD — посчитать оставшиеся запросы\n3. Если count < limit → ZADD новую запись → allow\n4. Иначе → reject + Retry-After заголовок\n\nLua скрипт выполняется атомарно — нет race condition между шардами.\n\nMasштабирование: Redis Cluster шардирует по user_id\n8 нод × 125K ops/сек = 1M ops/сек\nLatency: +0.5–1 мс на каждый запрос',
+      explanation: 'Без общего состояния каждый инстанс считает независимо — суммарный лимит превышается в N раз. Redis с Lua скриптом обеспечивает атомарность без distributed lock. Отдельный Redis кластер для rate limiting (не смешивать с основным кешем) — изоляция нагрузки и независимое масштабирование.',
       content: [
         { type: 'text', value: 'Когда несколько инстансов сервиса, локальный rate limiting не работает. Нужен распределённый с общим состоянием.' },
         { type: 'heading', value: 'Проблема локального rate limiting' },
@@ -80,6 +82,8 @@ export default {
       id: 6,
       title: 'Практика: проектируем rate limiter',
       type: 'practice',
+      solution: 'Rate Limiter для публичного API с тарифными планами:\n\nКомпоненты:\n- Redis: хранит Token Bucket состояние для каждого API Key\n- Plan Store (Redis, кеш 5 мин): маппинг apiKey → plan\n- Middleware: проверяет лимит перед обработкой запроса\n\nПланы в Redis: "plan:free" → {limit:1000, window:3600}, "plan:basic" → {limit:10000}, "plan:premium" → {limit:100000}\n\nToken Bucket для каждого ключа:\n- "bucket:{apiKey}" → {tokens, last_refill}\n- Refill rate: free=0.28 ток/сек, basic=2.78, premium=27.8\n- Burst capacity = 2 × (limit/60) — двухминутный буфер\n\nMiddleware flow:\n1. Извлечь API Key из Authorization заголовка\n2. Получить план из Redis (кеш 5 мин)\n3. Атомарно проверить и обновить bucket\n4. Добавить заголовки: X-RateLimit-Limit, Remaining, Reset\n5. Если превышен → 429 + Retry-After\n\nМониторинг: топ-N клиентов по 429 → выявление злоупотреблений и потребностей в апгрейде плана.',
+      explanation: 'Token Bucket выбран для разрешения burst (полезно для легитимных спайков активности). Отдельный Redis для rate limiting — изоляция от основных данных. Кеш плана на 5 минут снижает нагрузку на БД при каждом запросе. Заголовки X-RateLimit-* — стандарт отрасли, позволяют клиентам адаптировать поведение.',
       content: [
         { type: 'text', value: 'Спроектируем rate limiter для публичного API.' },
         { type: 'heading', value: 'Требования' },

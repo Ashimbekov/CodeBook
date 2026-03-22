@@ -89,6 +89,8 @@ export default {
       id: 5,
       title: 'Когда выбирать SQL, когда NoSQL',
       type: 'practice',
+      solution: 'Финансовая система (банк, платежи): PostgreSQL — ACID транзакции обязательны, сложные запросы агрегации, структурированные данные.\n\nСессии и кеш: Redis (Key-Value) — максимальная скорость, TTL, простые операции get/set.\n\nКаталог товаров с разными атрибутами: MongoDB (Document) — гибкая схема (телефон: {процессор, RAM}, одежда: {размер, цвет}), нет JOIN между документами.\n\nИстория сообщений мессенджера: Cassandra (Wide Column) — огромный объём записей (100B/день), append-only паттерн, шардирование по chat_id.\n\nСоциальный граф (рекомендации, друзья): Neo4j (Graph) — эффективные traversal запросы ("друзья друзей", "кто ещё купил это").\n\nТипичная комбинация: PostgreSQL + Redis + Cassandra для разных задач одной системы.',
+      explanation: 'Выбор БД определяется тремя факторами: структура данных (нормализованная/иерархическая/граф), паттерн доступа (CRUD с JOIN / key-value / time-series / graph traversal) и требования к согласованности (ACID vs eventual). На интервью допустимо использовать несколько БД — это правильный ответ.',
       content: [
         { type: 'text', value: 'На интервью часто спрашивают: "Какую БД вы выберете и почему?" Вот практическое руководство.' },
         { type: 'heading', value: 'Выбор SQL' },
@@ -121,6 +123,8 @@ export default {
       id: 7,
       title: 'Практика: проектируем схему данных',
       type: 'practice',
+      solution: 'Схема для системы бронирования авиабилетов (PostgreSQL):\n\nТаблица flights: id, origin, destination, departure_time, arrival_time, total_seats\nИндекс: (origin, destination, departure_time) для поиска рейсов\n\nТаблица seats: id, flight_id (FK), seat_number, class (ENUM), status (AVAILABLE/BOOKED)\nИндекс: (flight_id, status) для поиска свободных мест\n\nТаблица bookings: id, user_id (FK), seat_id (FK UNIQUE), payment_status, created_at\nUNIQUE на seat_id — гарантирует одно бронирование на место\n\nРешение конкурентного бронирования:\nBEGIN TRANSACTION → SELECT ... FOR UPDATE (pessimistic lock) → проверить status=AVAILABLE → UPDATE seats SET status=BOOKED → INSERT bookings → COMMIT\n\nFOR UPDATE блокирует строку — второй запрос ждёт, видит BOOKED и возвращает ошибку.',
+      explanation: 'UNIQUE constraint на seat_id — защита на уровне БД от двойного бронирования. FOR UPDATE (pessimistic locking) работает при высокой конкуренции за одно место. Альтернатива — optimistic locking с version counter (лучше при редких конфликтах). Индексы подобраны под конкретные запросы: поиск рейсов и поиск свободных мест.',
       content: [
         { type: 'text', value: 'Спроектируем схему данных для реального сценария — системы бронирования билетов.' },
         { type: 'heading', value: 'Требования' },

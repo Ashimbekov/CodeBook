@@ -83,6 +83,8 @@ export default {
       id: 6,
       title: 'Практика: Dashboard и Runbook',
       type: 'practice',
+      solution: 'Мониторинг API сервиса (RED + USE методы):\n\nGrafana Dashboard — Golden Signals:\n- Rate (RPS): http_requests_total[rate 1m] — line chart\n- Errors: rate(5xx[5m]) / rate(all[5m]) × 100 — алерт > 1% за 5 мин → P1\n- Duration: histogram_quantile(0.95, request_duration_seconds_bucket[5m]) — алерт p95 > 500 мс → P2, p99 > 2с → P1\n- Saturation: CPU utilization, request queue depth → алерт CPU > 85%\n\nАлерты:\n- P1 (разбудить): Error rate > 1%, p99 latency > 2с, payment failures > 0.5%\n- P2 (исправить завтра): p95 > 500 мс, CPU > 85% sustained\n- P3 (logging): disk < 20%, connection pool usage > 70%\n\nRunbook для "API Error Rate > 1%":\n1. Grafana: какой endpoint ошибается?\n2. Jaeger: найти failed traces за 15 мин\n3. Kibana: grep "ERROR" за 15 мин\n4. Проверить недавние деплои (git log)\n5. Если новый деплой → откатить\n6. Проверить downstream: БД, Redis, внешние API\n7. Не устранено за 15 мин → эскалировать',
+      explanation: 'RED метод (Rate, Errors, Duration) — минимально необходимый набор для любого сервиса. Алерты должны быть symptom-based (пользователи получают ошибки), не cause-based (CPU 90%). Runbook снижает MTTR (Mean Time To Resolve) — дежурный не тратит время на диагностику с нуля. Burn Rate алерты эффективнее threshold-алертов для SLO.',
       content: [
         { type: 'text', value: 'Спроектируем мониторинг для API сервиса.' },
         { type: 'heading', value: 'Ключевые метрики для API (RED метод)' },

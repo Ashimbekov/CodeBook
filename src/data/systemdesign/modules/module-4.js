@@ -124,6 +124,8 @@ export default {
       id: 8,
       title: 'Практика: спроектируй систему кеширования',
       type: 'practice',
+      solution: 'Система кеширования для e-commerce каталога (10M товаров, 50M запросов/день):\n\nУровень 1 — In-memory (в приложении):\n- Топ-1000 товаров, TTL 5 минут, ~100 МБ RAM\n- Скорость: ~50 нс (без сети)\n\nУровень 2 — Redis Cluster:\n- Топ-100,000 товаров, TTL 30 мин + jitter, ~10 ГБ\n- Стратегия: Cache-Aside, LFU eviction\n- Скорость: ~1 мс\n\nУровень 3 — PostgreSQL:\n- Все 10M товаров, индекс на product_id\n- Получает только ~5% запросов (промахи кеша)\n\nСтратегия инвалидации:\n1. Обновить товар в БД\n2. Событие "product_updated" → Kafka\n3. Cache Service → Redis DEL "product:{id}"\n4. In-memory устареет по TTL через 5 мин (eventual consistency)',
+      explanation: 'Многоуровневый кеш снижает нагрузку на БД в 20 раз (95% hit rate). Ключевые решения: LFU для вытеснения (самые редкие удаляются), jitter на TTL против Cache Avalanche, event-driven инвалидация для актуальности данных. Eventual consistency (5 мин) приемлемо для каталога e-commerce.',
       content: [
         { type: 'text', value: 'Применим знания о кешировании к реальному сценарию.' },
         { type: 'heading', value: 'Задача: кеширование для e-commerce каталога' },

@@ -7,6 +7,8 @@ export default {
       id: 1,
       title: 'Шаг 1: Требования и особенности',
       type: 'practice',
+      solution: 'Функциональные требования:\n- Водители обновляют геолокацию каждые 4 секунды\n- Пассажир вызывает такси → найти ближайшего водителя\n- Матчинг пассажира и водителя\n- Отображение водителя на карте в реальном времени\n- Расчёт маршрута и ETA\n- Surge pricing (динамические цены)\n- Завершение поездки и оплата\n\nНефункциональные:\n- 5M активных водителей, 10M поездок/день\n- Location updates: каждые 4 сек от каждого водителя\n- Matching latency: найти водителя < 1 сек\n- Consistency: один водитель = одна поездка (no double matching)\n\nОценка нагрузки:\n5M × 1 update/4 сек = 1.25M location updates/сек\n1.25M × 64 байт = 80 МБ/сек входящих данных',
+      explanation: '1.25M location updates/сек — исключительно высокий write throughput, требующий Kafka для буферизации. Matching latency < 1 сек при 5M водителях исключает наивный full-scan — нужен гео-индекс. Consistency при матчинге — distributed lock, иначе два пассажира могут "забрать" одного водителя одновременно.',
       content: [
         { type: 'text', value: 'Uber — уникальная система с жёсткими требованиями к реальному времени.' },
         { type: 'heading', value: 'Функциональные требования' },
@@ -35,6 +37,8 @@ export default {
       id: 2,
       title: 'Шаг 2: Геолокация — работа с координатами',
       type: 'practice',
+      solution: 'Проблема: 5M водителей × вычисление расстояния = медленно для наивного поиска.\n\nGeohash — иерархическое разбиение земли на ячейки:\n- 5 символов: ~5 км² (подходит для поиска такси)\n- Соседние ячейки имеют похожие префиксы\n- Поиск в радиусе: ячейка + 8 соседних ячеек\n\nRedis GEO (встроенная поддержка):\nДобавить водителя: GEOADD "drivers:available:{city}" lon lat driver_id\nПоиск ближайших в 2 км:\nGEOSEARCH "drivers:available:{city}" FROMMEMBER passenger BYRADIUS 2 KM ASC COUNT 10\n→ топ-10 ближайших, O(N+log M), быстро\n\nОбновление позиции:\nGEOADD "drivers:available:{city}" new_lon new_lat driver_id\n(перезаписывает старую позицию)',
+      explanation: 'Redis GEO использует Sorted Set внутри с геохешами в качестве score — это позволяет range запросы по географии. GEOSEARCH возвращает отсортированный список за O(N+log M) вместо O(N) для brute force. Sharding по городу критичен: Нью-Йорк и Лондон полностью независимы — горизонтальное масштабирование без cross-shard запросов.',
       content: [
         { type: 'text', value: 'Ключевая задача: эффективно хранить и запрашивать геоданные.' },
         { type: 'heading', value: 'Проблема поиска ближайших' },
@@ -49,6 +53,8 @@ export default {
       id: 3,
       title: 'Шаг 3: Location Service — 1.25M updates/sec',
       type: 'practice',
+      solution: 'Архитектура Location Service:\n[Driver App] → WebSocket → [Location Gateway] → [Kafka] → [Location Processor]\n\nLocation Gateway:\n- Принимает WebSocket соединения от водителей\n- Буферизирует batch обновлений\n- Отправляет в Kafka topic "driver_locations"\n\nKafka (100 партиций, ключ = driver_id):\n- Один водитель всегда в одной партиции → упорядоченность\n- 1.25M updates/сек легко переваривает Kafka\n\nLocation Processor (Kafka consumers):\n1. GEOADD обновить в Redis Geo index\n2. SET "driver:{id}:location" {lat, lon, status} EX 30\n3. INSERT в Cassandra (история перемещений)\n4. Publish в pub/sub для пассажиров (отображение на карте)\n\nTTL 30 сек: если нет обновления → водитель оффлайн',
+      explanation: 'Kafka — буфер между 1.25M/сек входящих и обработчиками. Без Kafka Location Gateway напрямую давил бы на Redis, что недопустимо. Partition key = driver_id обеспечивает порядок обновлений одного водителя. Cassandra для истории перемещений — append-only паттерн с высоким write throughput идеален.',
       content: [
         { type: 'text', value: 'Как обрабатывать поток обновлений локаций от 5M водителей.' },
         { type: 'heading', value: 'Архитектура Location Service' },
@@ -61,6 +67,8 @@ export default {
       id: 4,
       title: 'Шаг 4: Matching Service — найти водителя',
       type: 'practice',
+      solution: 'Алгоритм матчинга:\n1. GEOSEARCH "drivers:available:{city}" BYRADIUS 2 KM ASC COUNT 10\n2. Фильтр: рейтинг >= 4.0, нужный класс автомобиля\n3. Ранжирование: расстояние + рейтинг + acceptance rate\n4. Отправить запрос водителю #1 (ближайшему)\n5. Таймаут 15 сек → следующий водитель\n6. Принял → поездка назначена\n\nПредотвращение двойного матчинга (Redis Distributed Lock):\nredis.SET "lock:driver:{id}" ride_id NX EX 30\n- NX (Only if Not Exists): атомарная операция\n- Если lock уже есть → водитель занят, try next\n- Водитель принял → lock остаётся\n- Водитель отказал → DEL lock\n\nRide State Machine:\nREQUESTED → MATCHING → ACCEPTED → DRIVER_EN_ROUTE → IN_PROGRESS → COMPLETED\nKafka events при каждом переходе → Payment, Notification, Analytics',
+      explanation: 'Distributed Lock через Redis NX — атомарная операция без race condition. Без lock два пассажира могут одновременно "зарезервировать" одного водителя. State Machine для поездки — явное описание всех возможных состояний и переходов, упрощает debugging и мониторинг. Kafka events при переходах — event-driven архитектура для decoupling.',
       content: [
         { type: 'text', value: 'Алгоритм матчинга пассажира с водителем.' },
         { type: 'heading', value: 'Базовый алгоритм матчинга' },
@@ -75,6 +83,8 @@ export default {
       id: 5,
       title: 'Шаг 5: Отображение водителя в реальном времени',
       type: 'practice',
+      solution: 'После матчинга пассажир видит водителя на карте в реальном времени.\n\nАрхитектура push обновлений:\n[Driver App] → Location Service → Redis Pub/Sub\n  → channel "ride:{ride_id}:driver_location"\n  → [Passenger WebSocket Server] (подписан на канал)\n  → [Passenger App] ← WebSocket push\n\nПоток:\n1. Location Processor получает новую позицию водителя\n2. Проверяет: есть ли активная поездка у водителя?\n3. Если да: PUBLISH "ride:{ride_id}:driver_location" {lat, lon}\n4. Passenger WebSocket Server → push обновление пассажиру\n\nЧастота: каждые 4 секунды (синхронно с GPS обновлениями)\nПо завершении поездки: отписаться от канала → канал автоматически исчезает\n\nКлиентская интерполяция:\nСервер присылает позицию раз в 4 сек → клиент интерполирует для плавного движения на карте',
+      explanation: 'Redis Pub/Sub идеален для real-time трансляции: один publisher (Location Processor) → один subscriber (Passenger WebSocket Server). Только активные поездки создают pub/sub каналы — нет лишней нагрузки. Клиентская интерполяция решает UX проблему: водитель "плавно движется" между дискретными обновлениями без серверной нагрузки.',
       content: [
         { type: 'text', value: 'Пассажир видит водителя движущегося на карте.' },
         { type: 'heading', value: 'Push обновлений на карте' },
@@ -87,6 +97,8 @@ export default {
       id: 6,
       title: 'Шаг 6: Surge Pricing и аналитика',
       type: 'practice',
+      solution: 'Surge Pricing (динамические цены):\nsurge_multiplier = demand / supply\n- demand: запросы на поездки в geohash ячейке за последние 5 мин\n- supply: доступные водители в ячейке\n- demand/supply > 2 → 1.5x; > 3 → 2.0x; > 5 → 2.5x (max)\n\nВычисление:\n- Kafka Streams обрабатывает поток ride.requested\n- Aggregate по geohash (5 символов = ~5 км²) за скользящее 5-мин окно\n- Redis: "surge:{geohash}" → multiplier (TTL 2 мин)\n- Обновляется каждую минуту\n\nReal-time Analytics:\n- Kafka Streams / Apache Flink: поток ride.requested, ride.completed\n- Aggregate по городу + 5-мин окно → Dashboard, Surge calculation\n\nBatch Analytics (Spark, раз в ночь):\n- Детальный анализ маршрутов, паттернов спроса\n- Data Lake (S3) → Redshift → BI инструменты',
+      explanation: 'Surge pricing через Kafka Streams — образцовый пример streaming аналитики: real-time агрегация входящих событий для принятия бизнес-решений. Redis с TTL для surge multiplier — кеш, который автоматически устаревает (не показывать старые цены). Разделение real-time и batch аналитики — стандартная Lambda Architecture.',
       content: [
         { type: 'text', value: 'Динамическое ценообразование и аналитика в реальном времени.' },
         { type: 'heading', value: 'Surge Pricing (Динамическая цена)' },
@@ -99,6 +111,8 @@ export default {
       id: 7,
       title: 'Шаг 7: Итоговая архитектура и масштабирование',
       type: 'practice',
+      solution: 'Сервисы Uber:\n- Location Service: WebSocket + Kafka для 1.25M updates/сек\n- Driver Service: профили, рейтинги → PostgreSQL\n- Ride Service: создание/управление поездками (Saga pattern) → PostgreSQL\n- Matching Service: поиск водителя через Redis GEO\n- Map Service: маршруты (Google Maps / HERE Maps)\n- Pricing Service: базовые тарифы + surge multiplier\n- Payment Service: обработка платежей\n- Notification Service: push уведомления\n- Analytics Service: Kafka Streams + Spark\n\nМасштабирование Location Service:\nРазделить по городам:\n- Kafka topic per city: "locations:new_york", "locations:london"\n- Redis GEO index per city: "drivers:available:new_york"\n- Matching Service per region\n\nКлючевые решения:\n1. Redis GEO для поиска ближайших — O(log N)\n2. Kafka для буферизации 1.25M/сек location updates\n3. Distributed Lock (Redis NX) против double matching\n4. Geohash + regional sharding — горизонтальное масштабирование\n5. Surge pricing на основе real-time supply/demand',
+      explanation: 'Sharding по городам — ключевое решение масштабирования: географически изолированные данные не имеют смысла объединять. Это уменьшает размер каждого Redis GEO index и повышает производительность поиска. Uber реально использует Go, Java, Kafka, PostgreSQL, Redis — архитектура описанная здесь соответствует их реальным решениям.',
       content: [
         { type: 'text', value: 'Финальная архитектура и ключевые решения по масштабированию.' },
         { type: 'heading', value: 'Сервисы' },

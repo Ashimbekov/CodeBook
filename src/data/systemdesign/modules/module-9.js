@@ -90,6 +90,8 @@ export default {
       id: 6,
       title: 'Практика: CDN стратегия для крупного сайта',
       type: 'practice',
+      solution: 'CDN стратегия для новостного сайта (50M пользователей/месяц, аудитория США/Европа/Азия):\n\nJS/CSS бандлы (app.{hash}.js):\n- Pull CDN (Cloudflare), Cache-Control: max-age=31536000 (1 год)\n- Инвалидация не нужна — хеш меняется при деплое\n\nindex.html:\n- Pull CDN, Cache-Control: s-maxage=60 (1 минута на CDN)\n- При деплое: инвалидировать через Cloudflare API\n\nИзображения к статьям:\n- Pull CDN + image optimization (авто-WebP, resize)\n- Cache-Control: max-age=604800 (7 дней)\n- Имена: /images/{article_id}/{image_hash}.jpg\n\nВидео:\n- AWS CloudFront + S3 origin, HLS сегменты\n- Cache-Control: max-age=86400 (1 день)\n\nAPI публичных статей:\n- Cache-Control: s-maxage=30 (30 сек на CDN)\n- При публикации: инвалидировать конкретный URL\n\nРезультат: cache hit rate ~92%, нагрузка на origin снижена в 12 раз.',
+      explanation: 'Стратегия зависит от типа контента: неизменяемые файлы (с хешем в имени) кешируются на год; часто меняющийся HTML — короткий TTL; динамическое API — кеш только для публичных данных. Разделение на Pull/Push: Pull для большого количества файлов, Push для критичного небольшого контента. Измерение hit rate по типам — обязательно.',
       content: [
         { type: 'text', value: 'Разработаем CDN стратегию для новостного сайта с глобальной аудиторией.' },
         { type: 'heading', value: 'Характеристики системы' },
