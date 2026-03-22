@@ -4,13 +4,15 @@ import { ref, shallowRef } from 'vue'
 const courseImports = {
   java: () => import('../data/java/index.js'),
   algorithms: () => import('../data/algorithms/index.js'),
-  golang: () => import('../data/golang/index.js')
+  golang: () => import('../data/golang/index.js'),
+  claude: () => import('../data/claude/index.js')
 }
 
 const moduleImports = {
   java: (moduleId) => import(`../data/java/modules/module-${moduleId}.js`),
   algorithms: (moduleId) => import(`../data/algorithms/modules/module-${moduleId}.js`),
-  golang: (moduleId) => import(`../data/golang/modules/module-${moduleId}.js`)
+  golang: (moduleId) => import(`../data/golang/modules/module-${moduleId}.js`),
+  claude: (moduleId) => import(`../data/claude/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {
