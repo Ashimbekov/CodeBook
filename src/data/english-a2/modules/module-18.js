@@ -57,7 +57,9 @@ export default {
       id: 7,
       title: 'Практика: Описание багов',
       type: 'practice',
-      content: [
+            description: 'Переведите описания ошибок на английский язык.',
+      solution: 'Правильные ответы:\\n1. The app crashes when logging in.\\n2. The stack trace shows a NullPointerException at line 56.\\n3. The bug was caused by a memory leak.\\n4. Add logging to track the execution flow.\\n5. I fixed the issue by restarting the service.\\n6. Reproduce the bug before fixing it.\\n7. Expected behaviour: the user is redirected to the dashboard.',
+content: [
         { type: 'text', value: 'Переведите описания ошибок на английский язык.' },
         {
           type: 'exercise',

@@ -55,7 +55,9 @@ export default {
       id: 7,
       title: 'Практика: Понимание GitHub текстов',
       type: 'practice',
-      content: [
+            description: 'Прочитайте PR описание и ответьте на вопросы.',
+      solution: 'Правильные ответы:\\n1. It refactors the payment processing module to use the new Stripe API v3.\\n2. Because the old API will be deprecated on March 1st, 2024.\\n3. It means this PR closes/resolves issue number 234.\\n4. 12 new tests.\\n5. Старый API будет признан устаревшим с 1 марта.',
+content: [
         { type: 'text', value: 'Прочитайте PR описание и ответьте на вопросы.\n\n"This PR refactors the payment processing module to use the new Stripe API v3. The old API will be deprecated on March 1st, 2024. Changes include updating the payment service, adding webhook support, and improving error handling. All 47 existing tests pass and I\'ve added 12 new tests for the webhook functionality. Closes #234."' },
         {
           type: 'exercise',

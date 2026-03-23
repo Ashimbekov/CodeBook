@@ -57,7 +57,9 @@ export default {
       id: 7,
       title: 'Практика: Описание проблем',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The app crashes when the user uploads a file.\\n2. The service is down due to database issues.\\n3. We can fix this by adding error handling.\\n4. The issue appeared after the last dependency update.\\n5. The root cause is a race condition in the code.\\n6. We need to either fix the bug or roll back the deployment.\\n7. High latency is affecting the user experience.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

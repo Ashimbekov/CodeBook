@@ -59,7 +59,9 @@ export default {
       id: 6,
       title: 'Практика: Составление сравнений',
       type: 'practice',
-      content: [
+            description: 'Составьте предложения, используя comparative или superlative.',
+      solution: 'Правильные ответы:\\n1. Go is faster than Python for network applications.\\n2. This is the most complex bug I have ever seen.\\n3. This approach requires less memory than the previous one.\\n4. AWS is the most widely used cloud provider.\\n5. The new version is more secure and reliable.\\n6. Docker is lighter than virtual machines.\\n7. Which programming language is the easiest to learn?',
+content: [
         { type: 'text', value: 'Составьте предложения, используя comparative или superlative.' },
         {
           type: 'exercise',
@@ -80,7 +82,9 @@ export default {
       id: 7,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильную форму прилагательного.',
+      solution: 'Правильные ответы:\\n1. easier\\n2. worst\\n3. more powerful\\n4. more\\n5. most efficient\\n6. more expensive / more scalable\\n7. faster',
+content: [
         { type: 'text', value: 'Вставьте правильную форму прилагательного.' },
         {
           type: 'exercise',

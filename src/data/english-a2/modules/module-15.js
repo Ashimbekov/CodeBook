@@ -63,7 +63,9 @@ export default {
       id: 7,
       title: 'Практика: Описание типов данных',
       type: 'practice',
-      content: [
+            description: 'Переведите технические описания на английский язык.',
+      solution: 'Правильные ответы:\\n1. This function returns a boolean value.\\n2. The array contains five elements.\\n3. The username field is of type string.\\n4. Convert the string to an integer.\\n5. Always check for null before using.\\n6. The object contains the fields id, name, and email.\\n7. Filter the array to get active users.',
+content: [
         { type: 'text', value: 'Переведите технические описания на английский язык.' },
         {
           type: 'exercise',
@@ -84,7 +86,9 @@ export default {
       id: 8,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный термин: string, integer, boolean, array, object, null.',
+      solution: 'Правильные ответы:\\n1. boolean\\n2. string\\n3. integer\\n4. array\\n5. object\\n6. null\\n7. integer',
+content: [
         { type: 'text', value: 'Вставьте правильный термин: string, integer, boolean, array, object, null.' },
         {
           type: 'exercise',

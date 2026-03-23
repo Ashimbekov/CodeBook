@@ -7,7 +7,9 @@ export default {
       id: 1,
       title: 'Типы данных — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный термин: integer, string, boolean, array, object, null, float.',
+      solution: 'Правильные ответы:\\n1. boolean\\n2. string\\n3. integer\\n4. array\\n5. object\\n6. null\\n7. float\\n8. boolean\\n9. string / integer\\n10. length',
+content: [
         { type: 'text', value: 'Вставьте правильный термин: integer, string, boolean, array, object, null, float.' },
         {
           type: 'exercise',
@@ -31,7 +33,9 @@ export default {
       id: 2,
       title: 'ООП термины — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. A class is a blueprint for creating objects.\\n2. This class inherits from the base class.\\n3. The constructor initializes the object\'s properties.\\n4. The class implements the Serializable interface.\\n5. This method overrides the parent class method.\\n6. Use getters and setters for private fields.\\n7. The object is an instance of the User class.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
@@ -52,7 +56,9 @@ export default {
       id: 3,
       title: 'Git терминология — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный Git-термин.',
+      solution: 'Правильные ответы:\\n1. cloned\\n2. branch\\n3. committed\\n4. pushed\\n5. pull request (PR)\\n6. conflict\\n7. merged\\n8. commit\\n9. roll back / revert\\n10. blame',
+content: [
         { type: 'text', value: 'Вставьте правильный Git-термин.' },
         {
           type: 'exercise',
@@ -76,7 +82,9 @@ export default {
       id: 4,
       title: 'Баги и отладка — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите описания ошибок и решений.',
+      solution: 'Правильные ответы:\\n1. The stack trace shows a NullPointerException at line 42.\\n2. The app crashes when the user uploads a file.\\n3. Reproduce the bug before fixing it.\\n4. Add a breakpoint and inspect the variables.\\n5. Fix the root cause, not just the symptom.\\n6. The bug was caused by a race condition.\\n7. Add logging to track the execution flow.',
+content: [
         { type: 'text', value: 'Переведите описания ошибок и решений.' },
         {
           type: 'exercise',
@@ -97,7 +105,9 @@ export default {
       id: 5,
       title: 'Метрики — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык или вставьте термин.',
+      solution: 'Правильные ответы:\\n1. response\\n2. requests\\n3. latency\\n4. uptime\\n5. error\\n6. usage\\n7. alert\\n8. bottleneck',
+content: [
         { type: 'text', value: 'Переведите на английский язык или вставьте термин.' },
         {
           type: 'exercise',
@@ -119,7 +129,9 @@ export default {
       id: 6,
       title: 'Офисная лексика — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The deadline is next Friday.\\n2. I have a blocker — I\'m waiting for a review from the architect.\\n3. I estimate the task will take 3 days.\\n4. Add this task to the backlog.\\n5. The sprint starts on Monday.\\n6. Let\'s take this offline.\\n7. How many story points is this task?',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
@@ -140,7 +152,9 @@ export default {
       id: 7,
       title: 'Описание проблем — тест',
       type: 'practice',
-      content: [
+            description: 'Составьте предложения, описывающие проблемы и решения.',
+      solution: 'Правильные ответы:\\n1. The service is down due to database issues.\\n2. We can fix this by adding a caching layer.\\n3. The issue appeared after the last update.\\n4. We need to either fix the bug or roll back the deployment.\\n5. We have two options: restart the service or scale the server.',
+content: [
         { type: 'text', value: 'Составьте предложения, описывающие проблемы и решения.' },
         {
           type: 'exercise',
@@ -159,7 +173,9 @@ export default {
       id: 8,
       title: 'Смешанный IT-словарь — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильное слово.',
+      solution: 'Правильные ответы:\\n1. primary key\\n2. compiler\\n3. exception / runtime error\\n4. merge\\n5. unit\\n6. Singleton\\n7. interface',
+content: [
         { type: 'text', value: 'Вставьте правильное слово.' },
         {
           type: 'exercise',
@@ -180,7 +196,9 @@ export default {
       id: 9,
       title: 'IT-словарь в контексте — перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите IT-предложения с русского на английский.',
+      solution: 'Правильные ответы:\\n1. Passwords must be hashed before storing.\\n2. The API accepts POST requests and returns JSON.\\n3. Microservices are more scalable than monolithic applications.\\n4. The team is migrating from SVN to Git.\\n5. I refactored the authentication module.',
+content: [
         { type: 'text', value: 'Переведите IT-предложения с русского на английский.' },
         {
           type: 'exercise',
@@ -199,7 +217,9 @@ export default {
       id: 10,
       title: 'Написание технических описаний',
       type: 'practice',
-      content: [
+            description: 'Напишите описания технических концепций на английском.',
+      solution: 'Примеры ответов:\\n1. CI/CD stands for Continuous Integration and Continuous Deployment. CI automatically runs tests on every code commit. CD automatically deploys the code to production when all tests pass.\\n2. Merge combines two branches by creating a merge commit. Rebase moves commits to a new base, creating a linear history. Rebase is cleaner but rewrites history, while merge is safer for shared branches.\\n3. feat(auth): add Google OAuth authentication\\n\\nUsers can now log in using their Google account.\\nThis implements Google OAuth 2.0 flow in the auth module.',
+content: [
         { type: 'text', value: 'Напишите описания технических концепций на английском.' },
         {
           type: 'exercise',

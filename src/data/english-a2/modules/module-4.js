@@ -57,7 +57,9 @@ export default {
       id: 6,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык, используя Present Perfect.',
+      solution: 'Правильные ответы:\\n1. I have deployed the app.\\n2. We have just merged the pull request.\\n3. Have you written the tests yet?\\n4. I haven\'t checked the logs yet.\\n5. She has never worked with Docker.\\n6. We have used this framework since 2022.\\n7. Have you ever seen such an error?\\n8. The bug has been in production for three days.',
+content: [
         { type: 'text', value: 'Переведите на английский язык, используя Present Perfect.' },
         {
           type: 'exercise',
@@ -79,7 +81,9 @@ export default {
       id: 7,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильную форму глагола (Present Perfect или Past Simple).',
+      solution: 'Правильные ответы:\\n1. have just fixed\\n2. deployed\\n3. Have / worked\\n4. haven\'t released\\n5. has already reviewed\\n6. wrote\\n7. have / used\\n8. has crashed',
+content: [
         { type: 'text', value: 'Вставьте правильную форму глагола (Present Perfect или Past Simple).' },
         {
           type: 'exercise',
@@ -101,7 +105,9 @@ export default {
       id: 8,
       title: 'Практика: Исправление ошибок и написание',
       type: 'practice',
-      content: [
+            description: 'Часть 1: Исправьте ошибки.',
+      solution: 'Правильные ответы:\\n1. I fixed the bug yesterday. (с "yesterday" используется Past Simple)\\n2. Did you work with AWS last year? (конкретное время = Past Simple)\\n3. She never deployed to production last month. (конкретное время = Past Simple)\\n4. I haven\'t finished the task yet. (yet = Present Perfect)\\n\\nПримеры ответов:\\n1. Пример: I have worked with Python for 3 years. I have never used Go. Have you ever deployed to AWS?',
+content: [
         { type: 'text', value: 'Часть 1: Исправьте ошибки.' },
         {
           type: 'exercise',

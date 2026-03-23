@@ -49,7 +49,9 @@ export default {
       id: 6,
       title: 'Практика: Выбор предлога',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный предлог.',
+      solution: 'Правильные ответы:\\n1. at / on\\n2. in / in\\n3. by\\n4. with\\n5. by\\n6. on / in\\n7. with / via / by using\\n8. under / for',
+content: [
         { type: 'text', value: 'Вставьте правильный предлог.' },
         {
           type: 'exercise',
@@ -71,7 +73,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения на английский язык.',
+      solution: 'Правильные ответы:\\n1. The data is stored in the PostgreSQL database.\\n2. Please finish the task by Friday.\\n3. We migrated from REST API to GraphQL.\\n4. The app runs on port 8080.\\n5. This tool is used for performance monitoring.\\n6. The standup is held every morning at 10.',
+content: [
         { type: 'text', value: 'Переведите предложения на английский язык.' },
         {
           type: 'exercise',

@@ -53,7 +53,9 @@ export default {
       id: 6,
       title: 'Практика: Формирование вопросов',
       type: 'practice',
-      content: [
+            description: 'Составьте вопрос по данному ответу.',
+      solution: 'Правильные ответы:\\n1. Why did the build fail?\\n2. When did she deploy the app?\\n3. Have you ever worked with Docker?\\n4. How long does the deployment take?\\n5. Who wrote this module?\\n6. Could you tell me why the server is slow?\\n7. didn\'t you',
+content: [
         { type: 'text', value: 'Составьте вопрос по данному ответу.' },
         {
           type: 'exercise',
@@ -74,7 +76,9 @@ export default {
       id: 7,
       title: 'Практика: Исправление ошибок',
       type: 'practice',
-      content: [
+            description: 'Найдите и исправьте ошибки в вопросах.',
+      solution: 'Правильные ответы:\\n1. What does this error code mean?\\n2. Do you know what the error means? (косвенный вопрос = прямой порядок слов)\\n3. The tests passed, didn\'t they? (утвердительное предложение = отрицательный тег)\\n4. How long does the deployment take? / How much time does it take?\\n5. Why is the build failing?',
+content: [
         { type: 'text', value: 'Найдите и исправьте ошибки в вопросах.' },
         {
           type: 'exercise',

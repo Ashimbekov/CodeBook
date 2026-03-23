@@ -7,7 +7,9 @@ export default {
       id: 1,
       title: 'Деловой email: структура',
       type: 'practice',
-      content: [
+            description: 'Структура делового email:',
+      solution: 'Примеры ответов:\\n1. Subject: Code review request - PR #234\\n\\nHi Alex,\\n\\nI hope you\'re doing well. I\'ve just submitted a pull request (#234) that implements the user authentication feature. Could you please review it wh...',
+content: [
         { type: 'text', value: 'Структура делового email:\n\n1. Subject (тема): краткое и информативное\n2. Greeting (приветствие): Hi/Hello + имя\n3. Opening (вступление): цель письма\n4. Body (основная часть): детали\n5. Call to action (действие): что нужно сделать\n6. Closing (завершение): Best regards / Thanks\n7. Signature (подпись): имя и должность\n\nПримеры приветствий:\nHi [Name], (неформальное)\nHello [Name], (нейтральное)\nDear [Name], (формальное)\n\nПримеры завершений:\nBest regards, / Kind regards, (формальное)\nThanks, / Best, (неформальное)\nLooking forward to your reply. (Жду вашего ответа.)' },
         {
           type: 'exercise',
@@ -22,7 +24,9 @@ export default {
       id: 2,
       title: 'Email об инциденте — тест',
       type: 'practice',
-      content: [
+            description: 'Прочитайте email об инциденте и ответьте на вопросы.',
+      solution: 'Правильные ответы:\\n1. 45 minutes.\\n2. Database disk space ran out due to uncontrolled log growth.\\n3. All users were unable to access the application.\\n4. They cleared old log files.\\n5. Automated log rotation was set up, and disk usage alerts were lowered to 80%.',
+content: [
         { type: 'text', value: 'Прочитайте email об инциденте и ответьте на вопросы.\n\n---\nSubject: [INCIDENT] Production outage - 2024-01-15 02:30-03:15 UTC\n\nHi team,\n\nI\'m writing to inform you about a production outage that occurred last night.\n\nIncident Summary:\n- Duration: 45 minutes (02:30 - 03:15 UTC)\n- Impact: All users were unable to access the application\n- Root cause: Database disk space ran out due to uncontrolled log growth\n\nWhat happened:\nAt 02:30 UTC, monitoring alerts fired for high disk usage. By 02:35, disk was at 100% and the database stopped accepting writes. The application became unavailable.\n\nResolution:\nWe identified the issue and cleared old log files. By 03:15 UTC, the service was fully restored.\n\nPrevention:\n- We have set up automated log rotation\n- Disk usage alerts have been lowered to 80%\n\nWe apologize for the inconvenience.\n\nBest regards,\nDev Team\n---' },
         {
           type: 'exercise',
@@ -41,7 +45,9 @@ export default {
       id: 3,
       title: 'Email с просьбой о помощи — написание',
       type: 'practice',
-      content: [
+            description: 'Напишите email по данным ситуациям.',
+      solution: 'Примеры ответов:\\n1. Subject: Request for staging server access\\n\\nHi DevOps team,\\n\\nI\'m working on the new user profile feature (ticket #89) and need access to the staging server to test it.\\n\\nCould you please grant me...\\n2. Subject: Delay in task #123 - updated estimate\\n\\nHi Sarah,\\n\\nI\'m writing to let you know that task #123 will take longer than originally estimated.\\n\\nWhile working on the feature, I discovered a co...',
+content: [
         { type: 'text', value: 'Напишите email по данным ситуациям.' },
         {
           type: 'exercise',
@@ -57,7 +63,9 @@ export default {
       id: 4,
       title: 'Написание тикетов в Jira — тест',
       type: 'practice',
-      content: [
+            description: 'Напишите полные тикеты по описаниям ситуаций.',
+      solution: 'Примеры ответов:\\n1. Title: [Bug] Page freezes when clicking "Delete Account" button\\n\\nSeverity: Critical\\n\\nSteps to Reproduce:\\n1. Log in to the application.\\n2. Navigate to Account Settings.\\n3. Click "Delete Account"...\\n2. Title: [Feature] Add CSV export for user data\\n\\nAs a user, I want to export my data to CSV so that I can analyze it in Excel.\\n\\nAcceptance Criteria:\\n- User can click "Export to CSV" button in the d...',
+content: [
         { type: 'text', value: 'Напишите полные тикеты по описаниям ситуаций.' },
         {
           type: 'exercise',
@@ -73,7 +81,9 @@ export default {
       id: 5,
       title: 'Написание ответов на технические вопросы',
       type: 'practice',
-      content: [
+            description: 'Напишите короткие ответы на технические вопросы клиента.',
+      solution: 'Примеры ответов:\\n1. Hi,\\n\\nThank you for reporting this issue. We are aware of the slow load times and are investigating.\\n\\nThe issue is caused by unoptimized database queries. We have a fix ready and will deploy it tom...\\n2. Hi,\\n\\nThank you for your interest in feature X. We are happy to let you know that it is planned for Q2 2024.\\n\\nWe don\'t have an exact release date yet, but we will announce it on our blog and via em...',
+content: [
         { type: 'text', value: 'Напишите короткие ответы на технические вопросы клиента.' },
         {
           type: 'exercise',
@@ -89,7 +99,9 @@ export default {
       id: 6,
       title: 'Email фразы — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите email-фразы на английский язык.',
+      solution: 'Правильные ответы:\\n1. I hope you\'re doing well.\\n2. I\'m writing to inform you about...\\n3. Could you please review this?\\n4. Looking forward to your reply.\\n5. I apologize for the inconvenience.\\n6. Please let me know if you have any questions.\\n7. Thank you for your time.\\n8. I\'m attaching the file for your reference.',
+content: [
         { type: 'text', value: 'Переведите email-фразы на английский язык.' },
         {
           type: 'exercise',
@@ -111,7 +123,9 @@ export default {
       id: 7,
       title: 'Формальный vs неформальный email',
       type: 'practice',
-      content: [
+            description: 'Определите: формальный или неформальный? Или перепишите в другом стиле.',
+      solution: 'Правильные ответы:\\n1. Hi [Name], could you please review my pull request when you have time? Thank you.\\n2. Hey, could you help me with this issue?\\n3. Формальное.\\n4. Неформальное (British English).',
+content: [
         { type: 'text', value: 'Определите: формальный или неформальный? Или перепишите в другом стиле.' },
         {
           type: 'exercise',
@@ -129,7 +143,9 @@ export default {
       id: 8,
       title: 'Написание постмортема — практика',
       type: 'practice',
-      content: [
+            description: 'Постмортем — анализ инцидента после его разрешения.',
+      solution: 'Примеры ответов:\\n1. Incident Summary: Production server outage due to DDoS attack.\\n\\nTimeline: Attack started at 03:00 UTC. Server became unavailable at 03:05. Issue was resolved at 05:00 UTC.\\n\\nRoot Cause: A DDoS atta...',
+content: [
         { type: 'text', value: 'Постмортем — анализ инцидента после его разрешения.\n\nСтруктура постмортема:\n1. Incident summary (краткое описание)\n2. Timeline (хронология)\n3. Root cause (первопричина)\n4. Impact (влияние)\n5. Resolution (решение)\n6. Prevention (профилактика)\n\nНапишите мини-постмортем по следующему инциденту: сервер упал в 3 ночи из-за DDoS-атаки, восстановление заняло 2 часа, потеряли 0.5% пользователей.' },
         {
           type: 'exercise',
@@ -144,7 +160,9 @@ export default {
       id: 9,
       title: 'Написание Slack/Teams сообщений',
       type: 'practice',
-      content: [
+            description: 'Напишите короткие сообщения для корпоративного мессенджера.',
+      solution: 'Примеры ответов:\\n1. Deployment to production was successful! Version 2.5 is now live. No issues detected.\\n2. Hey team, I\'m stuck on a JWT authentication issue. The token validation fails for some users but not others. Could anyone help me debug this?\\n3. Heads up everyone! We have scheduled server maintenance on Saturday, January 20, from 02:00 to 04:00 UTC. The app will be unavailable during this time. Please plan accordingly.',
+content: [
         { type: 'text', value: 'Напишите короткие сообщения для корпоративного мессенджера.' },
         {
           type: 'exercise',
@@ -161,7 +179,9 @@ export default {
       id: 10,
       title: 'Итоговый тест по написанию',
       type: 'practice',
-      content: [
+            description: 'Напишите полный email по ситуации:',
+      solution: 'Примеры ответов:\\n1. Subject: Update on login issue - JWT token fix\\n\\nHi,\\n\\nThank you for reporting the login issue. We apologize for the inconvenience.\\n\\nWe have investigated the problem and found the root cause. The ...',
+content: [
         { type: 'text', value: 'Напишите полный email по ситуации:\n\nВы разработчик. Клиент сообщил вам баг: при входе в систему через мобильное приложение получает ошибку 401. Вы уже нашли причину (неверный алгоритм JWT токена для мобильных клиентов) и исправите это завтра.' },
         {
           type: 'exercise',

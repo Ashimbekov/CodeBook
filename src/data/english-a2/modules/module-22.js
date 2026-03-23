@@ -55,7 +55,9 @@ export default {
       id: 7,
       title: 'Практика: Описание метрик',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The average response time is 150 milliseconds.\\n2. We reduced latency by 40%.\\n3. The service handles 2000 requests per second.\\n4. CPU usage is at 85% — this is too high.\\n5. Our SLA guarantees 99.9% uptime.\\n6. Memory usage is increasing — there might be a leak.\\n7. Set up an alert if the error rate exceeds 1%.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

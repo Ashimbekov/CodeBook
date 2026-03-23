@@ -53,7 +53,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод фразовых глаголов',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения на английский язык, используя фразовые глаголы.',
+      solution: 'Правильные ответы:\\n1. I need to set up the local development environment.\\n2. We rolled back the deployment because of a critical bug.\\n3. Look up this error code in the documentation.\\n4. Let\'s break down the task into smaller parts.\\n5. I can\'t log in — my account is blocked.\\n6. Spin up a new container for testing.\\n7. I ran into a strange network issue.\\n8. Turn off debug mode before deploying.',
+content: [
         { type: 'text', value: 'Переведите предложения на английский язык, используя фразовые глаголы.' },
         {
           type: 'exercise',
@@ -75,7 +77,9 @@ export default {
       id: 8,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный фразовый глагол: set up, log in, roll back, break down, look up, figure out, spin up, shut down.',
+      solution: 'Правильные ответы:\\n1. set up\\n2. roll back\\n3. log in\\n4. look up\\n5. Break down\\n6. figure out\\n7. Spin up\\n8. shut down',
+content: [
         { type: 'text', value: 'Вставьте правильный фразовый глагол: set up, log in, roll back, break down, look up, figure out, spin up, shut down.' },
         {
           type: 'exercise',

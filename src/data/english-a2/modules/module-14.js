@@ -53,7 +53,9 @@ export default {
       id: 6,
       title: 'Практика: used to или would?',
       type: 'practice',
-      content: [
+            description: 'Вставьте used to или would (иногда оба варианты возможны — укажите оба).',
+      solution: 'Правильные ответы:\\n1. used to / would\\n2. used to (состояние, would нельзя)\\n3. used to / would\\n4. used to (не было = состояние)\\n5. would / used to\\n6. didn\'t use to\\n7. used to / would',
+content: [
         { type: 'text', value: 'Вставьте used to или would (иногда оба варианты возможны — укажите оба).' },
         {
           type: 'exercise',
@@ -74,7 +76,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. We used to deploy manually every week.\\n2. We didn\'t use to have CI/CD. / There used to be no CI/CD.\\n3. I\'m used to working from home.\\n4. It took her a month to get used to the new process.\\n5. The whole team used to use SVN, but then switched to Git.\\n6. Whenever there was a bug, they would fix it immediately.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

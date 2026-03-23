@@ -49,7 +49,9 @@ export default {
       id: 6,
       title: 'Практика: Написание commit messages',
       type: 'practice',
-      content: [
+            description: 'Напишите правильные commit messages в формате Conventional Commits.',
+      solution: 'Правильные ответы:\\n1. feat(auth): add password change functionality\\n2. fix(users): resolve null pointer in getUserById function\\n3. docs(readme): add Docker setup instructions\\n4. test(payments): add unit tests for payment processing\\n5. perf(database): optimize queries for better performance\\n6. chore(api): remove deprecated /api/v1/users/old endpoint',
+content: [
         { type: 'text', value: 'Напишите правильные commit messages в формате Conventional Commits.' },
         {
           type: 'exercise',
@@ -69,7 +71,9 @@ export default {
       id: 7,
       title: 'Практика: Написание PR Description',
       type: 'practice',
-      content: [
+            description: 'Напишите краткое описание PR по данной информации:',
+      solution: 'Примеры ответов:\\n1. ## Summary\\nThis PR adds two-factor authentication (2FA) using TOTP.\\n\\n## Changes\\n- Added POST /auth/2fa/enable endpoint\\n- Updated UserService with 2FA support\\n- Added 20 new unit and integration ...',
+content: [
         { type: 'text', value: 'Напишите краткое описание PR по данной информации:\n\nЧто: Добавлена двухфакторная аутентификация (2FA) с TOTP.\nПочему: Улучшение безопасности аккаунтов пользователей.\nЧто изменилось: Новый endpoint /auth/2fa/enable, обновлён UserService, добавлено 20 тестов.\nЗакрывает задачу #87.' },
         {
           type: 'exercise',

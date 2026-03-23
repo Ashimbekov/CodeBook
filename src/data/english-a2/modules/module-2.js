@@ -61,7 +61,9 @@ export default {
       id: 6,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения на английский язык.',
+      solution: 'Правильные ответы:\\n1. Yesterday I found a critical bug in production.\\n2. While the team was having a meeting, the server crashed.\\n3. We merged the pull request last night.\\n4. What were you doing when the error appeared?\\n5. She was writing tests all day yesterday.\\n6. The deployment took three hours.\\n7. The tests didn\'t pass, so we cancelled the release.',
+content: [
         { type: 'text', value: 'Переведите предложения на английский язык.' },
         {
           type: 'exercise',
@@ -82,7 +84,9 @@ export default {
       id: 7,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте глагол в правильной форме (Past Simple или Past Continuous).',
+      solution: 'Правильные ответы:\\n1. was debugging / found\\n2. was reviewing / failed\\n3. wrote\\n4. were deploying / went\\n5. didn\'t know / happened\\n6. Did you test\\n7. pushed / opened',
+content: [
         { type: 'text', value: 'Вставьте глагол в правильной форме (Past Simple или Past Continuous).' },
         {
           type: 'exercise',

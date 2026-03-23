@@ -67,7 +67,9 @@ export default {
       id: 6,
       title: 'Практика: Перевод предложений',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык. Определите, какое время использовать.',
+      solution: 'Правильные ответы:\\n1. He usually works on the backend.\\n2. She is fixing a bug right now.\\n3. We deploy every Thursday.\\n4. The team is migrating the database.\\n5. The API returns JSON.\\n6. I am learning Kubernetes now.\\n7. The CI pipeline runs tests on every push.\\n8. They are doing a code review.',
+content: [
         { type: 'text', value: 'Переведите на английский язык. Определите, какое время использовать.' },
         {
           type: 'exercise',
@@ -89,7 +91,9 @@ export default {
       id: 7,
       title: 'Практика: Выбор правильной формы',
       type: 'practice',
-      content: [
+            description: 'Выберите правильную форму глагола — Present Simple или Present Continuous.',
+      solution: 'Правильные ответы:\\n1. is working\\n2. processes\\n3. don\'t understand\\n4. is migrating\\n5. reviews\\n6. is crashing\\n7. push\\n8. am currently fixing',
+content: [
         { type: 'text', value: 'Выберите правильную форму глагола — Present Simple или Present Continuous.' },
         {
           type: 'exercise',
@@ -111,7 +115,9 @@ export default {
       id: 8,
       title: 'Практика: Исправление ошибок',
       type: 'practice',
-      content: [
+            description: 'Найдите и исправьте ошибки в предложениях.',
+      solution: 'Правильные ответы:\\n1. She knows the answer to this bug.\\n2. I work on the backend every day.\\n3. The function does not return the correct value.\\n4. We deploy the app every Friday.\\n5. Is the build finished? / Has the build finished?\\n6. He is working from home at the moment.',
+content: [
         { type: 'text', value: 'Найдите и исправьте ошибки в предложениях.' },
         {
           type: 'exercise',

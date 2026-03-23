@@ -61,7 +61,9 @@ export default {
       id: 6,
       title: 'Практика: will или going to?',
       type: 'practice',
-      content: [
+            description: 'Выберите will или going to и объясните свой выбор.',
+      solution: 'Правильные ответы:\\n1. will (спонтанное решение)\\n2. are going to (заранее спланировано)\\n3. is going to (видимые признаки)\\n4. will (мнение/предсказание)\\n5. will (только что согласился)\\n6. is going to (запланировано)\\n7. will (общее предсказание)',
+content: [
         { type: 'text', value: 'Выберите will или going to и объясните свой выбор.' },
         {
           type: 'exercise',
@@ -82,7 +84,9 @@ export default {
       id: 7,
       title: 'Практика: Переводы и составление предложений',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. Next quarter we are going to release the mobile app.\\n2. I think this framework will become the industry standard.\\n3. Look at this error — the database is going to crash!\\n4. OK, I will send you the report tonight.\\n5. When will the next release be?\\n6. We are going to switch from REST to GraphQL.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

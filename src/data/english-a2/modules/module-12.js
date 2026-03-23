@@ -53,7 +53,9 @@ export default {
       id: 6,
       title: 'Практика: Вставьте связующее слово',
       type: 'practice',
-      content: [
+            description: 'Вставьте подходящее связующее слово.',
+      solution: 'Правильные ответы:\\n1. because\\n2. Moreover / In addition / Also\\n3. Although / Even though\\n4. First / Then\\n5. so\\n6. while / whereas\\n7. However',
+content: [
         { type: 'text', value: 'Вставьте подходящее связующее слово.' },
         {
           type: 'exercise',

@@ -55,7 +55,9 @@ export default {
       id: 6,
       title: 'Практика: Активный в пассивный',
       type: 'practice',
-      content: [
+            description: 'Преобразуйте предложения из активного залога в пассивный.',
+      solution: 'Правильные ответы:\\n1. Updates are deployed every week.\\n2. The bug was found by QA.\\n3. All the errors have been fixed.\\n4. User data is stored in the database.\\n5. The pull request was rejected by the tech lead.\\n6. The important files were deleted.',
+content: [
         { type: 'text', value: 'Преобразуйте предложения из активного залога в пассивный.' },
         {
           type: 'exercise',
@@ -75,7 +77,9 @@ export default {
       id: 7,
       title: 'Практика: Заполнить пропуски',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильную форму пассивного залога.',
+      solution: 'Правильные ответы:\\n1. are processed\\n2. was cancelled\\n3. has already been updated\\n4. is encrypted / being stored\\n5. are being tested\\n6. are hashed\\n7. has been reported',
+content: [
         { type: 'text', value: 'Вставьте правильную форму пассивного залога.' },
         {
           type: 'exercise',

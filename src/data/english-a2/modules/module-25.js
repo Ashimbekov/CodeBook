@@ -47,7 +47,9 @@ export default {
       id: 6,
       title: 'Практика: Написание заголовков тикетов',
       type: 'practice',
-      content: [
+            description: 'Напишите заголовки баг-репортов на английском языке по описаниям.',
+      solution: 'Правильные ответы:\\n1. File upload page freezes when uploading files larger than 10MB.\\n2. "Save" button not working in mobile Safari browser.\\n3. API returns 404 when username contains special characters.\\n4. Email notifications not sent after registration.\\n5. Search does not find results with Cyrillic characters.',
+content: [
         { type: 'text', value: 'Напишите заголовки баг-репортов на английском языке по описаниям.' },
         {
           type: 'exercise',
@@ -66,7 +68,9 @@ export default {
       id: 7,
       title: 'Практика: Написание полного баг-репорта',
       type: 'practice',
-      content: [
+            description: 'Напишите полный баг-репорт по следующей ситуации:',
+      solution: 'Примеры ответов:\\n1. Title: Account email not updating when changed in Settings\\n\\nSteps to Reproduce:\\n1. Log in to the app.\\n2. Navigate to Account Settings.\\n3. Change the email address to a new valid email.\\n4. Click ...',
+content: [
         { type: 'text', value: 'Напишите полный баг-репорт по следующей ситуации:\n\nСитуация: Вы заметили, что когда пользователь пытается изменить свой email в настройках аккаунта, страница перезагружается, но email не изменяется. Это происходит каждый раз.' },
         {
           type: 'exercise',

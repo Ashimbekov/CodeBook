@@ -47,7 +47,9 @@ export default {
       id: 6,
       title: 'Практика: Чтение и понимание',
       type: 'practice',
-      content: [
+            description: 'Прочитайте фрагмент ответа с Stack Overflow и ответьте на вопросы.',
+      solution: 'Правильные ответы:\\n1. Because the server doesn\'t include the proper CORS headers.\\n2. Access-Control-Allow-Origin\\n3. Use the cors middleware package.\\n4. Restrict origins to only trusted domains.\\n5. Самое простое решение — использовать middleware-пакет cors.',
+content: [
         { type: 'text', value: 'Прочитайте фрагмент ответа с Stack Overflow и ответьте на вопросы.\n\nAnswer text:\n"The reason you\'re getting a CORS error is that your browser is blocking the request because the server doesn\'t include the proper CORS headers. To fix this, you need to add the Access-Control-Allow-Origin header to your server response. If you\'re using Express.js, the simplest solution is to use the cors middleware package. Install it with npm install cors, then add it to your app: app.use(cors()). This will allow requests from all origins. For production, make sure to restrict origins to only your trusted domains."' },
         {
           type: 'exercise',
@@ -66,7 +68,9 @@ export default {
       id: 7,
       title: 'Практика: Поиск информации',
       type: 'practice',
-      content: [
+            description: 'Сформулируйте вопрос для Stack Overflow на английском языке.',
+      solution: 'Правильные ответы:\\n1. How do I convert a string to a number in JavaScript?\\n2. Why is my database query running slowly?\\n3. What is the difference between GET and POST requests?\\n4. How do I connect to PostgreSQL from Python?\\n5. Is there a way to run multiple Docker containers at the same time?',
+content: [
         { type: 'text', value: 'Сформулируйте вопрос для Stack Overflow на английском языке.' },
         {
           type: 'exercise',
@@ -85,7 +89,9 @@ export default {
       id: 8,
       title: 'Практика: Перевод типичных фраз',
       type: 'practice',
-      content: [
+            description: 'Переведите фразы с английского на русский.',
+      solution: 'Правильные ответы:\\n1. Лучший подход — использовать async/await.\\n2. Убедись, что ты обрабатываешь случай с null.\\n3. Обрати внимание, что этот метод устарел в версии 3.0.\\n4. Имей в виду, что это работает только в Node.js 18+.\\n5. Вместо for...in, используй for...of для массивов.',
+content: [
         { type: 'text', value: 'Переведите фразы с английского на русский.' },
         {
           type: 'exercise',

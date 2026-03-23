@@ -7,7 +7,9 @@ export default {
       id: 1,
       title: 'Present Simple vs Continuous — тест',
       type: 'practice',
-      content: [
+            description: 'Выберите правильную форму глагола.',
+      solution: 'Правильные ответы:\\n1. returns\\n2. am debugging\\n3. doesn\'t know\\n4. are deploying\\n5. is handling\\n6. writes\\n7. are currently migrating\\n8. doesn\'t return\\n9. runs\\n10. need',
+content: [
         { type: 'text', value: 'Выберите правильную форму глагола.' },
         {
           type: 'exercise',
@@ -31,7 +33,9 @@ export default {
       id: 2,
       title: 'Past Simple vs Continuous — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте глагол в правильной форме.',
+      solution: 'Правильные ответы:\\n1. was fixing / found\\n2. was reviewing / failed\\n3. wrote\\n4. pushed / opened\\n5. were / working\\n6. succeeded\\n7. didn\'t know / happened\\n8. were deploying / was spiking\\n9. was building\\n10. ran / passed',
+content: [
         { type: 'text', value: 'Вставьте глагол в правильной форме.' },
         {
           type: 'exercise',
@@ -55,7 +59,9 @@ export default {
       id: 3,
       title: 'Present Perfect — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте глагол в Present Perfect.',
+      solution: 'Правильные ответы:\\n1. have just deployed\\n2. has never used\\n3. Have / already reviewed\\n4. haven\'t released\\n5. has failed\\n6. has / worked\\n7. have worked\\n8. have just fixed\\n9. set up (Past Simple, конкретное время)\\n10. has completed',
+content: [
         { type: 'text', value: 'Вставьте глагол в Present Perfect.' },
         {
           type: 'exercise',
@@ -79,7 +85,9 @@ export default {
       id: 4,
       title: 'Future: will vs going to — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильную форму будущего времени.',
+      solution: 'Правильные ответы:\\n1. \'ll fix (will fix)\\n2. are going to migrate\\n3. is going to go\\n4. will improve\\n5. ends / is going to end\\n6. \'ll ask\\n7. are going to release\\n8. will change\\n9. is going to present / is presenting\\n10. is going to crash',
+content: [
         { type: 'text', value: 'Вставьте правильную форму будущего времени.' },
         {
           type: 'exercise',
@@ -103,7 +111,9 @@ export default {
       id: 5,
       title: 'Modal Verbs — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте must, should, have to, don\\\'t have to, mustn\\\'t.',
+      solution: 'Правильные ответы:\\n1. mustn\'t\\n2. should\\n3. must / have to\\n4. don\'t have to\\n5. has to / needs to\\n6. should\\n7. must (logical deduction)\\n8. don\'t have to\\n9. must\\n10. should',
+content: [
         { type: 'text', value: 'Вставьте must, should, have to, don\'t have to, mustn\'t.' },
         {
           type: 'exercise',
@@ -127,7 +137,9 @@ export default {
       id: 6,
       title: 'Passive Voice — тест',
       type: 'practice',
-      content: [
+            description: 'Преобразуйте в пассивный залог или вставьте правильную форму.',
+      solution: 'Правильные ответы:\\n1. are run\\n2. was found\\n3. has already been approved\\n4. is encrypted\\n5. was cancelled\\n6. have been updated\\n7. was written\\n8. are stored\\n9. was completed\\n10. are being tested',
+content: [
         { type: 'text', value: 'Преобразуйте в пассивный залог или вставьте правильную форму.' },
         {
           type: 'exercise',
@@ -151,7 +163,9 @@ export default {
       id: 7,
       title: 'First Conditional — тест',
       type: 'practice',
-      content: [
+            description: 'Составьте условные предложения.',
+      solution: 'Правильные ответы:\\n1. fail / won\'t deploy\\n2. will crash / don\'t restart\\n3. add / will appear\\n4. use / will be\\n5. finishes / will notify\\n6. will review / submit\\n7. runs / will stop\\n8. will succeed / fix\\n9. scale / won\'t handle\\n10. find / notify',
+content: [
         { type: 'text', value: 'Составьте условные предложения.' },
         {
           type: 'exercise',
@@ -175,7 +189,9 @@ export default {
       id: 8,
       title: 'Mixed Grammar — перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения на английский язык.',
+      solution: 'Правильные ответы:\\n1. While the team was having a meeting, the server crashed.\\n2. I have already deployed the app. You can check.\\n3. If the tests pass, we will deploy tonight.\\n4. The bug was found by the QA team last week.\\n5. You must write tests before opening a PR.\\n6. Go is faster than Python for network applications.\\n7. I enjoy solving complex technical problems.',
+content: [
         { type: 'text', value: 'Переведите предложения на английский язык.' },
         {
           type: 'exercise',
@@ -196,7 +212,9 @@ export default {
       id: 9,
       title: 'Исправление ошибок — всё',
       type: 'practice',
-      content: [
+            description: 'Найдите и исправьте грамматические ошибки.',
+      solution: 'Правильные ответы:\\n1. She knows the solution to this bug. (stative verb)\\n2. I fixed the bug yesterday. (конкретное время = Past Simple)\\n3. If the server crashes, we will roll back.\\n4. We need to avoid global variables.\\n5. The code was reviewed by the senior developer.\\n6. You don\'t have to write tests for this.\\n7. The build is faster than before.\\n8. We are deploying to production tomorrow.',
+content: [
         { type: 'text', value: 'Найдите и исправьте грамматические ошибки.' },
         {
           type: 'exercise',
@@ -218,7 +236,9 @@ export default {
       id: 10,
       title: 'Написание текстов — всё',
       type: 'practice',
-      content: [
+            description: 'Напишите тексты, используя грамматику A2.',
+      solution: 'Примеры ответов:\\n1. Пример: I work as a backend developer. I usually write Python code and review pull requests. This week I am working on a new authentication feature. I am also learning Docker to improve our deployment...\\n2. Пример: Yesterday I fixed a critical bug in the payment service. Today I will write tests for the fix and open a PR. No blockers.\\n3. Пример: The server crashed at 2 AM. We were deploying an update when the database ran out of memory. The error was caused by a migration script. We rolled back to the previous version.',
+content: [
         { type: 'text', value: 'Напишите тексты, используя грамматику A2.' },
         {
           type: 'exercise',

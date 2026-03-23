@@ -59,7 +59,9 @@ export default {
       id: 6,
       title: 'Практика: Составление условных предложений',
       type: 'practice',
-      content: [
+            description: 'Соедините части, чтобы создать правильные условные предложения.',
+      solution: 'Правильные ответы:\\n1. fail / will not deploy\\n2. add / will crash\\n3. use / will improve\\n4. will succeed / fix\\n5. have / will refactor\\n6. will miss / start\\n7. doesn\'t respond / restart',
+content: [
         { type: 'text', value: 'Соедините части, чтобы создать правильные условные предложения.' },
         {
           type: 'exercise',

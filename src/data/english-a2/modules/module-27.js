@@ -49,7 +49,9 @@ export default {
       id: 6,
       title: 'Практика: Написание стендапа',
       type: 'practice',
-      content: [
+            description: 'Напишите стендап по данным ситуациям.',
+      solution: 'Примеры ответов:\\n1. Yesterday I worked on the login page and wrote 5 unit tests. Today I will finish the login functionality and start working on the registration page. No blockers.\\n2. Yesterday I fixed a bug in the payment module. Today I plan to write tests for the bug fix. I have a blocker — I\'m waiting for access to the staging environment.\\n3. Yesterday I studied the API documentation and started the integration. Today I will continue working on the integration. I have a blocker — the documentation is incomplete and I need clarification.',
+content: [
         { type: 'text', value: 'Напишите стендап по данным ситуациям.' },
         {
           type: 'exercise',
@@ -78,7 +80,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод стендап-фраз',
       type: 'practice',
-      content: [
+            description: 'Переведите фразы на английский язык.',
+      solution: 'Правильные ответы:\\n1. Yesterday I worked on the new search feature.\\n2. Today I\'m going to finish the refactoring and open a PR.\\n3. I have a blocker — I\'m waiting for a review from the tech lead.\\n4. The task is taking longer than expected.\\n5. That\'s it from me. Your turn, Alex.\\n6. Let\'s take this offline after the standup.',
+content: [
         { type: 'text', value: 'Переведите фразы на английский язык.' },
         {
           type: 'exercise',

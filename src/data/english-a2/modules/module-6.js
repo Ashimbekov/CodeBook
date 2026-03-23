@@ -63,7 +63,9 @@ export default {
       id: 6,
       title: 'Практика: Выбор модального глагола',
       type: 'practice',
-      content: [
+            description: 'Выберите правильный модальный глагол: must, should, have to, don\\\'t have to, mustn\\\'t.',
+      solution: 'Правильные ответы:\\n1. mustn\'t\\n2. don\'t have to\\n3. must\\n4. must / have to\\n5. shouldn\'t\\n6. have to\\n7. must\\n8. don\'t have to',
+content: [
         { type: 'text', value: 'Выберите правильный модальный глагол: must, should, have to, don\'t have to, mustn\'t.' },
         {
           type: 'exercise',
@@ -85,7 +87,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод и написание правил',
       type: 'practice',
-      content: [
+            description: 'Часть 1: Переведите на английский.',
+      solution: 'Правильные ответы:\\n1. You must test this before deploying.\\n2. You should use more descriptive variable names.\\n3. We don\'t have to use this framework — it\'s optional.\\n4. All API endpoints must have authentication.\\n5. You should read the documentation before installation.\\n\\nПримеры ответов:\\n1. Пример: Developers must write unit tests. You should review at least 2 PRs per week. Every developer has to attend the weekly sync.',
+content: [
         { type: 'text', value: 'Часть 1: Переведите на английский.' },
         {
           type: 'exercise',

@@ -57,7 +57,9 @@ export default {
       id: 7,
       title: 'Практика: Офисный словарь',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The deadline is next Friday. We need to meet it.\\n2. I\'m working on ticket #456.\\n3. I have a blocker — I\'m waiting for approval from the security team.\\n4. Can we schedule a call for tomorrow?\\n5. The sprint ends on Friday.\\n6. Prioritize the backlog before sprint planning.\\n7. I\'m stuck on this task. Can you help?',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

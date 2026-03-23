@@ -47,7 +47,9 @@ export default {
       id: 6,
       title: 'Практика: Текст для чтения и понимания',
       type: 'practice',
-      content: [
+            description: 'Прочитайте текст технического выступления и ответьте на вопросы.',
+      solution: 'Правильные ответы:\\n1. Deployments took 2 hours and affected the entire system. If one part failed, everything went down.\\n2. 18 months.\\n3. From 2 hours to 10 minutes per service.\\n4. Service discovery, distributed tracing, and managing multiple databases.\\n5. Сбои изолированы — если сервис уведомлений падает, платежи всё равно работают.',
+content: [
         { type: 'text', value: 'Прочитайте текст технического выступления и ответьте на вопросы.\n\n"Good morning, everyone. Today I will talk about how we migrated from a monolithic architecture to microservices.\n\nWe started with a large monolith — a single application with over 500,000 lines of code. The problem was that deployments took 2 hours and affected the entire system. If one part failed, everything went down.\n\nWe decided to migrate to microservices. The process took 18 months. First, we identified the main domains: users, payments, notifications, and products. Then, we extracted each domain into a separate service with its own database.\n\nThe benefits were significant. Deployment time dropped from 2 hours to 10 minutes per service. Teams can now work independently. And failures are isolated — if the notifications service goes down, payments still work.\n\nHowever, microservices also brought new challenges: service discovery, distributed tracing, and managing multiple databases."' },
         {
           type: 'exercise',

@@ -53,7 +53,9 @@ export default {
       id: 6,
       title: 'Практика: Герундий или инфинитив?',
       type: 'practice',
-      content: [
+            description: 'Вставьте глагол в форме герундия или инфинитива.',
+      solution: 'Правильные ответы:\\n1. to fix\\n2. solving\\n3. to switch\\n4. hardcoding\\n5. deploying\\n6. to reduce\\n7. using\\n8. migrating\\n9. ignoring\\n10. to complete',
+content: [
         { type: 'text', value: 'Вставьте глагол в форме герундия или инфинитива.' },
         {
           type: 'exercise',
@@ -77,7 +79,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения на английский язык.',
+      solution: 'Правильные ответы:\\n1. I enjoy solving complex technical problems.\\n2. We plan to migrate to microservices next quarter.\\n3. Avoid using outdated libraries.\\n4. After testing, send a pull request.\\n5. He is good at optimizing performance.\\n6. She managed to fix the bug in 30 minutes.\\n7. I recommend reading the documentation before starting.',
+content: [
         { type: 'text', value: 'Переведите предложения на английский язык.' },
         {
           type: 'exercise',

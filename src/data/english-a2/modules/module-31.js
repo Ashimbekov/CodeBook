@@ -7,7 +7,9 @@ export default {
       id: 1,
       title: 'Set up, Log in/out — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный фразовый глагол.',
+      solution: 'Правильные ответы:\\n1. set up\\n2. log in\\n3. log out\\n4. set up\\n5. logged out\\n6. login\\n7. process\\n8. logged out',
+content: [
         { type: 'text', value: 'Вставьте правильный фразовый глагол.' },
         {
           type: 'exercise',
@@ -29,7 +31,9 @@ export default {
       id: 2,
       title: 'Roll back, Break down — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The deployment broke production. We need to roll back.\\n2. I rolled back to version 2.1 because of the bug.\\n3. Let\'s break down this task into smaller parts.\\n4. The server broke down during peak hours.\\n5. The rollback was successful.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
@@ -48,7 +52,9 @@ export default {
       id: 3,
       title: 'Look up, Figure out, Find out — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте: look up, figure out, find out.',
+      solution: 'Правильные ответы:\\n1. look up\\n2. figure out\\n3. find out\\n4. figure out\\n5. look up\\n6. find out / figure out\\n7. figured out',
+content: [
         { type: 'text', value: 'Вставьте: look up, figure out, find out.' },
         {
           type: 'exercise',
@@ -69,7 +75,9 @@ export default {
       id: 4,
       title: 'Turn on/off, Shut down, Spin up — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. Turn on debug mode.\\n2. Turn off the feature flag before deploying.\\n3. Shut down all processes before maintenance.\\n4. Spin up a new container for testing.\\n5. The server takes 2 minutes to start up / boot up.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
@@ -88,7 +96,9 @@ export default {
       id: 5,
       title: 'Run into, Scale up/down — тест',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильный фразовый глагол.',
+      solution: 'Правильные ответы:\\n1. ran into\\n2. scale up\\n3. Scale down\\n4. ran into\\n5. clean up (unused resources)',
+content: [
         { type: 'text', value: 'Вставьте правильный фразовый глагол.' },
         {
           type: 'exercise',
@@ -107,7 +117,9 @@ export default {
       id: 6,
       title: 'Sign up, Plug in, Write up — тест',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. Sign up for a free account.\\n2. Write up the incident report.\\n3. The device is not plugged in.\\n4. Hook up the service to the message queue.\\n5. Sign up for the conference before Friday.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
@@ -126,7 +138,9 @@ export default {
       id: 7,
       title: 'Mixed Phrasal Verbs — перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите предложения с фразовыми глаголами.',
+      solution: 'Правильные ответы:\\n1. Setting up the new development environment took 2 hours.\\n2. We ran into network issues during deployment.\\n3. I can\'t figure out why this test is failing.\\n4. Scale down the service after the traffic drops.\\n5. If the primary API is down, fall back to the backup.',
+content: [
         { type: 'text', value: 'Переведите предложения с фразовыми глаголами.' },
         {
           type: 'exercise',
@@ -145,7 +159,9 @@ export default {
       id: 8,
       title: 'Фразовые глаголы в контексте — рассказ',
       type: 'practice',
-      content: [
+            description: 'Вставьте правильные фразовые глаголы в текст.',
+      solution: 'Правильные ответы:\\n1. broke down\\n2. logged in\\n3. found out\\n4. scale up\\n5. turn off / disable\\n6. spun up\\n7. wrote up',
+content: [
         { type: 'text', value: 'Вставьте правильные фразовые глаголы в текст.\n\n"Yesterday we had a major incident. First, the server ___ (1) due to high traffic. We ___ (2) into the admin panel to investigate. We ___ (3) that the database was running out of memory. We tried to ___ (4) the service — adding more RAM. But first, we had to ___ (5) the feature that was causing the memory spike. Then we ___ (6) additional containers to handle the load. After 2 hours, we ___ (7) a full incident report."' },
         {
           type: 'exercise',
@@ -166,7 +182,9 @@ export default {
       id: 9,
       title: 'Исправление ошибок — фразовые глаголы',
       type: 'practice',
-      content: [
+            description: 'Найдите и исправьте ошибки с фразовыми глаголами.',
+      solution: 'Правильные ответы:\\n1. I need to set up the development environment right now. (OK также: set it up)\\n2. We logged out of the system.\\n3. Let\'s figure out the bug. (OK также: figure it out)\\n4. The server broke down during maintenance.\\n5. Can you look up this error in the docs? (два слова)',
+content: [
         { type: 'text', value: 'Найдите и исправьте ошибки с фразовыми глаголами.' },
         {
           type: 'exercise',
@@ -185,7 +203,9 @@ export default {
       id: 10,
       title: 'Написание с фразовыми глаголами',
       type: 'practice',
-      content: [
+            description: 'Напишите предложения, используя данные фразовые глаголы.',
+      solution: 'Примеры ответов:\\n1. Пример: I logged in to the server at 2 AM when the alert triggered. I needed to figure out why the service was down. After checking the logs, I set up a new container to restore the service.\\n2. Пример: We spun up a new container for testing. After deployment, the service broke down due to a memory issue. We had to roll back to the previous version. Later, we scaled up the infrastructure to p...',
+content: [
         { type: 'text', value: 'Напишите предложения, используя данные фразовые глаголы.' },
         {
           type: 'exercise',

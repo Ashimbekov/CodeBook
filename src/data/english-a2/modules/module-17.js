@@ -61,7 +61,9 @@ export default {
       id: 7,
       title: 'Практика: Git-терминология',
       type: 'practice',
-      content: [
+            description: 'Переведите фразы на английский язык.',
+      solution: 'Правильные ответы:\\n1. I created a new branch for this feature.\\n2. Please open a pull request for review.\\n3. There is a merge conflict in this file.\\n4. I reverted the last commit because it broke the build.\\n5. Merge the branch after approval.\\n6. The commit history shows all changes.\\n7. Clone the repository and create a branch.',
+content: [
         { type: 'text', value: 'Переведите фразы на английский язык.' },
         {
           type: 'exercise',

@@ -53,7 +53,9 @@ export default {
       id: 6,
       title: 'Практика: much, many, some, any',
       type: 'practice',
-      content: [
+            description: 'Вставьте much, many, some или any.',
+      solution: 'Правильные ответы:\\n1. many\\n2. much\\n3. some\\n4. any\\n5. some\\n6. any\\n7. much\\n8. some',
+content: [
         { type: 'text', value: 'Вставьте much, many, some или any.' },
         {
           type: 'exercise',
@@ -75,7 +77,9 @@ export default {
       id: 7,
       title: 'Практика: Перевод',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. We have a lot of technical debt in this project.\\n2. There aren\'t any tests for this module.\\n3. How much memory does this service use?\\n4. I have a few questions about the architecture.\\n5. Few developers know how to use this tool.\\n6. We have a little time for refactoring.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',

@@ -7,7 +7,9 @@ export default {
       id: 1,
       title: 'Перевод EN→RU: документация',
       type: 'practice',
-      content: [
+            description: 'Переведите фрагменты документации с английского на русский.',
+      solution: 'Правильные ответы:\\n1. Эта библиотека предоставляет простой интерфейс для выполнения HTTP-запросов. Она поддерживает async/await и автоматически обрабатывает JSON-сериализацию.\\n2. Аутентификация требуется для всех эндпоинтов, кроме /api/health. Включите Bearer-токен в заголовок Authorization.\\n3. Функция возвращает null, если запись не найдена. Всегда проверяйте на null перед доступом к свойствам, чтобы избежать NullPointerException.\\n4. Ограничение скорости включено по умолчанию. Каждый API-ключ ограничен 100 запросами в минуту.\\n5. Устарело: Этот метод будет удалён в версии 3.0. Используйте вместо него getUserById().',
+content: [
         { type: 'text', value: 'Переведите фрагменты документации с английского на русский.' },
         {
           type: 'exercise',
@@ -26,7 +28,9 @@ export default {
       id: 2,
       title: 'Перевод EN→RU: баг-репорты',
       type: 'practice',
-      content: [
+            description: 'Переведите баг-репорты с английского на русский.',
+      solution: 'Правильные ответы:\\n1. Приложение падает когда пользователь пытается загрузить файл больше 10 МБ. Сообщение об ошибке говорит: "Размер файла превышает максимально допустимый предел."\\n2. Шаги для воспроизведения: 1. Войдите с аккаунтом администратора. 2. Перейдите в Управление пользователями. 3. Нажмите "Удалить пользователя". Ожидаемое: Диалог подтверждения. Фактическое: Страница перезагружается без удаления пользователя.\\n3. Эта проблема появилась в версии 2.3.0 и отсутствовала в 2.2.x. По всей видимости, она связана с новым middleware аутентификации.',
+content: [
         { type: 'text', value: 'Переведите баг-репорты с английского на русский.' },
         {
           type: 'exercise',
@@ -43,7 +47,9 @@ export default {
       id: 3,
       title: 'Перевод EN→RU: commit messages и PR',
       type: 'practice',
-      content: [
+            description: 'Переведите commit messages и PR descriptions.',
+      solution: 'Правильные ответы:\\n1. feat: реализована поддержка WebSocket для уведомлений в реальном времени\\n2. fix: исправлено состояние гонки при обработке платежей, вызывавшее дублирование списаний\\n3. Этот PR добавляет кэширование Redis для снижения нагрузки на базу данных. Время ответа улучшилось на 40%.\\n4. Критическое изменение: Функция getUserById() теперь возвращает Promise вместо callback.\\n5. chore: обновлены все зависимости для устранения уязвимостей безопасности',
+content: [
         { type: 'text', value: 'Переведите commit messages и PR descriptions.' },
         {
           type: 'exercise',
@@ -62,7 +68,9 @@ export default {
       id: 4,
       title: 'Перевод RU→EN: технические описания',
       type: 'practice',
-      content: [
+            description: 'Переведите технические описания с русского на английский.',
+      solution: 'Правильные ответы:\\n1. The system authenticates users using JWT tokens. The token expires after 24 hours.\\n2. Microservices architecture allows each component to be scaled independently.\\n3. User data is encrypted using the AES-256 algorithm before being stored in the database.\\n4. The service handles up to 10,000 requests per second thanks to horizontal scaling.\\n5. If a request fails, the system automatically retries up to three times with exponential backoff.',
+content: [
         { type: 'text', value: 'Переведите технические описания с русского на английский.' },
         {
           type: 'exercise',
@@ -81,7 +89,9 @@ export default {
       id: 5,
       title: 'Перевод RU→EN: описание архитектуры',
       type: 'practice',
-      content: [
+            description: 'Переведите описание архитектуры системы.',
+      solution: 'Правильные ответы:\\n1. The application consists of three layers: presentation, business logic, and data access.\\n2. The load balancer distributes requests between multiple instances of the service.\\n3. A message queue is used for asynchronous task processing.\\n4. The database is replicated across three nodes to ensure high availability.\\n5. Redis cache stores frequently requested data to reduce the database load.',
+content: [
         { type: 'text', value: 'Переведите описание архитектуры системы.' },
         {
           type: 'exercise',
@@ -100,7 +110,9 @@ export default {
       id: 6,
       title: 'Перевод Stack Overflow ответов',
       type: 'practice',
-      content: [
+            description: 'Переведите ключевые части ответов Stack Overflow.',
+      solution: 'Правильные ответы:\\n1. Причина этого в том, что JavaScript однопоточный. Асинхронные операции выполняются в цикле событий.\\n2. Лучший подход — использовать переменные окружения вместо жёсткого кодирования API-ключа.\\n3. Убедитесь, что вы обрабатываете случай, когда ответ пустой или JSON некорректный.\\n4. Обратите внимание, что этот метод устарел в Python 3.10 и будет удалён в 3.12.\\n5. Имейте в виду, что это работает только если у вас установлен Node.js версии 16 или выше.',
+content: [
         { type: 'text', value: 'Переведите ключевые части ответов Stack Overflow.' },
         {
           type: 'exercise',
@@ -119,7 +131,9 @@ export default {
       id: 7,
       title: 'Перевод технических терминов',
       type: 'practice',
-      content: [
+            description: 'Переведите термины и их определения с английского.',
+      solution: 'Правильные ответы:\\n1. Идемпотентность: Операция является идемпотентной, если её многократное выполнение даёт тот же результат, что и однократное.\\n2. Технический долг: Код, который работает, но написан плохо и будет дорогостоящим для поддержки или изменения в будущем.\\n3. Состояние гонки: Баг, возникающий когда два процесса пытаются получить доступ к одному ресурсу одновременно, и результат зависит от того, который завершится первым.',
+content: [
         { type: 'text', value: 'Переведите термины и их определения с английского.' },
         {
           type: 'exercise',
@@ -136,7 +150,9 @@ export default {
       id: 8,
       title: 'Перевод error messages',
       type: 'practice',
-      content: [
+            description: 'Переведите сообщения об ошибках и объясните их.',
+      solution: 'Правильные ответы:\\n1. Ошибка типа: Невозможно установить свойство \'name\' для null. Объект равен null.\\n2. 404 Не найдено: Запрошенный ресурс не существует.\\n3. Ошибка CORS: Межсайтовый запрос заблокирован. Сервер не разрешает запросы с этого источника.\\n4. Таймаут подключения к базе данных: Не удалось подключиться к базе данных после 30000 мс (30 секунд).',
+content: [
         { type: 'text', value: 'Переведите сообщения об ошибках и объясните их.' },
         {
           type: 'exercise',
@@ -154,7 +170,9 @@ export default {
       id: 9,
       title: 'Перевод технической статьи',
       type: 'practice',
-      content: [
+            description: 'Переведите фрагмент технической статьи на русский.',
+      solution: 'Правильные ответы:\\n1. Docker-контейнеры используют общее ядро операционной системы хоста, что делает их значительно легче виртуальных машин. Контейнер обычно запускается за миллисекунды, тогда как ВМ может загружаться несколько минут.\\n2. Непрерывная интеграция означает автоматическую сборку и тестирование кода каждый раз, когда разработчик вносит изменения. Это помогает обнаруживать баги на ранних этапах и гарантирует, что основная ветка всегда готова к деплою.',
+content: [
         { type: 'text', value: 'Переведите фрагмент технической статьи на русский.' },
         {
           type: 'exercise',
@@ -170,7 +188,9 @@ export default {
       id: 10,
       title: 'Полный перевод IT-текста',
       type: 'practice',
-      content: [
+            description: 'Переведите полный технический текст.',
+      solution: 'Правильные ответы:\\n1. Наша команда недавно перешла с монолитной архитектуры на микросервисы. Миграция заняла 6 месяцев и включала разделение нашего приложения на 8 отдельных сервисов: аутентификация, пользователи, продукты, заказы, платежи, уведомления, поиск и аналитика.\\n\\nГлавное преимущество в том, что теперь каждый сервис можно деплоить и масштабировать независимо. До миграции деплой любого изменения требовал остановки всего приложения. Теперь мы можем деплоить отдельные сервисы без простоя.\\n\\nОднако микросервисы принесли новые трудности. Нам пришлось реализовать обнаружение сервисов, распределённую трассировку и управлять несколькими базами данных. Операционная сложность значительно возросла.\\n\\nПорекомендовали бы мы это? Да, но только если ваша команда готова к дополнительной сложности.',
+content: [
         { type: 'text', value: 'Переведите полный технический текст.\n\n"Our team recently migrated from a monolithic architecture to microservices. The migration took 6 months and involved splitting our application into 8 separate services: authentication, users, products, orders, payments, notifications, search, and analytics.\n\nThe main benefit is that each service can now be deployed and scaled independently. Before the migration, deploying any change required taking down the entire application. Now, we can deploy individual services with zero downtime.\n\nHowever, microservices introduced new challenges. We needed to implement service discovery, distributed tracing, and manage multiple databases. The operational complexity increased significantly.\n\nWould we recommend it? Yes, but only if your team is ready for the additional complexity."' },
         {
           type: 'exercise',

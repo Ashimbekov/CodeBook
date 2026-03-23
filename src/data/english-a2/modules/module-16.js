@@ -59,7 +59,9 @@ export default {
       id: 7,
       title: 'Практика: OOP-термины',
       type: 'practice',
-      content: [
+            description: 'Переведите на английский язык.',
+      solution: 'Правильные ответы:\\n1. The AdminUser class inherits from the User class.\\n2. The constructor initializes the object\'s properties.\\n3. This class must implement the Serializable interface.\\n4. Use getters and setters to access private fields.\\n5. This method overrides the parent class method.\\n6. The object is an instance of the DatabaseConnection class.\\n7. This class violates the Single Responsibility Principle.',
+content: [
         { type: 'text', value: 'Переведите на английский язык.' },
         {
           type: 'exercise',
