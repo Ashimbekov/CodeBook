@@ -97,6 +97,8 @@ export default {
       id: 7,
       title: 'Ещё коллокации и практика',
       type: 'practice',
+      description: 'Заполни пропуски нужными словами, переведи фразы на английский и напиши абзац о рабочем дне DevOps инженера.',
+      solution: 'Правильные ответы (заполни пропуски):\n1. phase\n2. spin\n3. rolled\n4. close\n5. running\n6. hanging\n7. building\n8. brought\n9. raised\n10. boil\n\nПравильные переводы:\n1. We need to run the tests before merging into main.\n2. She raised a pull request and asked two colleagues to review the code.\n3. Let\'s phase out this API — it\'s deprecated and no longer maintained.\n4. The deployment to production is scheduled for Friday afternoon.\n5. The team spun up a new instance in five minutes using Terraform.\n6. We\'ve accumulated too much technical debt — we need to allocate time for refactoring.',
       content: [
         {
           type: 'text',
@@ -120,6 +122,8 @@ export default {
       id: 8,
       title: 'Полный обзор: 50 самых важных IT фраз',
       type: 'practice',
+      description: 'Изучи и запомни 50 самых важных IT фразовых глаголов и коллокаций.',
+      solution: 'Это урок-справочник. Убедись, что знаешь все 50 фраз:\n- Деплоймент: spin up, tear down, roll out, roll back, phase out, bring up/down, scale up/down\n- Код: make a commit, raise a PR, review code, merge a branch, run tests, fix a bug, write docs\n- Коммуникация: run a meeting, hand off, sign off, kick off, wrap up\n- Идиомы: hit the ground running, move the needle, low-hanging fruit, technical debt, ship it\n- Коллокации: make a decision, run a query, raise a concern, break backward compatibility',
       content: [
         {
           type: 'text',

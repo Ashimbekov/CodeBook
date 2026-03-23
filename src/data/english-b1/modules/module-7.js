@@ -105,6 +105,8 @@ export default {
       id: 7,
       title: 'Практика: технические тексты',
       type: 'practice',
+      description: 'Переведи предложения в пассивный залог и исправь ошибки в пассивных конструкциях.',
+      solution: 'Правильные ответы (пассивный залог):\n1. All code is tested before deployment.\n2. The new microservices architecture was designed by the architect.\n3. Version 3.0 will be released next quarter.\n4. The pull request has already been reviewed.\n5. The bug had been introduced before we noticed it.\n6. The hotfix is currently being deployed.\n\nИсправление ошибок:\n1. The code was reviewed last week.\n2. New features will be deployed on Friday.\n3. The application is developed by a team of 10 engineers.\n4. All bugs were fixed before the release.\n5. The service is monitored 24/7.',
       content: [
         {
           type: 'text',

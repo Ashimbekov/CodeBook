@@ -98,6 +98,8 @@ export default {
       id: 6,
       title: 'Практика: последовательность событий',
       type: 'practice',
+      description: 'Используй Past Perfect и Past Simple для описания последовательности событий в прошлом.',
+      solution: 'Правильные ответы:\n1. The CI pipeline failed because someone had pushed broken code.\n2. The deploy succeeded because the developer had written the migration script.\n3. The client found bugs in production because the team hadn\'t tested the API.\n4. By the time the developers started building, the architect had designed the database schema.\n5. The security breach happened because an engineer had configured the firewall incorrectly.\n\nПостмортем (исправление):\n"The server crashed at 3 AM. Before that, it had been running for 30 days. Someone had pushed a bad config. The alert hadn\'t triggered because no one had set it up. By the time the engineer woke up, the data had been lost for 200 users."',
       content: [
         {
           type: 'text',

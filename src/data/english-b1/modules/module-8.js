@@ -101,6 +101,8 @@ export default {
       id: 7,
       title: 'Практика: пересказ IT-коммуникаций',
       type: 'practice',
+      description: 'Переведи предложения в косвенную речь, соблюдая правила согласования времён.',
+      solution: 'Правильные ответы:\n1. The engineer said the deployment had failed at midnight.\n2. The tech lead asked me to write unit tests for the module.\n3. The PM announced that they would release the new API version the following month.\n4. She told us not to commit to the main branch during the freeze.\n5. The Scrum Master asked how many story points we had completed that sprint.\n6. He suggested that the bug might have been caused by a race condition.',
       content: [
         {
           type: 'text',

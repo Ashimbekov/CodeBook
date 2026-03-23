@@ -102,6 +102,8 @@ export default {
       id: 6,
       title: 'Практика: выражение сожалений и желаний',
       type: 'practice',
+      description: 'Преобразуй утверждения в предложения с Wish, If only, I\'d rather и It\'s time.',
+      solution: 'Правильные ответы:\n1. I wish we had automated tests. / If only we had automated tests!\n2. I wish we had documented the API when we built it. / If only we had documented the API!\n3. I wish my team would follow code review standards.\n4. I wish the legacy code were easier to understand.\n5. I wish we had chosen a more scalable architecture. / If only we hadn\'t gone with the monolith!',
       content: [
         {
           type: 'text',

@@ -93,6 +93,8 @@ export default {
       id: 7,
       title: 'Практика: DevOps разговор и отчёты',
       type: 'practice',
+      description: 'Переведи DevOps-фразы на английский язык.',
+      solution: 'Правильные ответы:\n1. The pipeline failed at the testing stage due to a failing integration test.\n2. We rolled back the deployment after the error rate exceeded 5%.\n3. The system automatically scaled out to 30 instances during the traffic spike.\n4. The on-call engineer received an alert at 2 AM and immediately started investigating.\n5. The post-mortem identified a single point of failure in our architecture.',
       content: [
         {
           type: 'text',

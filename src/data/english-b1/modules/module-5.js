@@ -94,6 +94,8 @@ export default {
       id: 6,
       title: 'Практика: условные в реальных ситуациях',
       type: 'practice',
+      description: 'Завершите условные предложения Second Conditional и найдите ошибки.',
+      solution: 'Правильные ответы (завершение предложений):\n1. would refactor (If I had more time...)\n2. would load / optimised\n3. were / would introduce\n4. wouldn\'t have / wrote\n5. would you do / crashed\n\nИсправление ошибок:\n1. If I had time, I would help. (не would have)\n2. If the server were faster, we would be happy. (не would be)\n3. I would help if I could. (не would to help)\n4. If I were you, I would refactor this. (не will)',
       content: [
         {
           type: 'text',

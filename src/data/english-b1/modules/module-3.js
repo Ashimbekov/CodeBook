@@ -117,6 +117,8 @@ export default {
       id: 7,
       title: 'Практика: исправление ошибок и составление предложений',
       type: 'practice',
+      description: 'Исправь ошибки в использовании Present Perfect Continuous и составь предложения по подсказкам.',
+      solution: 'Правильные ответы (исправление ошибок):\n1. We have been working on this feature for two weeks.\n2. She has been debugging the issue all morning.\n3. I have been working here since January.\n4. How long has the server been down?\n5. They have been testing the application for three days and are still finding bugs.\n6. We have been having this issue since the last update.\n\nПравильные ответы (составление предложений):\n1. The team has been working on the migration for two months.\n2. I have been trying to reach the client since yesterday morning.\n3. The application has been using too much RAM for the past hour.\n4. She has been learning DevOps practices since she joined the team.\n5. They have been interviewing candidates all week.',
       content: [
         {
           type: 'text',

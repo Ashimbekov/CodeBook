@@ -121,6 +121,8 @@ export default {
       id: 7,
       title: 'Практика: IT диалоги и тексты',
       type: 'practice',
+      description: 'Выбери правильную форму глагола: Present Perfect или Past Simple.',
+      solution: 'Правильные ответы:\n1. have just finished (Present Perfect с just)\n2. Have you ever deployed (Present Perfect с ever)\n3. joined (Past Simple — last week)\n4. has failed (Present Perfect — three times today, незавершённый период)\n5. did you write (Past Simple в вопросе)\n6. haven\'t merged (Present Perfect с yet)',
       content: [
         {
           type: 'text',

@@ -105,6 +105,8 @@ export default {
       id: 7,
       title: 'Практика: объединение предложений',
       type: 'practice',
+      description: 'Объедини пары предложений с помощью относительных местоимений (who, which, that, whose, where).',
+      solution: 'Правильные ответы (объединение предложений):\n1. The developer who wrote the authentication module left the company.\n2. The framework that/which we use for the frontend is easy to learn.\n3. John, whose code quality is always excellent, was promoted.\n4. The staging environment where we test is managed by Terraform.\n5. Docker, which was created by Solomon Hykes, changed DevOps.\n6. The startup, whose product was a code review tool, recently closed.\n\nПравильные местоимения:\n1. who\n2. that / which\n3. whose\n4. where\n5. whose\n6. when / in which',
       content: [
         {
           type: 'text',

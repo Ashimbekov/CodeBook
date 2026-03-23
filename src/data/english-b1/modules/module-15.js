@@ -97,6 +97,8 @@ export default {
       id: 7,
       title: 'Практика: API документация и обсуждение',
       type: 'practice',
+      description: 'Переведи API-фразы на английский и опиши endpoint.',
+      solution: 'Правильные ответы (перевод):\n1. The API returns 404 if the user is not found.\n2. The token has expired — the client needs to use the refresh token.\n3. We use JWT to authenticate API requests.\n4. Don\'t forget to include the Authorization header in every request.\n5. The client exceeded the rate limit and received a 429 status.\n6. Add pagination to this endpoint — it returns too much data.',
       content: [
         {
           type: 'text',

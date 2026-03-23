@@ -137,6 +137,8 @@ export default {
       id: 7,
       title: 'Маркеры времён: слова-подсказки',
       type: 'practice',
+      description: 'Определи правильное время глагола по словам-маркерам в предложении.',
+      solution: 'Правильные ответы:\n1. released (Past Simple — yesterday)\n2. has worked (Present Perfect — for two years)\n3. deploy (Present Simple — every Friday)\n4. am fixing (Present Continuous — right now)\n5. will have finished (Future Perfect — by tomorrow)\n6. had been coding (Past Perfect Continuous — for 5 hours when...)',
       content: [
         {
           type: 'text',
@@ -156,6 +158,8 @@ export default {
       id: 8,
       title: 'Времена в IT-контексте: практика',
       type: 'practice',
+      description: 'Исправь ошибки в употреблении времён в IT-предложениях.',
+      solution: 'Правильные ответы:\n1. She has been working here since 2019. (Present Perfect Continuous + since)\n2. I have already sent the report. (Present Perfect с already)\n3. We haven\'t deployed the new version yet. (Present Perfect с yet)\n4. When did you work on this project? (Past Simple в вопросе)\n5. By tomorrow I will have finished the task. (Future Perfect)',
       content: [
         {
           type: 'text',

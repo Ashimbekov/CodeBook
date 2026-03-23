@@ -97,6 +97,8 @@ export default {
       id: 7,
       title: 'Talking about Architecture: фразы для собеседования',
       type: 'practice',
+      description: 'Опиши архитектуру IT-системы, используя профессиональные фразы из урока.',
+      solution: 'Пример правильного описания архитектуры:\n"The system consists of several microservices. Each service is responsible for a specific business domain. The API gateway handles authentication and routes requests. Services communicate via a message queue. We use Redis as a cache layer. The system is designed with no single point of failure."',
       content: [
         {
           type: 'text',
@@ -112,6 +114,8 @@ export default {
       id: 8,
       title: 'Практика: технические определения',
       type: 'practice',
+      description: 'Определи термин по описанию и заполни пропуски в техническом тексте.',
+      solution: 'Правильные ответы (определение термина):\n1. Load balancer\n2. Cache\n3. Endpoint\n4. Payload\n5. Microservices (architecture)\n6. Middleware\n7. Event-driven architecture\n8. Scalability\n\nПравильные ответы (заполни пропуски):\n1. load balancer\n2. cache (Redis)\n3. middleware\n4. queue\n5. microservices',
       content: [
         {
           type: 'text',

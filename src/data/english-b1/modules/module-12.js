@@ -97,6 +97,8 @@ export default {
       id: 7,
       title: 'Практика: технические тексты со связующими словами',
       type: 'practice',
+      description: 'Добавь подходящий связующий маркер в каждое предложение.',
+      solution: 'Правильные ответы:\n1. However (противопоставление: эффективнее, но сложнее настраивать)\n2. Although / Even though (уступка: Python медленный, но популярный)\n3. Moreover / Furthermore / In addition (добавление: улучшение производительности)\n4. Despite / In spite of (несмотря на сбои)\n5. whereas / while (сравнение двух фреймворков)\n6. Despite (несмотря на переработки)',
       content: [
         {
           type: 'text',

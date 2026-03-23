@@ -105,6 +105,8 @@ export default {
       id: 7,
       title: 'Практика: постмортем и ретроспектива',
       type: 'practice',
+      description: 'Завершите предложения Third Conditional и напишите постмортем с использованием нереальных условий прошлого.',
+      solution: 'Правильные ответы:\n1. If we had backed up the data, we would not have lost 3 hours of user activity.\n2. The service would have stayed online if someone had monitored the disk usage.\n3. If she had read the changelog, she would have known about the breaking change.\n4. We would have finished the sprint if we had not added new tickets mid-sprint.\n5. If the team had written better documentation, onboarding would have taken half the time.',
       content: [
         {
           type: 'text',

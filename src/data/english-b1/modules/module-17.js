@@ -82,6 +82,8 @@ export default {
       id: 6,
       title: 'Практика: Agile встречи и коммуникация',
       type: 'practice',
+      description: 'Напиши User Story с Acceptance Criteria и используй Agile-фразы для встреч.',
+      solution: 'Пример правильной User Story:\nAs a [role], I want [feature], so that [benefit].\n\nAcceptance Criteria формат: Given [context], When [action], Then [result].\n\nОбязательные элементы: роль пользователя, желаемая функциональность, ценность для пользователя, чёткие измеримые критерии приёмки, Definition of Done.',
       content: [
         {
           type: 'text',

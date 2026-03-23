@@ -93,6 +93,8 @@ export default {
       id: 7,
       title: 'Практика: обсуждение базы данных',
       type: 'practice',
+      description: 'Используй профессиональные фразы для обсуждения производительности базы данных.',
+      solution: 'Примеры правильных ответов:\n- "The query is slow — let\'s check the execution plan."\n- "We need an index on the user_id column to speed up this lookup."\n- "This migration adds a new column — we\'ll need to backfill existing rows."\n- "Wrap these operations in a transaction to ensure consistency."\n- При обсуждении проблемы: выявить медленный запрос, проверить индексы, написать миграцию для оптимизации.',
       content: [
         {
           type: 'text',
