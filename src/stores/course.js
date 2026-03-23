@@ -22,7 +22,11 @@ const courseImports = {
   javascript: () => import('../data/javascript/index.js'),
   interview: () => import('../data/interview/index.js'),
   fullstack: () => import('../data/fullstack/index.js'),
-  cheatsheets: () => import('../data/cheatsheets/index.js')
+  cheatsheets: () => import('../data/cheatsheets/index.js'),
+  'english-a1': () => import('../data/english-a1/index.js'),
+  'english-a2': () => import('../data/english-a2/index.js'),
+  'english-b1': () => import('../data/english-b1/index.js'),
+  'english-b2': () => import('../data/english-b2/index.js')
 }
 
 const moduleImports = {
@@ -46,7 +50,11 @@ const moduleImports = {
   javascript: (moduleId) => import(`../data/javascript/modules/module-${moduleId}.js`),
   interview: (moduleId) => import(`../data/interview/modules/module-${moduleId}.js`),
   fullstack: (moduleId) => import(`../data/fullstack/modules/module-${moduleId}.js`),
-  cheatsheets: (moduleId) => import(`../data/cheatsheets/modules/module-${moduleId}.js`)
+  cheatsheets: (moduleId) => import(`../data/cheatsheets/modules/module-${moduleId}.js`),
+  'english-a1': (moduleId) => import(`../data/english-a1/modules/module-${moduleId}.js`),
+  'english-a2': (moduleId) => import(`../data/english-a2/modules/module-${moduleId}.js`),
+  'english-b1': (moduleId) => import(`../data/english-b1/modules/module-${moduleId}.js`),
+  'english-b2': (moduleId) => import(`../data/english-b2/modules/module-${moduleId}.js`)
 }
 
 export const useCourseStore = defineStore('course', () => {
