@@ -21,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Объектные местоимения стоят после глагола или предлога. Они отвечают на вопрос "кого? кому? с кем?"' },
         { type: 'code', language: 'text', value: 'Подлежащее → Дополнение:\nI   → me     (мне/меня)\nYou → you    (тебе/тебя)\nHe  → him    (ему/его)\nShe → her    (ей/её)\nIt  → it     (ему/его/ей)\nWe  → us     (нам/нас)\nThey→ them   (им/их)' },
-        { type: 'code', language: 'text', value: 'Примеры:\nSend me the link.          - Пришли мне ссылку.\nCan you help me?           - Можешь помочь мне?\nTell him about the bug.    - Скажи ему о баге.\nI\'ll ask her.              - Я спрошу её.\nTest it first.             - Сначала протестируй это.\nWe need them to fix it.    - Нам нужно, чтобы они это исправили.\nContact us on Slack.       - Свяжитесь с нами в Slack.' }
+        { type: 'code', language: 'text', value: 'Примеры:\nSend me the link.          - Пришли мне ссылку.\nCan you help me?           - Можешь помочь мне?\nTell him about the bug.    - Скажи ему о баге.\nI\'ll ask her.              - Я спрошу её.\nTest it first.             - Сначала протестируй это.\nWe need them to fix it.    - Нам нужно, чтобы они это исправили.\nContact us on Slack.       - Свяжитесь с нами в Slack.' },
+        { type: 'note', value: 'В IT-общении объектные местоимения часто используются в запросах о помощи: "Can you help me?" (мне), "I assigned it to him." (ему), "She told us about the bug." (нам). "Cc me on that email." — частая фраза в переписке.' },
       ]
     },
     {

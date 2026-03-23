@@ -10,7 +10,8 @@ export default {
       content: [
         { type: 'text', value: 'Основные термины программирования — слова, которые вы используете каждый день. Нужно знать их по-английски для чтения документации и общения с коллегами.' },
         { type: 'code', language: 'text', value: 'Базовые термины:\nvariable    [вэриэбл]   - переменная\nconstant    [констэнт]  - константа\nfunction    [фанкшн]    - функция\nmethod      [мэтэд]     - метод\nclass       [клас]      - класс\nobject      [обджект]   - объект\narray       [эрэй]      - массив\nstring      [стринг]    - строка (тип данных)\ninteger/int [интиджер]  - целое число\nboolean     [булиэн]    - логический тип\nnull        [нал]       - нулевое значение\nundefined   [андэфайнд] - неопределённое значение' },
-        { type: 'code', language: 'text', value: 'В контексте:\nDeclare a variable.          - Объявить переменную.\nCall a function.             - Вызвать функцию.\nCreate a class.              - Создать класс.\nInstantiate an object.       - Создать экземпляр объекта.\nIterate over an array.       - Перебирать элементы массива.\nReturn a value.              - Вернуть значение.\nPass a parameter.            - Передать параметр.\nAssign a value.              - Присвоить значение.' }
+        { type: 'code', language: 'text', value: 'В контексте:\nDeclare a variable.          - Объявить переменную.\nCall a function.             - Вызвать функцию.\nCreate a class.              - Создать класс.\nInstantiate an object.       - Создать экземпляр объекта.\nIterate over an array.       - Перебирать элементы массива.\nReturn a value.              - Вернуть значение.\nPass a parameter.            - Передать параметр.\nAssign a value.              - Присвоить значение.' },
+        { type: 'tip', value: 'Эти термины встречаются в любой документации. Например: "This function takes two parameters and returns a boolean." (Эта функция принимает два параметра и возвращает булево значение.) Попрактикуйте описание своих функций на английском.' }
       ]
     },
     {
@@ -20,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Термины управления потоком выполнения программы — условия, циклы, исключения.' },
         { type: 'code', language: 'text', value: 'Условия:\nif statement    - условный оператор if\nelse clause     - ветка else\ncondition       - условие\ncomparison      - сравнение\ntrue / false    - истина / ложь\nequal           - равно\ngreater than    - больше чем\nless than       - меньше чем\n\nЦиклы:\nloop            - цикл\nfor loop        - цикл for\nwhile loop      - цикл while\niteration       - итерация\niterator        - итератор\nincrement       - увеличивать (++)\ndecrement       - уменьшать (--)\nbreak           - прервать\ncontinue        - продолжить\nreturn          - вернуть' },
-        { type: 'code', language: 'text', value: 'Обработка ошибок:\nexception       - исключение\nerror           - ошибка\ntry/catch       - попробовать/поймать\nthrow           - выбросить (исключение)\nhandle          - обработать\nfinally         - в конце концов\nstack trace     - стек вызовов\nruntime error   - ошибка во время выполнения\nsyntax error    - синтаксическая ошибка\nlogic error     - логическая ошибка' }
+        { type: 'code', language: 'text', value: 'Обработка ошибок:\nexception       - исключение\nerror           - ошибка\ntry/catch       - попробовать/поймать\nthrow           - выбросить (исключение)\nhandle          - обработать\nfinally         - в конце концов\nstack trace     - стек вызовов\nruntime error   - ошибка во время выполнения\nsyntax error    - синтаксическая ошибка\nlogic error     - логическая ошибка' },
+        { type: 'tip', value: 'Описывая логику кода по-английски: "If the user is authenticated, redirect to dashboard." "Loop through all records and update the status." "If null, return an empty array." Эти фразы нужны при объяснении кода на code review.' },
       ]
     },
     {
@@ -30,7 +32,8 @@ export default {
       content: [
         { type: 'text', value: 'Нахождение и исправление ошибок — большая часть работы программиста. Словарь по отладке обязателен.' },
         { type: 'code', language: 'text', value: 'Ошибки:\nbug             - баг, ошибка\nerror           - ошибка\nwarning         - предупреждение\ncrash           - аварийное завершение\nfailure         - сбой\ndefect          - дефект\nregression      - регрессия (новая ошибка от старого кода)\n\nОтладка:\ndebug           - отлаживать\ndebugging       - отладка\nset a breakpoint- установить точку останова\nstep through    - пошагово выполнять\nlog / print     - логировать / выводить\ntest            - тестировать\nreproducible    - воспроизводимый (баг)\nroot cause      - первопричина\nfix / patch     - исправить / патч\nhotfix          - срочное исправление' },
-        { type: 'code', language: 'text', value: 'Фразы программиста:\nI found a bug.               - Я нашёл баг.\nI\'m debugging.               - Я отлаживаю.\nI can\'t reproduce the bug.   - Я не могу воспроизвести баг.\nThe bug is fixed.            - Баг исправлен.\nI\'ll open a ticket.          - Я открою тикет.\nWhat is the root cause?      - Что является первопричиной?' }
+        { type: 'code', language: 'text', value: 'Фразы программиста:\nI found a bug.               - Я нашёл баг.\nI\'m debugging.               - Я отлаживаю.\nI can\'t reproduce the bug.   - Я не могу воспроизвести баг.\nThe bug is fixed.            - Баг исправлен.\nI\'ll open a ticket.          - Я открою тикет.\nWhat is the root cause?      - Что является первопричиной?' },
+        { type: 'tip', value: 'Шаблон баг-репорта: "Steps to reproduce: [1,2,3]." "Expected result: [что должно быть]." "Actual result: [что происходит]." "Environment: [версия, ОС, браузер]." Используйте эту структуру в Jira и GitHub Issues.' },
       ]
     },
     {
@@ -40,7 +43,8 @@ export default {
       content: [
         { type: 'text', value: 'Git-терминология — обязательный словарь для любого разработчика.' },
         { type: 'code', language: 'text', value: 'Git-команды как слова:\nrepository (repo) - репозиторий\nbranch         - ветка\ncommit         - коммит\nmerge          - мёрджить (объединять)\nrebase         - ребейзить\npull           - забирать изменения\npush           - отправлять изменения\nclone          - клонировать\nfork           - форкнуть\npull request (PR) - пул-реквест\ncode review    - проверка кода\nconflict       - конфликт\nstash          - припрятать изменения' },
-        { type: 'code', language: 'text', value: 'Ветки:\nmain / master  - основная ветка\ndevelop        - ветка разработки\nfeature branch - ветка для фичи\nbugfix branch  - ветка для исправления\nrelease branch - ветка для релиза\n\nPR фразы:\nOpen a pull request.     - Открыть пул-реквест.\nRequest a review.        - Попросить проверку.\nApprove the PR.          - Одобрить PR.\nMerge the PR.            - Смёрджить PR.\nClose the PR.            - Закрыть PR.\nLeave a comment.         - Оставить комментарий.' }
+        { type: 'code', language: 'text', value: 'Ветки:\nmain / master  - основная ветка\ndevelop        - ветка разработки\nfeature branch - ветка для фичи\nbugfix branch  - ветка для исправления\nrelease branch - ветка для релиза\n\nPR фразы:\nOpen a pull request.     - Открыть пул-реквест.\nRequest a review.        - Попросить проверку.\nApprove the PR.          - Одобрить PR.\nMerge the PR.            - Смёрджить PR.\nClose the PR.            - Закрыть PR.\nLeave a comment.         - Оставить комментарий.' },
+        { type: 'note', value: 'Стандартные Git commit форматы: "feat: add user authentication" (новая функция), "fix: resolve login bug" (исправление), "docs: update README" (документация), "refactor: extract helper" (рефакторинг). Это Conventional Commits — международный стандарт.' },
       ]
     },
     {
@@ -50,7 +54,8 @@ export default {
       content: [
         { type: 'text', value: 'Словарь деплоя и инфраструктуры — важен для понимания работы DevOps и серверных процессов.' },
         { type: 'code', language: 'text', value: 'Окружения (Environments):\ndevelopment (dev) - среда разработки\nstaging (stage)   - тестовое окружение\nproduction (prod) - продакшен\nlocal             - локальная среда\n\nПроцессы:\ndeploy            - задеплоить\nbuild             - собрать\ncompile           - скомпилировать\nrun               - запустить\nstart             - запустить\nstop              - остановить\nrestart           - перезапустить\nscale             - масштабировать\nmonitor           - мониторить\nlog               - логировать' },
-        { type: 'code', language: 'text', value: 'Контейнеры и CI/CD:\ncontainer         - контейнер\nimage             - образ\nDockerfile        - файл Docker-конфигурации\nCI/CD pipeline    - конвейер CI/CD\nbuild pipeline    - сборочный конвейер\nautomated tests   - автоматизированные тесты\nartifact          - артефакт сборки\nrollback          - откат\nblue-green deploy - сине-зелёный деплой' }
+        { type: 'code', language: 'text', value: 'Контейнеры и CI/CD:\ncontainer         - контейнер\nimage             - образ\nDockerfile        - файл Docker-конфигурации\nCI/CD pipeline    - конвейер CI/CD\nbuild pipeline    - сборочный конвейер\nautomated tests   - автоматизированные тесты\nartifact          - артефакт сборки\nrollback          - откат\nblue-green deploy - сине-зелёный деплой' },
+        { type: 'tip', value: 'Перед деплоем: "I am going to push to production." После: "The deployment is complete." При проблеме: "We need to rollback." "Who approved this deploy?" — стандартный checklist перед выпуском.' },
       ]
     },
     {
@@ -60,7 +65,8 @@ export default {
       content: [
         { type: 'text', value: 'Терминология API и баз данных — основа для бэкенд-разработчиков и фулстек-специалистов.' },
         { type: 'code', language: 'text', value: 'API:\nAPI (Application Programming Interface)\nendpoint       - эндпоинт\nrequest        - запрос\nresponse       - ответ\nHTTP method    - HTTP-метод\nGET            - получить данные\nPOST           - создать/отправить данные\nPUT / PATCH    - обновить данные\nDELETE         - удалить данные\njson           - формат данных JSON\nheader         - заголовок\nparameter      - параметр\nauthentication - аутентификация\nstatus code    - код статуса' },
-        { type: 'code', language: 'text', value: 'Базы данных:\ndatabase       - база данных\ntable          - таблица\nrecord / row   - запись / строка\nfield / column - поле / колонка\nquery          - запрос\nindex          - индекс\nprimary key    - первичный ключ\nforeign key    - внешний ключ\nmigration      - миграция\ntransaction    - транзакция\nSQL            - язык запросов\nORM            - ORM (объектно-реляционное отображение)' }
+        { type: 'code', language: 'text', value: 'Базы данных:\ndatabase       - база данных\ntable          - таблица\nrecord / row   - запись / строка\nfield / column - поле / колонка\nquery          - запрос\nindex          - индекс\nprimary key    - первичный ключ\nforeign key    - внешний ключ\nmigration      - миграция\ntransaction    - транзакция\nSQL            - язык запросов\nORM            - ORM (объектно-реляционное отображение)' },
+        { type: 'tip', value: 'В API документации всегда читайте: "Authentication" — как авторизоваться, "Endpoints" — доступные URL, "Request/Response" — что передавать и получать, "Rate limits" — лимиты запросов, "Error codes" — что делать при ошибках.' },
       ]
     },
     {

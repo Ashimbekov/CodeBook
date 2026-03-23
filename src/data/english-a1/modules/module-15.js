@@ -9,7 +9,9 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Знание названий IT-профессий необходимо для резюме, LinkedIN, переписки и разговоров с иностранными коллегами.' },
-        { type: 'code', language: 'text', value: 'Основные IT-профессии:\ndeveloper / programmer - разработчик / программист\nfrontend developer     - фронтенд-разработчик\nbackend developer      - бэкенд-разработчик\nfull-stack developer   - фулстек-разработчик\nmobile developer       - мобильный разработчик\nweb developer          - веб-разработчик\nDevOps engineer        - DevOps-инженер\nQA engineer / tester   - QA-инженер / тестировщик\nUI/UX designer         - UI/UX-дизайнер\ndata scientist         - дата-сайентист\ndata analyst           - аналитик данных\nmachine learning engineer - ML-инженер\ncybersecurity engineer - специалист по кибербезопасности\ncloud architect        - облачный архитектор' }
+        { type: 'code', language: 'text', value: 'Основные IT-профессии:\ndeveloper / programmer - разработчик / программист\nfrontend developer     - фронтенд-разработчик\nbackend developer      - бэкенд-разработчик\nfull-stack developer   - фулстек-разработчик\nmobile developer       - мобильный разработчик\nweb developer          - веб-разработчик\nDevOps engineer        - DevOps-инженер\nQA engineer / tester   - QA-инженер / тестировщик\nUI/UX designer         - UI/UX-дизайнер\ndata scientist         - дата-сайентист\ndata analyst           - аналитик данных\nmachine learning engineer - ML-инженер\ncybersecurity engineer - специалист по кибербезопасности\ncloud architect        - облачный архитектор' },
+        { type: 'tip', value: 'На собеседовании вас спросят: "What is your role?" (Какова ваша роль?) или "What do you do?" (Кем вы работаете?). Ответ: "I am a [level] [specialization] developer at [company]." Пример: "I am a senior frontend developer at a fintech startup."' },
+        { type: 'note', value: 'В LinkedIn и резюме используйте полные английские названия без перевода: "Software Engineer" вместо "программист", "QA Engineer" вместо "тестировщик". Это международный стандарт, понятный рекрутёрам по всему миру.' }
       ]
     },
     {
@@ -18,7 +20,8 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'В IT есть стандартная иерархия уровней разработчиков. Важно знать эти термины для чтения вакансий и описания своего опыта.' },
-        { type: 'code', language: 'text', value: 'Уровни опыта:\njunior (junior developer)  - джуниор (начинающий)\nmid-level (mid developer)  - мид-левел (средний)\nsenior (senior developer)  - синьор (опытный)\nlead developer / tech lead - лид-разработчик\nstaff engineer             - стафф-инженер\nprincipal engineer         - принципал-инженер\n\nУправленческие должности:\nteam lead                  - тимлид\nengineering manager        - менеджер по инженерии\nCTO (Chief Technology Officer) - технический директор\nVP of Engineering          - вице-президент по инженерии\nproduct manager (PM)       - продакт-менеджер\nproject manager            - менеджер проекта\nscrum master               - скрам-мастер' }
+        { type: 'code', language: 'text', value: 'Уровни опыта:\njunior (junior developer)  - джуниор (начинающий)\nmid-level (mid developer)  - мид-левел (средний)\nsenior (senior developer)  - синьор (опытный)\nlead developer / tech lead - лид-разработчик\nstaff engineer             - стафф-инженер\nprincipal engineer         - принципал-инженер\n\nУправленческие должности:\nteam lead                  - тимлид\nengineering manager        - менеджер по инженерии\nCTO (Chief Technology Officer) - технический директор\nVP of Engineering          - вице-президент по инженерии\nproduct manager (PM)       - продакт-менеджер\nproject manager            - менеджер проекта\nscrum master               - скрам-мастер' },
+        { type: 'code', language: 'text', value: 'Иерархия уровней в IT:\nIntern         - стажёр\nJunior (0-2 г) - джуниор\nMid-level (2-5)- мид-левел\nSenior (5+)    - синьор\nLead           - тимлид\nStaff Engineer - стафф-инженер\nPrincipal      - принципал\nCTO            - технический директор' },
       ]
     },
     {
@@ -28,7 +31,8 @@ export default {
       content: [
         { type: 'text', value: 'Лексика для описания места работы и условий труда — важна для собеседований и общения с рекрутёрами.' },
         { type: 'code', language: 'text', value: 'Место работы:\noffice          - офис\nremote work     - удалённая работа\nhybrid work     - гибридная работа\nco-working space- коворкинг\nstartup         - стартап\ncorporation     - корпорация\ntech company    - технологическая компания\nIT department   - IT-отдел\n\nУсловия работы:\nfull-time       - полная занятость\npart-time       - частичная занятость\nfreelance       - фриланс\ncontract work   - контрактная работа\ninternship      - стажировка\nsalary          - зарплата\nbenefits        - льготы/бенефиты\nvacation        - отпуск' },
-        { type: 'code', language: 'text', value: 'Фразы для собеседования:\nI work remotely.                - Я работаю удалённо.\nI prefer a hybrid setup.        - Я предпочитаю гибридный формат.\nI\'m a full-time employee.       - Я штатный сотрудник.\nI\'m looking for a remote job.   - Я ищу удалённую работу.\nI have 3 years of experience.   - У меня 3 года опыта.' }
+        { type: 'code', language: 'text', value: 'Фразы для собеседования:\nI work remotely.                - Я работаю удалённо.\nI prefer a hybrid setup.        - Я предпочитаю гибридный формат.\nI\'m a full-time employee.       - Я штатный сотрудник.\nI\'m looking for a remote job.   - Я ищу удалённую работу.\nI have 3 years of experience.   - У меня 3 года опыта.' },
+        { type: 'tip', value: 'При обсуждении условий работы: "Is this role remote-first?" "What is the PTO policy?" (Какова политика отпусков?) "Do you offer equity?" (Предлагаете долю?) "What is the tech stack?" — стандартные вопросы для собеседования.' },
       ]
     },
     {
@@ -38,7 +42,8 @@ export default {
       content: [
         { type: 'text', value: 'Слова для описания рабочих процессов в IT-команде — scrum, agile, sprint и другие методологии.' },
         { type: 'code', language: 'text', value: 'Agile/Scrum:\nscrum         - скрам (методология)\nspirit        - нет! sprint - спринт (итерация)\nstandup       - стендап (ежедневная встреча)\nretro / retrospective - ретро (встреча по итогам)\nplanning      - планирование\nbacklog       - бэклог (список задач)\nstory         - история (пользовательская история)\ntask / ticket - задача / тикет\nbug           - баг (ошибка)\nfeature       - фича (новая функция)\nepic          - эпик (большая функция)\ndefinition of done (DoD) - определение готовности' },
-        { type: 'code', language: 'text', value: 'Действия в рабочем процессе:\nreview code          - проверять код\nmerge a branch       - мёрджить ветку\nopen a PR            - открыть пул-реквест\nclose an issue       - закрыть задачу\nassign a ticket      - назначить задачу\nprioritize           - приоритизировать\ndeliver              - доставлять / сдавать\nship / release       - выпускать (версию)' }
+        { type: 'code', language: 'text', value: 'Действия в рабочем процессе:\nreview code          - проверять код\nmerge a branch       - мёрджить ветку\nopen a PR            - открыть пул-реквест\nclose an issue       - закрыть задачу\nassign a ticket      - назначить задачу\nprioritize           - приоритизировать\ndeliver              - доставлять / сдавать\nship / release       - выпускать (версию)' },
+        { type: 'tip', value: 'На стендапе о процессах: "We follow Scrum." "Our sprint is two weeks." "We use Jira for tracking." "We have a code freeze before release." — стандартные IT-фразы, которые вы услышите в любой Agile-команде.' },
       ]
     },
     {
@@ -48,7 +53,8 @@ export default {
       content: [
         { type: 'text', value: 'Важные фразы для повседневного рабочего общения — от приветствия до обсуждения задач.' },
         { type: 'code', language: 'text', value: 'Приветствия и прощания:\nGood morning!          - Доброе утро!\nGood afternoon!        - Добрый день!\nGood evening!          - Добрый вечер!\nHi! / Hello!           - Привет!\nHave a good day!       - Хорошего дня!\nSee you tomorrow!      - До завтра!\nHave a good weekend!   - Хороших выходных!\n\nНа встречах:\nLet\'s start.           - Начнём.\nCan we begin?          - Можем начать?\nAny questions?         - Есть вопросы?\nThat\'s all for today.  - На сегодня всё.\nThanks, everyone!      - Спасибо всем!' },
-        { type: 'tip', value: 'На стендапах принято говорить кратко: Yesterday I did... Today I\'m doing... No blockers. (Вчера я делал... Сегодня делаю... Блокеров нет.)' }
+        { type: 'tip', value: 'На стендапах принято говорить кратко: Yesterday I did... Today I\'m doing... No blockers. (Вчера я делал... Сегодня делаю... Блокеров нет.)' },
+        { type: 'note', value: 'Полезные фразы для поиска работы: "I am open to new opportunities." "I am actively job searching." "I am looking for a senior role." Используйте в LinkedIn статусе и на собеседованиях.' },
       ]
     },
     {
@@ -57,7 +63,8 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Полезно знать общие профессии для разговоров о семье, друзьях и общем small talk.' },
-        { type: 'code', language: 'text', value: 'Общие профессии:\ndoctor       - врач\nteacher      - учитель\nlawyer       - юрист\nengineer     - инженер\narchitect    - архитектор\naccountant   - бухгалтер\nmanager      - менеджер\ndesigner     - дизайнер\nwriter       - писатель\nstudent      - студент\nbusiness owner - владелец бизнеса\nentrepreneur - предприниматель\n\nФразы:\nWhat do you do for a living?    - Чем вы занимаетесь?\nI\'m a software engineer.        - Я разработчик программного обеспечения.\nI work at/for [company].        - Я работаю в [компании].' }
+        { type: 'code', language: 'text', value: 'Общие профессии:\ndoctor       - врач\nteacher      - учитель\nlawyer       - юрист\nengineer     - инженер\narchitect    - архитектор\naccountant   - бухгалтер\nmanager      - менеджер\ndesigner     - дизайнер\nwriter       - писатель\nstudent      - студент\nbusiness owner - владелец бизнеса\nentrepreneur - предприниматель\n\nФразы:\nWhat do you do for a living?    - Чем вы занимаетесь?\nI\'m a software engineer.        - Я разработчик программного обеспечения.\nI work at/for [company].        - Я работаю в [компании].' },
+        { type: 'code', language: 'text', value: 'Не-IT профессии, которые встречаются:\naccountant    - бухгалтер\nlawyer        - юрист\nHR manager    - HR-менеджер\nCFO           - финансовый директор\nCEO           - генеральный директор\ncustomer support - поддержка клиентов\nmarketing     - маркетинг' },
       ]
     },
     {

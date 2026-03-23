@@ -10,7 +10,9 @@ export default {
       content: [
         { type: 'text', value: 'Предлоги места — одна из сложных тем для русскоязычных. В русском мы говорим "в" и "на", а в английском есть три основных предлога: in, on, at.' },
         { type: 'code', language: 'text', value: 'IN — внутри чего-то:\nin the office      - в офисе\nin the file        - в файле\nin the code        - в коде\nin the database    - в базе данных\nin the array       - в массиве\nin the loop        - в цикле\nin the folder      - в папке\n\nON — на поверхности / на платформе:\non the screen      - на экране\non GitHub          - на GitHub\non the server      - на сервере\non the website     - на сайте\non Slack           - в Slack\non the team        - в команде' },
-        { type: 'code', language: 'text', value: 'AT — в точке / по адресу:\nat port 8080       - на порту 8080\nat line 42         - на строке 42\nat the meeting     - на встрече\nat Google          - в Google (компания)\nat the desk        - за столом\nat the command line- в командной строке\n\nВажные примеры:\nThe bug is in line 42.           - Баг на строке 42.\nThe app runs on port 3000.       - Приложение работает на порту 3000.\nI work at Google.                - Я работаю в Google.' }
+        { type: 'code', language: 'text', value: 'AT — в точке / по адресу:\nat port 8080       - на порту 8080\nat line 42         - на строке 42\nat the meeting     - на встрече\nat Google          - в Google (компания)\nat the desk        - за столом\nat the command line- в командной строке\n\nВажные примеры:\nThe bug is in line 42.           - Баг на строке 42.\nThe app runs on port 3000.       - Приложение работает на порту 3000.\nI work at Google.                - Я работаю в Google.' },
+        { type: 'tip', value: 'Запомните три ключевых правила: IN — внутри чего-то (in the code, in the file), ON — на платформе или поверхности (on GitHub, on the screen), AT — в конкретной точке (at port 8080, at line 42, at Google).' },
+        { type: 'note', value: 'В IT часто путают on и in: "on the server" (на сервере, платформа) vs "in the database" (в базе данных, внутри). "On Slack" — потому что Slack это платформа. "In the code" — внутри кода.' }
       ]
     },
     {
@@ -20,7 +22,8 @@ export default {
       content: [
         { type: 'text', value: 'Те же предлоги in, on, at используются для времени, но по другим правилам. Это нужно выучить отдельно.' },
         { type: 'code', language: 'text', value: 'AT — точное время, праздники:\nat 9 AM            - в 9 утра\nat noon            - в полдень\nat midnight        - в полночь\nat 3 o\'clock       - в 3 часа\nat the weekend     - на выходных (BE)\n\nON — дни и даты:\non Monday          - в понедельник\non Friday          - в пятницу\non June 5          - 5 июня\non the weekend     - на выходных (AE)\non release day     - в день выпуска\n\nIN — периоды:\nin January         - в январе\nin 2024            - в 2024 году\nin the morning     - утром\nin the evening     - вечером\nin two weeks       - через две недели' },
-        { type: 'note', value: 'Правило "большой кусок → маленький кусок": in (большой период) → on (день/дата) → at (точное время). "In January, on Monday, at 9 AM."' }
+        { type: 'note', value: 'Правило "большой кусок → маленький кусок": in (большой период) → on (день/дата) → at (точное время). "In January, on Monday, at 9 AM."' },
+        { type: 'tip', value: 'В IT-переписке предлоги времени критически важны: "The release is on Friday." (Релиз в пятницу.) "The standup is at 10 AM." (Стендап в 10 утра.) "We deployed in the morning." (Задеплоили утром.) "The deadline is in two weeks." (Дедлайн через две недели.)' },
       ]
     },
     {
@@ -41,7 +44,8 @@ export default {
       content: [
         { type: 'text', value: 'Предлоги движения используются с глаголами действия — перемещения, передачи данных, запуска процессов.' },
         { type: 'code', language: 'text', value: 'Предлоги движения:\nto           - к, в (направление)\nfrom         - из, от\ninto         - внутрь\nout of       - из, вовне\nthrough      - через\nto/into      - куда-то (с глаголами движения)' },
-        { type: 'code', language: 'text', value: 'Примеры в IT:\nDeploy to production.            - Задеплоить в продакшен.\nMove to the next sprint.         - Перейти к следующему спринту.\nMerge into main.                 - Смёрджить в main.\nUpload to the cloud.             - Загрузить в облако.\nDownload from the server.        - Скачать с сервера.\nImport from a module.            - Импортировать из модуля.\nExport to CSV.                   - Экспортировать в CSV.\nLog out of the system.           - Выйти из системы.\nSign in to GitHub.               - Войти в GitHub.' }
+        { type: 'code', language: 'text', value: 'Примеры в IT:\nDeploy to production.            - Задеплоить в продакшен.\nMove to the next sprint.         - Перейти к следующему спринту.\nMerge into main.                 - Смёрджить в main.\nUpload to the cloud.             - Загрузить в облако.\nDownload from the server.        - Скачать с сервера.\nImport from a module.            - Импортировать из модуля.\nExport to CSV.                   - Экспортировать в CSV.\nLog out of the system.           - Выйти из системы.\nSign in to GitHub.               - Войти в GitHub.' },
+        { type: 'note', value: 'В командах git всегда предлог "into": merge feature into main (смёрджить feature в main). В деплое: push to production. В коде: import from module. Эти предлоги фиксированы — запомните их вместе с глаголами.' },
       ]
     },
     {
@@ -61,7 +65,8 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Ещё несколько важных предлогов, которые часто встречаются в технической документации и переписке.' },
-        { type: 'code', language: 'text', value: 'by    - к (дедлайн), кем сделано:\n  Fix it by Friday.          - Исправьте к пятнице.\n  Written by the team.       - Написано командой.\n  Sort by date.              - Сортировать по дате.\n\nwith  - с, с помощью:\n  Connect with SSH.          - Подключиться по SSH.\n  Test with Postman.         - Тестировать с Postman.\n  Build with Docker.         - Собрать с помощью Docker.\n\nfor   - для, из-за:\n  This is for testing.       - Это для тестирования.\n  Thanks for the review.     - Спасибо за проверку.\n\nabout - о:\n  Tell me about the bug.     - Расскажи о баге.\n  A question about the API.  - Вопрос об API.' }
+        { type: 'code', language: 'text', value: 'by    - к (дедлайн), кем сделано:\n  Fix it by Friday.          - Исправьте к пятнице.\n  Written by the team.       - Написано командой.\n  Sort by date.              - Сортировать по дате.\n\nwith  - с, с помощью:\n  Connect with SSH.          - Подключиться по SSH.\n  Test with Postman.         - Тестировать с Postman.\n  Build with Docker.         - Собрать с помощью Docker.\n\nfor   - для, из-за:\n  This is for testing.       - Это для тестирования.\n  Thanks for the review.     - Спасибо за проверку.\n\nabout - о:\n  Tell me about the bug.     - Расскажи о баге.\n  A question about the API.  - Вопрос об API.' },
+        { type: 'tip', value: 'Полезные комбинации: "by [дедлайн]" — к дедлайну: "by Friday" (к пятнице). "built with [технология]" — создан на React. "for [цель]" — for backend developers. "talk about [тема]" — about the architecture.' },
       ]
     },
     {

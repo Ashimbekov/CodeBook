@@ -22,7 +22,7 @@ export default {
         { type: 'text', value: 'В разговорной речи и неформальных текстах глагол to be часто сокращается. В коде, комментариях и чатах с коллегами вы увидите сокращения постоянно.' },
         { type: 'code', language: 'text', value: 'Полная форма → Сокращение:\nI am     → I\'m\nHe is    → He\'s\nShe is   → She\'s\nIt is    → It\'s\nWe are   → We\'re\nYou are  → You\'re\nThey are → They\'re' },
         { type: 'code', language: 'text', value: 'Примеры в IT-контексте:\nI\'m a full-stack developer.   - Я фулстек-разработчик.\nIt\'s a critical bug.          - Это критический баг.\nWe\'re on the same team.       - Мы в одной команде.\nThey\'re running the tests.    - Они запускают тесты.\nYou\'re the lead developer.    - Ты ведущий разработчик.' },
-        { type: 'note', value: 'Апостроф (\'') заменяет пропущенную букву или буквы. "I\'m" = "I am" (пропущена буква "a"). Важно не путать "it\'s" (it is) и "its" (притяжательное — его/её).' }
+        { type: 'note', value: 'Апостроф (\') заменяет пропущенную букву или буквы. "I\'m" = "I am" (пропущена буква "a"). Важно не путать "it\'s" (it is) и "its" (притяжательное — его/её).' }
       ]
     },
     {

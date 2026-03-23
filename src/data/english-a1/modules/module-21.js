@@ -10,7 +10,8 @@ export default {
       content: [
         { type: 'text', value: 'Чтение технических текстов на английском требует особого подхода. Не нужно понимать каждое слово — важно понять общий смысл и ключевую информацию.' },
         { type: 'code', language: 'text', value: 'Три стратегии чтения:\n1. Skimming (скимминг) — быстрое чтение для общего понимания\n   - Читайте заголовки и первые предложения\n   - Смотрите на структуру текста\n   - Цель: понять тему\n\n2. Scanning (сканирование) — поиск конкретной информации\n   - Ищете конкретное слово или факт\n   - Не читаете весь текст\n   - Цель: найти нужную информацию\n\n3. Intensive reading (детальное чтение)\n   - Читаете внимательно, понимаете каждую часть\n   - Используете словарь\n   - Цель: полное понимание' },
-        { type: 'tip', value: 'Для чтения документации: сначала skim (понять структуру), потом scan (найти нужное), потом read внимательно только нужную часть.' }
+        { type: 'tip', value: 'Для чтения документации: сначала skim (понять структуру), потом scan (найти нужное), потом read внимательно только нужную часть.' },
+        { type: 'note', value: 'Не пугайтесь незнакомых слов! В IT-текстах около 80% слов — это IT-термины (API, deploy, backend), которые одинаковы в русском и английском. Реально нужно понять только связующие слова: is, are, can, returns, requires.' }
       ]
     },
     {
@@ -20,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Прочитайте типичное описание IT-проекта и разберём каждую часть.' },
         { type: 'code', language: 'text', value: 'Пример текста:\n"TaskTracker is a simple web application for\nteam task management. It allows users to\ncreate, assign, and track tasks in real time.\nThe app is built with React and Node.js.\nIt supports multiple users and roles."\n\nПеревод:\nTaskTracker — это простое веб-приложение\nдля управления задачами команды. Оно позволяет\nпользователям создавать, назначать и отслеживать\nзадачи в реальном времени. Приложение создано\nна React и Node.js. Оно поддерживает\nнескольких пользователей и роли.' },
-        { type: 'code', language: 'text', value: 'Ключевые слова в описании проекта:\nallows         - позволяет\nsupports       - поддерживает\nbuilt with     - создан с помощью\ndesigned for   - разработан для\nprovides       - предоставляет\nenables        - включает / позволяет\nmanages        - управляет\nintegrates     - интегрируется\nuses           - использует' }
+        { type: 'code', language: 'text', value: 'Ключевые слова в описании проекта:\nallows         - позволяет\nsupports       - поддерживает\nbuilt with     - создан с помощью\ndesigned for   - разработан для\nprovides       - предоставляет\nenables        - включает / позволяет\nmanages        - управляет\nintegrates     - интегрируется\nuses           - использует' },
+        { type: 'note', value: 'Ключевые маркеры в описаниях проектов: "powered by" (работает на), "built with" (создан с), "designed for" (предназначен для), "compatible with" (совместим с), "requires" (требует), "supports" (поддерживает).' },
       ]
     },
     {
@@ -30,7 +32,8 @@ export default {
       content: [
         { type: 'text', value: 'Сообщения об ошибках (error messages) — один из главных текстов для программиста. Нужно научиться быстро понимать их структуру.' },
         { type: 'code', language: 'text', value: 'Типичные сообщения об ошибках:\nTypeError: Cannot read property \'length\' of undefined\n→ Ошибка типа: не могу прочитать свойство \'length\' у undefined\n\nSyntaxError: Unexpected token \'}\' at line 42\n→ Синтаксическая ошибка: неожиданный токен \'}\' на строке 42\n\nReferenceError: variable is not defined\n→ Ошибка ссылки: переменная не определена\n\nError: Connection refused at port 5432\n→ Ошибка: соединение отклонено на порту 5432\n\nFailed to fetch: Network request failed\n→ Не удалось получить данные: сетевой запрос не удался' },
-        { type: 'code', language: 'text', value: 'Слова в сообщениях об ошибках:\ncannot / can\'t  - не может\nunexpected      - неожиданный\nundefined       - неопределённый\nfailed          - не удалось\nrefused         - отклонено\ndenied          - отказано\ntimeout         - превышено время ожидания\nconnection      - соединение\nmissing         - отсутствует\nrequired        - обязательный\ninvalid         - неверный' }
+        { type: 'code', language: 'text', value: 'Слова в сообщениях об ошибках:\ncannot / can\'t  - не может\nunexpected      - неожиданный\nundefined       - неопределённый\nfailed          - не удалось\nrefused         - отклонено\ndenied          - отказано\ntimeout         - превышено время ожидания\nconnection      - соединение\nmissing         - отсутствует\nrequired        - обязательный\ninvalid         - неверный' },
+        { type: 'tip', value: 'Стратегия чтения error messages: 1) Тип ошибки (TypeError, SyntaxError). 2) Описание (cannot read, unexpected token). 3) Location (at line 42). 4) Stack trace (история вызовов). Читайте в этом порядке для быстрой диагностики.' },
       ]
     },
     {
@@ -40,7 +43,8 @@ export default {
       content: [
         { type: 'text', value: 'Технические требования (requirements / specs) — важный тип текста для разработчика. Нужно понимать ключевые слова.' },
         { type: 'code', language: 'text', value: 'Пример требований:\n"The user registration form must:\n- Accept email and password\n- Validate email format\n- Require password minimum 8 characters\n- Send a confirmation email\n- Redirect to the dashboard after success"\n\nПеревод:\n"Форма регистрации пользователя должна:\n- Принимать email и пароль\n- Проверять формат email\n- Требовать минимум 8 символов в пароле\n- Отправлять письмо подтверждения\n- Перенаправлять на dashboard после успеха"' },
-        { type: 'code', language: 'text', value: 'Слова-обязательства в requirements:\nmust           - должен (обязательно)\nshould         - должен (рекомендуется)\ncan / may      - может (опционально)\nshall          - должен (формальный)\nrequired       - обязательный\noptional       - опциональный\nmandatory      - обязательный\naccepted       - принятый\nvalid          - допустимый' }
+        { type: 'code', language: 'text', value: 'Слова-обязательства в requirements:\nmust           - должен (обязательно)\nshould         - должен (рекомендуется)\ncan / may      - может (опционально)\nshall          - должен (формальный)\nrequired       - обязательный\noptional       - опциональный\nmandatory      - обязательный\naccepted       - принятый\nvalid          - допустимый' },
+        { type: 'note', value: 'В технических требованиях ищите: "MUST" (обязательно), "SHOULD" (рекомендуется), "MAY" (может), "MUST NOT" (запрещено). В обычных requirements: "The system shall..." (Система должна...), "Users should be able to..." (Пользователи должны...).' },
       ]
     },
     {
@@ -50,7 +54,8 @@ export default {
       content: [
         { type: 'text', value: 'Документация библиотек — главный источник информации для разработчика. Важно понимать структуру типичной документации.' },
         { type: 'code', language: 'text', value: 'Типичная структура документации:\nInstallation      - Установка\nGetting Started   - Начало работы\nConfiguration     - Конфигурация\nAPI Reference     - Справочник API\nExamples          - Примеры\nTroubleshooting   - Устранение проблем\nChangelog         - История изменений\nContributing      - Как внести вклад\nLicense           - Лицензия' },
-        { type: 'code', language: 'text', value: 'Пример из документации:\n"Installation:\nTo install the package, run:\nnpm install express\n\nBasic Usage:\nCreate a file app.js and add:\nconst express = require(\'express\')\nconst app = express()\n\nThe server listens on port 3000 by default.\nYou can change this in the configuration."\n\nКлючевые слова:\nrun             - запустите\nadd             - добавьте\ncreate          - создайте\nby default      - по умолчанию\nyou can         - вы можете\nfor more info   - для получения подробной информации' }
+        { type: 'code', language: 'text', value: 'Пример из документации:\n"Installation:\nTo install the package, run:\nnpm install express\n\nBasic Usage:\nCreate a file app.js and add:\nconst express = require(\'express\')\nconst app = express()\n\nThe server listens on port 3000 by default.\nYou can change this in the configuration."\n\nКлючевые слова:\nrun             - запустите\nadd             - добавьте\ncreate          - создайте\nby default      - по умолчанию\nyou can         - вы можете\nfor more info   - для получения подробной информации' },
+        { type: 'tip', value: 'Структура изучения новой библиотеки: 1) README — что это. 2) Getting Started — быстрый старт. 3) API Reference — полный справочник. 4) Examples — примеры. 5) Changelog — изменения. Начинайте с Getting Started.' },
       ]
     },
     {

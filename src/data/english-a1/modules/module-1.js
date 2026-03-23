@@ -54,7 +54,8 @@ export default {
       content: [
         { type: 'text', value: 'Ударение (stress) в английских словах очень важно. Неправильное ударение может помешать вас понять. В транскрипции ударение обозначается знаком [ˈ] перед ударным слогом.' },
         { type: 'code', language: 'text', value: 'IT-слова с ударением:\nCOMputer   - [kəmˈpjuːtər]  - компьютер\nPROgram    - [ˈprəʊɡræm]   - программа\nINternet   - [ˈɪntənet]    - интернет\nDATAbase   - [ˈdeɪtəbeɪs]  - база данных\nALgorithm  - [ˈælɡərɪðm]   - алгоритм\nDEveloper  - [dɪˈveləpər]  - разработчик\nAPPlication- [ˌæplɪˈkeɪʃn]- приложение\nREpository - [rɪˈpɒzɪtri]  - репозиторий' },
-        { type: 'warning', value: 'Слово "program" — ударение на первый слог [ˈprəʊɡræm]. Слово "programmer" — тоже на первый [ˈprəʊɡræmər]. Не путайте с русским "программИст".' }
+        { type: 'warning', value: 'Слово "program" — ударение на первый слог [ˈprəʊɡræm]. Слово "programmer" — тоже на первый [ˈprəʊɡræmər]. Не путайте с русским "программИст".' },
+        { type: 'tip', value: 'В IT-словах ударение часто падает на первый слог: DEveloper, FUNCtion, SERver. Но есть исключения: dePLOY (деплой), proGRAM (программа). Слушайте носителей и повторяйте вслух для лучшего запоминания.' },
       ]
     },
     {

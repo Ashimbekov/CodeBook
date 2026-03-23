@@ -21,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Некоторые слова образуют множественное число неправильно — не по правилам. Их нужно просто запомнить.' },
         { type: 'code', language: 'text', value: 'Неправильное множественное:\nman → men         - мужчина → мужчины\nwoman → women     - женщина → женщины\nchild → children  - ребёнок → дети\nperson → people   - человек → люди\nfoot → feet       - нога → ноги\ntooth → teeth     - зуб → зубы\nmouse → mice      - мышь → мыши\nanalysis → analyses - анализ → анализы\ncriterion → criteria - критерий → критерии\nmedium → media    - среда → медиа' },
-        { type: 'note', value: 'Интересно! В IT "mouse" (компьютерная мышь) обычно используется в единственном числе. Множественное "mice" или "mouses" — оба варианта встречаются для компьютерных мышей.' }
+        { type: 'note', value: 'Интересно! В IT "mouse" (компьютерная мышь) обычно используется в единственном числе. Множественное "mice" или "mouses" — оба варианта встречаются для компьютерных мышей.' },
+        { type: 'note', value: 'В IT часто встречаются: "data" (данные) — уже множественное число. "Criteria" (критерии) — множественное от "criterion". "Indices" или "indexes" — оба варианта правильны для "index". "Matrices" — множественное от "matrix" (матрица).' },
       ]
     },
     {
@@ -41,7 +42,8 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Некоторые слова используются только во множественном числе. С ними глагол всегда стоит во множественном числе.' },
-        { type: 'code', language: 'text', value: 'Только во множественном числе:\nscissors    - ножницы\nglasses     - очки\npants/jeans - брюки/джинсы\nheadphones  - наушники\ncredentials - учётные данные\nstats       - статистика\nanalytics   - аналитика\nsettings    - настройки\nresults     - результаты (контекстно)\n\nПримеры:\nMy headphones are broken.      - Мои наушники сломаны.\nThe credentials are wrong.     - Учётные данные неправильные.\nThe settings are saved.        - Настройки сохранены.' }
+        { type: 'code', language: 'text', value: 'Только во множественном числе:\nscissors    - ножницы\nglasses     - очки\npants/jeans - брюки/джинсы\nheadphones  - наушники\ncredentials - учётные данные\nstats       - статистика\nanalytics   - аналитика\nsettings    - настройки\nresults     - результаты (контекстно)\n\nПримеры:\nMy headphones are broken.      - Мои наушники сломаны.\nThe credentials are wrong.     - Учётные данные неправильные.\nThe settings are saved.        - Настройки сохранены.' },
+        { type: 'tip', value: 'В IT контексте: "credentials" (учётные данные) — всегда множественное: "Your credentials are invalid." "Settings" (настройки) — всегда множественное: "The settings are saved." Не говорите "a setting" или "a credential" в значении единственного числа.' },
       ]
     },
     {

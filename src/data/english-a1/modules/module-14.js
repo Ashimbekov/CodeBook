@@ -10,7 +10,8 @@ export default {
       content: [
         { type: 'text', value: 'Базовая лексика еды важна для общения с коллегами, на бизнес-ланчах и при написании о себе по-английски.' },
         { type: 'code', language: 'text', value: 'Напитки:\nwater     - вода\ncoffee    - кофе\ntea       - чай\njuice     - сок\nmilk      - молоко\n\nЗавтрак:\nbread     - хлеб\negg       - яйцо\nbutter    - масло\ncheese    - сыр\nyogurt    - йогурт\n\nОбед/ужин:\nrice      - рис\npasta     - паста\nmeat      - мясо\nchicken   - курица\nfish      - рыба\nvegetables- овощи\nsalad     - салат\nsoup      - суп' },
-        { type: 'tip', value: 'Программисты и кофе — классическое сочетание! "Coffee is my fuel" (Кофе — моё топливо). "I need coffee to debug this" — шутка, которую поймут все IT-шники.' }
+        { type: 'tip', value: 'Программисты и кофе — классическое сочетание! "Coffee is my fuel" (Кофе — моё топливо). "I need coffee to debug this" — шутка, которую поймут все IT-шники.' },
+        { type: 'note', value: 'Полезные фразы на бизнес-ланче или корпоративе: "What do you want to eat?" (Что ты хочешь поесть?), "I\'d like coffee, please." (Я бы хотел кофе, пожалуйста.), "I don\'t eat meat." (Я не ем мясо.), "Any vegetarian options?" (Есть вегетарианские блюда?)' }
       ]
     },
     {
@@ -20,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Лексика одежды полезна для описания дресс-кода в офисе и для светских разговоров с коллегами.' },
         { type: 'code', language: 'text', value: 'Одежда:\nt-shirt   - футболка\nshirt     - рубашка\njeans     - джинсы\npants     - брюки\nsweater   - свитер\njacket    - куртка\ndress     - платье\nskirt     - юбка\nshoes     - туфли/ботинки\nsneakers  - кроссовки\nglasses   - очки\ncap       - кепка\n\nОписание стиля:\ncasual    - повседневный\nformal    - официальный\nsmart casual - умный повседневный\ndress code - дресс-код' },
-        { type: 'note', value: 'Большинство IT-компаний имеют casual dress code. На собеседовании спросите: "What is the dress code?" (Какой дресс-код?) или скажите: "I prefer casual style." (Я предпочитаю повседневный стиль.)' }
+        { type: 'note', value: 'Большинство IT-компаний имеют casual dress code. На собеседовании спросите: "What is the dress code?" (Какой дресс-код?) или скажите: "I prefer casual style." (Я предпочитаю повседневный стиль.)' },
+        { type: 'tip', value: 'На zoom-созвонах можно сказать: "Sorry for my casual look, I am working from home." На собеседовании: "What is the dress code in your office?" "Business casual is fine." (Бизнес-кэжуал подойдёт.) Это стандартные вопросы при найме.' },
       ]
     },
     {
@@ -30,7 +32,8 @@ export default {
       content: [
         { type: 'text', value: 'Лексика дома особенно важна в эпоху удалённой работы — вы будете описывать своё рабочее место коллегам.' },
         { type: 'code', language: 'text', value: 'Комнаты:\nbedroom   - спальня\nliving room - гостиная\nkitchen   - кухня\nbathroom  - ванная\noffice    - кабинет\nbalcony   - балкон\n\nМебель:\ndesk      - стол (рабочий)\nchair     - стул\nbookshelf - книжная полка\nsofa/couch- диван\nbed       - кровать\n\nРабочее место (home office):\nmonitor   - монитор\nkeyboard  - клавиатура\nmouse     - мышь\nheadphones- наушники\nwebcam    - веб-камера\ndesk lamp - настольная лампа\ncharger   - зарядное устройство' },
-        { type: 'code', language: 'text', value: 'Фразы об удалённой работе:\nI work from home.               - Я работаю из дома.\nI have a home office.           - У меня домашний офис.\nMy desk is next to the window.  - Мой стол рядом с окном.\nI use a standing desk.          - Я использую стоячий стол.\nMy home setup is...             - Моя домашняя рабочая станция...' }
+        { type: 'code', language: 'text', value: 'Фразы об удалённой работе:\nI work from home.               - Я работаю из дома.\nI have a home office.           - У меня домашний офис.\nMy desk is next to the window.  - Мой стол рядом с окном.\nI use a standing desk.          - Я использую стоячий стол.\nMy home setup is...             - Моя домашняя рабочая станция...' },
+        { type: 'tip', value: 'На zoom о вашем setup: "I have a dual-monitor setup." "My internet connection is stable." "I work from a dedicated home office." Эти фразы популярны при удалённых собеседованиях и при знакомстве с новыми коллегами.' },
       ]
     },
     {
@@ -40,7 +43,8 @@ export default {
       content: [
         { type: 'text', value: 'Слова о семье и людях помогут вам в неформальном общении с иностранными коллегами.' },
         { type: 'code', language: 'text', value: 'Семья:\nmother/mom  - мать/мама\nfather/dad  - отец/папа\nbrother     - брат\nsister      - сестра\nwife        - жена\nhusband     - муж\nson         - сын\ndaughter    - дочь\ngrandmother - бабушка\ngrandfather - дедушка\nfriend      - друг\ncolleague   - коллега\nboss        - начальник\nteammate    - товарищ по команде' },
-        { type: 'tip', value: 'Small talk с коллегами: "Do you have kids?" (Есть дети?), "How is your family?" (Как семья?), "My wife/husband is also in IT" (Моя жена/муж тоже в IT).' }
+        { type: 'tip', value: 'Small talk с коллегами: "Do you have kids?" (Есть дети?), "How is your family?" (Как семья?), "My wife/husband is also in IT" (Моя жена/муж тоже в IT).' },
+        { type: 'note', value: 'На work-life balance беседах: "I need to pick up my kids." "My partner also works remotely." "I live alone." В международных командах могут спросить о семье в неформальном контексте — это нормальный small talk.' },
       ]
     },
     {
@@ -49,7 +53,8 @@ export default {
       type: 'theory',
       content: [
         { type: 'text', value: 'Лексика транспорта нужна для объяснения как добраться до офиса или для разговоров о поездках на конференции.' },
-        { type: 'code', language: 'text', value: 'Транспорт:\ncar       - машина\nbike      - велосипед\nbus       - автобус\ntrain     - поезд\nmetro/subway - метро\ntaxi      - такси\nplane     - самолёт\nscooter   - скутер\n\nДействия:\nwalk      - идти пешком\ndrive     - ехать (на машине)\nride      - ехать (на велосипеде/мотоцикле)\ntake      - взять (транспорт)\nfly       - лететь\n\nФразы:\nI take the bus to work.         - Я езжу на автобусе на работу.\nI work remotely.                - Я работаю удалённо.\nI commute by train.             - Я добираюсь на поезде.' }
+        { type: 'code', language: 'text', value: 'Транспорт:\ncar       - машина\nbike      - велосипед\nbus       - автобус\ntrain     - поезд\nmetro/subway - метро\ntaxi      - такси\nplane     - самолёт\nscooter   - скутер\n\nДействия:\nwalk      - идти пешком\ndrive     - ехать (на машине)\nride      - ехать (на велосипеде/мотоцикле)\ntake      - взять (транспорт)\nfly       - лететь\n\nФразы:\nI take the bus to work.         - Я езжу на автобусе на работу.\nI work remotely.                - Я работаю удалённо.\nI commute by train.             - Я добираюсь на поезде.' },
+        { type: 'code', language: 'text', value: 'Способы передвижения:\nby metro/subway  - на метро\nby bus           - на автобусе\nby car           - на машине\nby bike/bicycle  - на велосипеде\non foot          - пешком\nby taxi/Uber     - на такси\nremote (WFH)     - удалённо (без поездок)' },
       ]
     },
     {
@@ -59,7 +64,8 @@ export default {
       content: [
         { type: 'text', value: 'Базовые прилагательные помогут вам описывать и оценивать вещи, людей и ситуации.' },
         { type: 'code', language: 'text', value: 'Противоположности:\nbig/small       - большой/маленький\nfast/slow       - быстрый/медленный\ngood/bad        - хороший/плохой\neasy/difficult  - лёгкий/сложный\nnew/old         - новый/старый\nclean/dirty     - чистый/грязный\nopen/closed     - открытый/закрытый\nright/wrong     - правильный/неправильный\nhot/cold        - горячий/холодный\nlight/dark      - светлый/тёмный' },
-        { type: 'code', language: 'text', value: 'В IT-контексте:\nfast code        - быстрый код\nslow query       - медленный запрос\ngood documentation - хорошая документация\nbad practice     - плохая практика\neasy to use      - легко использовать\ndifficult bug    - сложный баг\nnew feature      - новая функция\nold version      - старая версия\nclean code       - чистый код' }
+        { type: 'code', language: 'text', value: 'В IT-контексте:\nfast code        - быстрый код\nslow query       - медленный запрос\ngood documentation - хорошая документация\nbad practice     - плохая практика\neasy to use      - легко использовать\ndifficult bug    - сложный баг\nnew feature      - новая функция\nold version      - старая версия\nclean code       - чистый код' },
+        { type: 'tip', value: 'Описывая коллег и командную работу: "He is a reliable teammate." "She is very experienced." "The team is collaborative." "Our manager is supportive." Эти прилагательные нужны на собеседованиях и в performance review.' },
       ]
     },
     {

@@ -10,7 +10,8 @@ export default {
       content: [
         { type: 'text', value: 'Комментарии в коде пишутся на английском в большинстве международных проектов. Нужно уметь их читать и писать.' },
         { type: 'code', language: 'text', value: '// Типы комментариев:\n\n// Single line comment - однострочный\n// This function calculates the total price\n\n/* Multi-line comment - многострочный\n   Used for longer explanations\n   or temporary code disabling */\n\n/** JSDoc/JavaDoc comment - документация\n * @param {string} name - The user name\n * @param {number} age - The user age\n * @returns {object} User object\n */\n\n# Python comment - однострочный в Python\n# TODO: refactor this function\n# FIXME: this breaks on null input' },
-        { type: 'code', language: 'text', value: 'Маркеры в комментариях:\nTODO   - нужно сделать\nFIXME  - нужно исправить\nHACK   - временное решение (некрасивое)\nNOTE   - важное замечание\nWARNING- предупреждение\nDEPRECATED - устарело, не использовать\nXXX    - срочно исправить (серьёзная проблема)\n\nПримеры:\n// TODO: add input validation\n// FIXME: this breaks with large arrays\n// NOTE: this is a temporary solution\n// DEPRECATED: use getUserById() instead' }
+        { type: 'code', language: 'text', value: 'Маркеры в комментариях:\nTODO   - нужно сделать\nFIXME  - нужно исправить\nHACK   - временное решение (некрасивое)\nNOTE   - важное замечание\nWARNING- предупреждение\nDEPRECATED - устарело, не использовать\nXXX    - срочно исправить (серьёзная проблема)\n\nПримеры:\n// TODO: add input validation\n// FIXME: this breaks with large arrays\n// NOTE: this is a temporary solution\n// DEPRECATED: use getUserById() instead' },
+        { type: 'tip', value: 'Большинство IDE (VS Code, JetBrains) подсвечивают TODO и FIXME комментарии — вы увидите их выделенными. Также есть плагины "TODO Highlight" и "Todo Tree" для удобного управления такими заметками в коде.' }
       ]
     },
     {
@@ -20,7 +21,8 @@ export default {
       content: [
         { type: 'text', value: 'Хороший комментарий объясняет ПОЧЕМУ, а не ЧТО. Код сам показывает что делается, комментарий объясняет зачем.' },
         { type: 'code', language: 'text', value: 'Плохие комментарии (объясняют "что"):\n// Add 1 to counter\ncounter++;\n\n// Check if user is admin\nif (user.role === "admin") {\n\n// Loop through all items\nfor (const item of items) {\n\nХорошие комментарии (объясняют "почему"):\n// Increment counter because API uses 1-based indexing\ncounter++;\n\n// Admin users can see all data, including private\nif (user.role === "admin") {\n\n// Process in batches to avoid memory overflow\nfor (const item of items) {' },
-        { type: 'code', language: 'text', value: 'Шаблоны хороших комментариев:\n// This is necessary because...\n// We use X instead of Y because Y has a bug with...\n// See issue #123 for context\n// Based on the spec: [link]\n// Edge case: when input is null, we return empty array\n// Performance: this O(n log n) approach is faster than...\n// Warning: changing this order breaks the auth flow\n// Temporary: remove this when API v2 is ready' }
+        { type: 'code', language: 'text', value: 'Шаблоны хороших комментариев:\n// This is necessary because...\n// We use X instead of Y because Y has a bug with...\n// See issue #123 for context\n// Based on the spec: [link]\n// Edge case: when input is null, we return empty array\n// Performance: this O(n log n) approach is faster than...\n// Warning: changing this order breaks the auth flow\n// Temporary: remove this when API v2 is ready' },
+        { type: 'tip', value: 'Правило комментирования: если нужен комментарий чтобы объяснить ЧТО делает код — перепишите код. Если нужно объяснить ПОЧЕМУ — добавьте комментарий. Хороший пример: "// Using bubble sort because input is always < 10 items" (объясняет почему).' },
       ]
     },
     {
@@ -30,7 +32,8 @@ export default {
       content: [
         { type: 'text', value: 'Naming conventions — правила именования переменных, функций, файлов. Разные языки и проекты используют разные конвенции.' },
         { type: 'code', language: 'text', value: 'Основные стили именования:\ncamelCase     - myVariable, getUserName\n  (используется в JS, Java, Swift для переменных/функций)\n\nPascalCase    - MyClass, UserService\n  (классы в большинстве языков)\n\nsnake_case    - my_variable, get_user_name\n  (Python, Ruby, SQL)\n\nkebab-case    - my-component, user-profile\n  (CSS классы, URL, HTML атрибуты)\n\nSCREAMING_SNAKE_CASE - MY_CONSTANT, MAX_SIZE\n  (константы в большинстве языков)' },
-        { type: 'code', language: 'text', value: 'Правила хорошего именования:\n1. Используйте описательные имена:\n   bad:  const d = 7;\n   good: const daysInWeek = 7;\n\n2. Глаголы для функций:\n   getUserById(), calculateTotal(), sendEmail()\n\n3. Существительные для переменных:\n   userList, productCount, errorMessage\n\n4. is/has для булевых:\n   isActive, hasPermission, isLoading\n\n5. Избегайте аббревиатур:\n   bad:  const usrNm = "John";\n   good: const userName = "John";' }
+        { type: 'code', language: 'text', value: 'Правила хорошего именования:\n1. Используйте описательные имена:\n   bad:  const d = 7;\n   good: const daysInWeek = 7;\n\n2. Глаголы для функций:\n   getUserById(), calculateTotal(), sendEmail()\n\n3. Существительные для переменных:\n   userList, productCount, errorMessage\n\n4. is/has для булевых:\n   isActive, hasPermission, isLoading\n\n5. Избегайте аббревиатур:\n   bad:  const usrNm = "John";\n   good: const userName = "John";' },
+        { type: 'tip', value: 'По именованию можно понять стиль языка: camelCase в JS — стандарт. snake_case — Python. SCREAMING_SNAKE для констант — хорошая практика. PascalCase для файлов компонентов — React. Это помогает ориентироваться в незнакомом codebase.' },
       ]
     },
     {
@@ -40,7 +43,8 @@ export default {
       content: [
         { type: 'text', value: 'Умение читать код на английском — это умение понимать имена функций, переменных и логику по названиям.' },
         { type: 'code', language: 'text', value: 'Глаголы в названиях функций:\nget     - получить:  getUser(), getData()\nset     - установить: setName(), setConfig()\ncreate  - создать:   createUser(), createOrder()\nupdate  - обновить:  updateProfile(), updateStatus()\ndelete/remove - удалить: deleteUser(), removeItem()\nfetch   - получить с сервера: fetchData(), fetchUsers()\nsend    - отправить: sendEmail(), sendNotification()\ncheck   - проверить: checkPermission(), checkStatus()\nvalidate- проверить: validateInput(), validateEmail()\nparse   - разобрать: parseJSON(), parseDate()\nformat  - форматировать: formatDate(), formatPrice()\ncalculate- вычислить: calculateTotal(), calculateAge()' },
-        { type: 'code', language: 'text', value: 'Читаем код как предложение:\ngetUserByEmail("test@test.com")\n→ "Get user by email"\n→ Получи пользователя по email\n\nisValidPassword(password)\n→ "Is valid password?"\n→ Является ли пароль валидным?\n\nsendNotificationToAllUsers(message)\n→ "Send notification to all users"\n→ Отправь уведомление всем пользователям\n\ncalculateDiscountForPremiumUsers(price)\n→ "Calculate discount for premium users"\n→ Вычисли скидку для премиум-пользователей' }
+        { type: 'code', language: 'text', value: 'Читаем код как предложение:\ngetUserByEmail("test@test.com")\n→ "Get user by email"\n→ Получи пользователя по email\n\nisValidPassword(password)\n→ "Is valid password?"\n→ Является ли пароль валидным?\n\nsendNotificationToAllUsers(message)\n→ "Send notification to all users"\n→ Отправь уведомление всем пользователям\n\ncalculateDiscountForPremiumUsers(price)\n→ "Calculate discount for premium users"\n→ Вычисли скидку для премиум-пользователей' },
+        { type: 'note', value: 'При чтении функций обращайте внимание на: название (глагол + что: getUserById), параметры (что принимает), return type (что возвращает), throws (какие исключения). Читая это, понимаете API без погружения в реализацию.' },
       ]
     },
     {
@@ -50,7 +54,8 @@ export default {
       content: [
         { type: 'text', value: 'JSDoc и подобные системы документации используют стандартные теги. Нужно уметь читать и писать такую документацию.' },
         { type: 'code', language: 'text', value: '/**\n * Sends an email to the specified user.\n * Отправляет email указанному пользователю.\n *\n * @param {string} to - Recipient email address\n * @param {string} subject - Email subject line\n * @param {string} body - Email body content\n * @returns {Promise<boolean>} True if sent successfully\n * @throws {Error} If email service is unavailable\n * @example\n * await sendEmail("user@example.com", "Hello", "Hi there!");\n */' },
-        { type: 'code', language: 'text', value: 'JSDoc теги и их значение:\n@param      - параметр функции\n@returns    - что возвращает\n@throws     - какое исключение может выбросить\n@example    - пример использования\n@deprecated - устарело\n@see        - смотри также\n@since      - с какой версии\n@type       - тип переменной\n@typedef    - определение типа\n@property   - свойство объекта' }
+        { type: 'code', language: 'text', value: 'JSDoc теги и их значение:\n@param      - параметр функции\n@returns    - что возвращает\n@throws     - какое исключение может выбросить\n@example    - пример использования\n@deprecated - устарело\n@see        - смотри также\n@since      - с какой версии\n@type       - тип переменной\n@typedef    - определение типа\n@property   - свойство объекта' },
+        { type: 'tip', value: 'JSDoc формат понимают IDE (VS Code, WebStorm) и инструменты генерации документации (TypeDoc, JSDoc). Пишите JSDoc для публичных API: @param для параметров, @returns для возвращаемого значения, @throws для исключений.' },
       ]
     },
     {
@@ -60,7 +65,8 @@ export default {
       content: [
         { type: 'text', value: 'Сообщения коммитов — важный вид письма в IT. Они пишутся на английском и должны чётко описывать изменение.' },
         { type: 'code', language: 'text', value: 'Conventional Commits стандарт:\nfeat: add user authentication\nfix: resolve login timeout issue\ndocs: update API documentation\nstyle: format code with prettier\nrefactor: simplify user service logic\ntest: add unit tests for auth module\nchore: update dependencies\nperf: optimize database queries\nbuild: configure webpack\nci: add GitHub Actions workflow\n\nПолный формат:\nfeat(auth): add JWT token refresh\n\nImplement automatic token refresh to prevent\nsession expiry. Tokens now refresh 5 minutes\nbefore expiration.\n\nCloses #123' },
-        { type: 'code', language: 'text', value: 'Правила хорошего commit message:\n1. Используй повелительное наклонение:\n   "add feature" (не "added" или "adding")\n\n2. Первая строка — не более 72 символов\n\n3. Объясни ПОЧЕМУ, не только ЧТО:\n   bad: "fix bug"\n   good: "fix null pointer exception in login flow"\n\n4. Ссылайся на задачи:\n   "Closes #42" или "Fixes #123"' }
+        { type: 'code', language: 'text', value: 'Правила хорошего commit message:\n1. Используй повелительное наклонение:\n   "add feature" (не "added" или "adding")\n\n2. Первая строка — не более 72 символов\n\n3. Объясни ПОЧЕМУ, не только ЧТО:\n   bad: "fix bug"\n   good: "fix null pointer exception in login flow"\n\n4. Ссылайся на задачи:\n   "Closes #42" или "Fixes #123"' },
+        { type: 'note', value: 'Conventional Commits — международный стандарт: "feat:" (новая функция), "fix:" (исправление бага), "docs:" (документация), "refactor:" (рефакторинг), "test:" (тесты), "chore:" (обслуживание). Пример: "feat(auth): add OAuth2 login support".' },
       ]
     },
     {

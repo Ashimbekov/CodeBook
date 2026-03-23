@@ -10,7 +10,8 @@ export default {
       content: [
         { type: 'text', value: 'Present Simple (Настоящее простое) — самое основное время в английском. Оно используется для описания регулярных действий, фактов и привычек. Это НЕ действие прямо сейчас (для этого есть Present Continuous).' },
         { type: 'code', language: 'text', value: 'Используется для:\n1. Регулярных действий (каждый день/всегда):\n   I write code every day.        - Я пишу код каждый день.\n   She deploys on Fridays.        - Она деплоит по пятницам.\n\n2. Фактов и истин:\n   Python uses indentation.       - Python использует отступы.\n   Git tracks changes.            - Git отслеживает изменения.\n\n3. Расписания и порядка:\n   The server starts at 9 AM.     - Сервер запускается в 9 утра.\n   The build runs every hour.     - Сборка запускается каждый час.' },
-        { type: 'tip', value: 'Слова-маркеры Present Simple: always (всегда), usually (обычно), often (часто), sometimes (иногда), never (никогда), every day/week/month (каждый день/неделю/месяц).' }
+        { type: 'tip', value: 'Слова-маркеры Present Simple: always (всегда), usually (обычно), often (часто), sometimes (иногда), never (никогда), every day/week/month (каждый день/неделю/месяц).' },
+        { type: 'note', value: 'В документации Present Simple используется постоянно для описания функций: "The function returns a string." (Функция возвращает строку.) "The API accepts GET requests." (API принимает GET запросы.) "This method throws an exception." (Этот метод выбрасывает исключение.)' },
       ]
     },
     {
