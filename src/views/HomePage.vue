@@ -2,8 +2,11 @@
   <div class="home-page">
     <div class="hero">
       <h1>Выбери курс</h1>
-      <p class="hero-subtitle">Языки программирования, алгоритмы и структуры данных. Теория + практика.</p>
+      <p class="hero-subtitle">Языки программирования, алгоритмы, фреймворки и подготовка к собеседованиям. Теория + практика.</p>
     </div>
+
+    <StatsPanel :courses="courseStore.courses" />
+
     <div class="courses-grid">
       <CourseCard
         v-for="course in courseStore.courses"
@@ -12,29 +15,19 @@
         :available="true"
         :progressPercent="getProgress(course)"
       />
-      <CourseCard
-        v-for="placeholder in placeholders"
-        :key="placeholder.id"
-        :course="placeholder"
-        :available="false"
-      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useCourseStore } from '../stores/course.js'
 import { useProgressStore } from '../stores/progress.js'
 import CourseCard from '../components/course/CourseCard.vue'
+import StatsPanel from '../components/ui/StatsPanel.vue'
 
 const courseStore = useCourseStore()
 const progressStore = useProgressStore()
-
-const placeholders = ref([
-  { id: 'python', title: 'Python', icon: '🐍', description: 'Курс в разработке...', color: '#3776ab', modules: [] },
-  { id: 'javascript', title: 'JavaScript', icon: '🟨', description: 'Курс в разработке...', color: '#f7df1e', modules: [] }
-])
 
 function getProgress(course) {
   return progressStore.courseProgress(course.id, course.modules)
