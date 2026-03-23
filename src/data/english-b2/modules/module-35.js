@@ -1,149 +1,149 @@
 export default {
   id: 35,
   title: 'Практикум: Перевод и локализация',
-  description: 'Практика перевода технических текстов и локализации IT-продуктов',
+  description: 'Практика перевода технических текстов: документация, интерфейсы, сообщения об ошибках',
   lessons: [
     {
       id: 1,
-      title: 'Практика: перевод технического сленга',
+      title: 'Практика: Перевод технической документации',
       type: 'practice',
       difficulty: 'medium',
-      description: 'Переведите IT-сленг на профессиональный английский.',
-      requirements: ['Переведите с сленга на формальный английский', 'Объясните контекст использования'],
+      description: 'Переведите технический текст с сохранением смысла и стиля.',
+      requirements: ['Сохраните технические термины', 'Адаптируйте стиль к целевой аудитории', 'Не переводите дословно'],
       questions: [
-        { text: 'Translate these informal/slang phrases into professional English suitable for a client email:\n1. "The app was totally FUBAR after the deploy."\n2. "We need to nuke the DB and start fresh."\n3. "The code is spaghetti — no one can grok it."\n4. "We yolo\'d the release without tests."\n5. "The feature is half-baked — it\\'s gonna blow up in prod."', answer: '1. "The application entered an unrecoverable state following the deployment."\n2. "We recommend reinitialising the database from scratch."\n3. "The codebase has become difficult to maintain due to its highly coupled architecture."\n4. "The release was deployed without adequate test coverage."\n5. "The feature is not yet production-ready — there is a significant risk of failure under real-world conditions."', explanation: 'Translation from IT slang to professional English requires understanding the precise technical meaning, not just swapping individual words. The register must match the audience.' }
+        { text: 'Translate this technical requirement into clear Russian for a business stakeholder:\n"The system MUST implement rate limiting on all public API endpoints. Requests exceeding the limit will receive a 429 Too Many Requests response with a Retry-After header indicating when the client may retry."', answer: 'Система должна ограничивать количество запросов ко всем публичным API-эндпоинтам. Если клиент превысит разрешённое количество запросов, сервер вернёт ответ об ошибке (код 429 — "Слишком много запросов"), в котором будет указано, через какое время можно повторить попытку.\n\nЭто защищает систему от перегрузки и обеспечивает равномерное распределение нагрузки между всеми пользователями.', explanation: 'Technical translation for business: preserve meaning, explain "why" that was implicit in the original, avoid raw HTTP codes without explanation.' }
       ],
-      hint: 'FUBAR = completely broken; nuke DB = wipe and recreate; spaghetti/grok = unmaintainable/understand; yolo = without safeguards; half-baked = incomplete.',
-      solution: 'Правильные ответы:\n1. "The application entered an unrecoverable state following the deployment."\n2. "We recommend reinitialising the database from scratch."\n3. "The codebase has become difficult to maintain due to its highly coupled architecture."\n4. "The release was deployed without adequate test coverage."\n5. "The feature is not yet production-ready — there is a significant risk of failure under real-world conditions."',
-      explanation: 'IT slang translation is a key professional skill. Internal teams use slang for speed; external communication requires precise, professional language that conveys the same meaning without jargon.'
+      hint: 'For business stakeholders: explain what happens in user-facing terms, add the "why" if not stated, avoid unexplained technical acronyms.',
+      solution: 'Правильные ответы:\n1. Ключевые элементы: объяснение rate limiting простыми словами, код 429 с расшифровкой, RetryAfter переведён как "через какое время повторить", добавлено зачем (защита от перегрузки).',
+      explanation: 'Technical translation for non-technical stakeholders requires explaining the "why" and avoiding unexplained jargon while preserving the essential meaning.'
     },
     {
       id: 2,
-      title: 'Практика: перевод UI-текстов',
+      title: 'Практика: Локализация UI-текстов',
       type: 'practice',
       difficulty: 'medium',
-      description: 'Переведите элементы пользовательского интерфейса с учётом локализации.',
-      requirements: ['Переведите UI-строки с английского', 'Учитывайте длину строки и контекст', 'Избегайте дословного перевода'],
+      description: 'Локализуйте UI-сообщения для русскоязычной аудитории.',
+      requirements: ['Естественный русский язык', 'Соответствующий тон (формальный/неформальный)', 'Учёт ограничений длины'],
       questions: [
-        { text: 'You are localising a project management SaaS for Russian-speaking users. Translate these UI strings, keeping them concise (similar character count where possible):\n1. "Mark as done" (button)\n2. "You have unsaved changes. Are you sure you want to leave?" (dialog)\n3. "Drag to reorder" (tooltip)\n4. "Something went wrong. Please try again." (error)\n5. "No results found for \'{{query}}\'" (empty state)\n6. "Invite team members" (CTA button)', answer: '1. "Отметить как выполненное" (or shortened: "Выполнено")\n2. "Есть несохранённые изменения. Покинуть страницу?"\n3. "Перетащите для сортировки" (or: "Для изменения порядка перетащите элемент")\n4. "Произошла ошибка. Попробуйте ещё раз."\n5. "По запросу \'{{query}}\' ничего не найдено"\n6. "Пригласить участников"', explanation: 'UI localisation requires balancing accuracy, brevity, and naturalness. Russian strings are often 1.3-1.5x longer than English. Buttons should use infinitive or shortened imperative forms.' }
+        { text: 'Localise these UI strings from English to Russian. Consider tone (the app is a B2B SaaS platform):\n1. "Your account has been suspended. Contact support."\n2. "Great job! You\'ve completed all tasks for today."\n3. "Are you sure you want to delete this project? This action cannot be undone."', answer: '1. "Ваш аккаунт заблокирован. Обратитесь в службу поддержки." (нейтральный тон, без обвинений)\n\n2. "Отлично! Вы выполнили все задачи на сегодня." (сохраняем позитивный тон, естественный русский)\n\n3. "Вы уверены, что хотите удалить этот проект? Это действие нельзя отменить." (прямой перевод, сохраняем предупреждающий характер)', explanation: 'UI localisation: match the tone of the original (formal B2B), keep strings concise, ensure the meaning is unambiguous.' }
       ],
-      hint: 'UI translation tips: buttons use imperative/infinitive; error messages are polite and action-focused; Russian text expands ~30-40% vs English — plan for truncation.',
-      solution: 'Правильные ответы:\n1. "Отметить как выполненное"\n2. "Есть несохранённые изменения. Покинуть страницу?"\n3. "Перетащите для сортировки"\n4. "Произошла ошибка. Попробуйте ещё раз."\n5. "По запросу \'{{query}}\' ничего не найдено"\n6. "Пригласить участников"',
-      explanation: 'UI string translation requires knowledge of platform conventions (mobile vs web), typical string lengths, and the tone of the product. Over-literal translation often sounds unnatural in Russian UI contexts.'
+      hint: 'B2B SaaS: formal "Вы/Ваш" (not "ты"). Preserve warning tone for destructive actions. Error messages: neutral, not blaming.',
+      solution: 'Правильные ответы:\n1. "Ваш аккаунт заблокирован. Обратитесь в службу поддержки."\n2. "Отлично! Вы выполнили все задачи на сегодня."\n3. "Вы уверены, что хотите удалить этот проект? Это действие нельзя отменить."',
+      explanation: 'UI localisation preserves tone and meaning. B2B platforms use formal "Вы". Warning messages must retain their cautionary emphasis in translation.'
     },
     {
       id: 3,
-      title: 'Практика: перевод документации API',
+      title: 'Практика: Перевод сообщений об ошибках',
       type: 'practice',
-      difficulty: 'hard',
-      description: 'Переведите описание API-эндпоинта на профессиональный русский.',
-      requirements: ['Сохраните технические термины на английском', 'Переведите описательный текст на русский', 'Сохраните структуру документа'],
+      difficulty: 'medium',
+      description: 'Переведите и улучшите сообщения об ошибках.',
+      requirements: ['Ясный, неагрессивный тон', 'Объясните что случилось', 'Предложите следующий шаг'],
       questions: [
-        { text: 'Translate this API endpoint documentation into Russian, keeping technical terms (HTTP methods, field names, status codes) in English:\n\n"POST /api/v1/users\n\nCreates a new user account. Requires authentication with an API key that has the write:users scope.\n\nRequest Body:\n- email (string, required): The user\'s email address. Must be unique.\n- role (string, optional): User role. Accepted values: admin, editor, viewer. Defaults to viewer.\n- notify (boolean, optional): If true, sends a welcome email. Defaults to false.\n\nReturns 201 Created on success with the new user object. Returns 409 Conflict if the email already exists."', answer: 'POST /api/v1/users\n\nСоздаёт новую учётную запись пользователя. Требует аутентификации с API-ключом, у которого есть scope write:users.\n\nТело запроса:\n- email (string, обязательный): Адрес электронной почты пользователя. Должен быть уникальным.\n- role (string, необязательный): Роль пользователя. Допустимые значения: admin, editor, viewer. По умолчанию: viewer.\n- notify (boolean, необязательный): Если true, отправляет приветственное письмо. По умолчанию: false.\n\nПри успешном выполнении возвращает 201 Created с объектом нового пользователя. Возвращает 409 Conflict, если пользователь с таким email уже существует.', explanation: 'API documentation translation keeps all technical terms (field names, HTTP methods, status codes, data types) in English, while translating all natural language descriptions into clear Russian.' }
+        { text: 'Improve and translate these error messages:\n1. "Error 500: Internal server error"\n2. "Invalid credentials"\n3. "Request timeout"', answer: '1. Original (bad): "Error 500: Internal server error"\nImproved English: "Something went wrong on our end. We\'ve been notified and are working on it. Please try again in a few minutes."\nRussian: "На нашей стороне произошла ошибка. Мы уже работаем над её устранением. Пожалуйста, попробуйте ещё раз через несколько минут."\n\n2. Original (bad): "Invalid credentials"\nImproved English: "The email address or password you entered is incorrect. Please check and try again."\nRussian: "Введённый адрес электронной почты или пароль неверны. Проверьте данные и попробуйте снова."\n\n3. Original (bad): "Request timeout"\nImproved English: "The operation took too long to complete. Please check your connection and try again."\nRussian: "Операция заняла слишком много времени. Проверьте подключение к интернету и попробуйте снова."', explanation: 'Good error messages: explain what happened in plain language, avoid technical codes, suggest the next action, use non-blaming tone.' }
       ],
-      hint: 'В технической документации оставляйте на английском: HTTP-методы, имена полей, типы данных, HTTP-статусы, scope-строки. Переводите только описательный текст.',
-      solution: 'Правильные ответы:\n1. POST /api/v1/users — создаёт новую учётную запись пользователя. Требует аутентификации с API-ключом, у которого есть scope write:users.',
-      explanation: 'Bilingual technical documentation requires clear decisions about what stays in English (technical identifiers) and what gets translated (human-readable descriptions). Inconsistency creates confusion for readers.'
+      hint: 'Error message formula: 1) What happened (plain language). 2) Why (if helpful). 3) What to do next. Avoid blaming the user.',
+      solution: 'Правильные ответы:\n1. 500 → "На нашей стороне произошла ошибка. Попробуйте через несколько минут."\n2. Invalid credentials → "Неверный email или пароль. Проверьте и попробуйте снова."\n3. Timeout → "Операция заняла слишком много времени. Проверьте подключение."',
+      explanation: 'Error messages are a critical UX touch point. Good ones reduce support tickets; bad ones frustrate users and erode trust.'
     },
     {
       id: 4,
-      title: 'Практика: локализация сообщений об ошибках',
+      title: 'Практика: Адаптация технического контента для разных аудиторий',
       type: 'practice',
-      difficulty: 'medium',
-      description: 'Напишите локализованные сообщения об ошибках для разных аудиторий.',
-      requirements: ['Напишите сообщение об ошибке для конечного пользователя', 'Напишите то же сообщение для разработчика (лог)', 'Сохраните полезность и уважение к пользователю'],
+      difficulty: 'hard',
+      description: 'Адаптируйте один технический текст для трёх разных аудиторий.',
+      requirements: ['Одна тема, три версии', 'Разный уровень технических деталей', 'Соответствующий тон и словарь'],
       questions: [
-        { text: 'Write two versions of error messages for each scenario — one for the end user (Russian, friendly and actionable), one for the developer log (English, technical and precise):\n\n1. Scenario: Payment gateway timeout after 30 seconds\n2. Scenario: File upload rejected because it exceeds the 10MB limit\n3. Scenario: JWT token has expired', answer: 'Scenario 1:\nUser (RU): "Платёж не прошёл из-за технического сбоя. Попробуйте ещё раз или используйте другой способ оплаты."\nDev log (EN): "PaymentGatewayTimeoutError: Request to Stripe /v1/charges timed out after 30000ms. Request ID: req_abc123. Retry count: 0."\n\nScenario 2:\nUser (RU): "Файл слишком большой. Максимальный размер — 10 МБ. Попробуйте загрузить файл меньшего размера."\nDev log (EN): "FileSizeLimitExceededError: Upload rejected. File size: 14.3MB. Limit: 10MB. User ID: usr_789. Endpoint: POST /api/uploads"\n\nScenario 3:\nUser (RU): "Ваш сеанс истёк. Пожалуйста, войдите снова."\nDev log (EN): "JWTExpiredError: Token expired at 2024-01-15T14:23:11Z. Current time: 2024-01-15T15:01:47Z. Token age: 38m36s. User ID: usr_456."', explanation: 'User-facing errors should be written in the user\'s language, be non-technical, explain what happened, and tell the user what to do next. Dev logs should be in English, precise, and include all context needed for debugging.' }
+        { text: 'Write three versions of an explanation of "database indexing" for:\n1. A junior developer\n2. A non-technical product manager\n3. An experienced DBA reviewing your design', answer: '1. JUNIOR DEVELOPER: "A database index is like the index at the back of a book. Without it, the database scans every row to find your data (full table scan). With an index, it goes directly to the right rows. Always add indexes on columns you filter on frequently (WHERE clause) or join on. Trade-off: indexes speed up reads but slow down writes slightly because the index must be updated."\\n\\n2. NON-TECHNICAL PM: "An index makes database searches much faster — like having a well-organised filing system versus searching through every document. When users search or filter data in the app, indexes let us find results in milliseconds instead of seconds. The cost is a small amount of extra storage and slightly slower data updates — usually a worthwhile trade-off."\\n\\n3. EXPERIENCED DBA: "I\'ve added a composite index on (user_id, created_at DESC) on the events table to support the primary query pattern. Considered a partial index filtering on status=\'active\', but given the high cardinality (~85% active records), the full composite index has better all-round selectivity. Watch for index bloat on the high-write events table — may need periodic REINDEX."', explanation: 'Audience adaptation: junior needs concept + rule; PM needs business impact + trade-off; DBA needs technical specifics + reasoning.' }
       ],
-      hint: 'Правила хороших error messages: для пользователя — не вините, объясните что произошло, скажите что делать. Для разработчика — ID, timestamps, размеры, состояние.',
-      solution: 'Правильные ответы:\nScenario 1 User: "Платёж не прошёл из-за технического сбоя. Попробуйте ещё раз или используйте другой способ оплаты."\nDev log: "PaymentGatewayTimeoutError: Request to Stripe /v1/charges timed out after 30000ms."',
-      explanation: 'The gap between user-facing and developer error messages reflects a fundamental UX principle: users need to understand what happened and what to do; developers need enough context to diagnose and fix the problem.'
+      hint: 'For each audience ask: What do they already know? What decision do they need to make? What level of detail serves them?',
+      solution: 'Правильные ответы:\n1. Junior dev: book index analogy + WHERE/JOIN rule + write trade-off.\n2. PM: filing system analogy + business impact (ms vs seconds) + storage/write trade-off.\n3. DBA: specific index type, columns, alternatives considered, maintenance concern.',
+      explanation: 'Adapting technical communication to the audience is a core professional skill. The same information means different things to different people.'
     },
     {
       id: 5,
-      title: 'Практика: перевод технических требований',
+      title: 'Практика: Перевод commit messages и PR-описаний',
       type: 'practice',
-      difficulty: 'hard',
-      description: 'Переведите технические требования из русского в профессиональный английский.',
-      requirements: ['Переведите требования на английский', 'Используйте RFC 2119 модальные глаголы (MUST, SHOULD, MAY)', 'Сохраните точность и однозначность'],
+      difficulty: 'easy',
+      description: 'Переведите технические git-сообщения и создайте их на английском.',
+      requirements: ['Следуйте Conventional Commits формату', 'Описательные, конкретные сообщения', 'Правильный английский'],
       questions: [
-        { text: 'Translate these technical requirements from Russian into formal English specification language using RFC 2119 keywords (MUST, MUST NOT, SHOULD, MAY):\n\n1. "Пароль должен содержать минимум 12 символов."\n2. "Система не должна хранить пароли в открытом виде."\n3. "Рекомендуется использовать HTTPS для всех эндпоинтов."\n4. "Токен может иметь срок действия до 30 дней."\n5. "После 5 неудачных попыток входа аккаунт должен быть заблокирован."', answer: '1. "The password MUST contain a minimum of 12 characters."\n2. "The system MUST NOT store passwords in plaintext."\n3. "All endpoints SHOULD use HTTPS."\n4. "A token MAY have a maximum validity period of 30 days."\n5. "After 5 consecutive failed login attempts, the account MUST be locked."', explanation: 'RFC 2119 keywords: MUST/MUST NOT = mandatory requirement; SHOULD/SHOULD NOT = recommended but exceptions possible; MAY = optional. Using them correctly eliminates ambiguity in specifications.' }
+        { text: 'Translate these Russian commit messages to professional English using Conventional Commits format:\n1. "починил баг с авторизацией"\n2. "добавил кэширование для запросов к бд"\n3. "рефакторинг модуля платежей"', answer: '1. fix(auth): resolve token validation failure on concurrent requests\n\n2. perf(database): add Redis caching layer to reduce query latency\n  - Caches user profile queries with 5-minute TTL\n  - Reduces average DB query time from 120ms to 8ms\n\n3. refactor(payments): extract payment processor into dedicated service\n  - Separate PaymentService class with single responsibility\n  - No functional changes, improves testability', explanation: 'Conventional Commits: type(scope): description. Body explains what and why, not how. Use imperative mood ("add" not "added").' }
       ],
-      hint: 'Должен → MUST; не должен → MUST NOT; рекомендуется → SHOULD; не рекомендуется → SHOULD NOT; может/допускается → MAY.',
-      solution: 'Правильные ответы:\n1. "The password MUST contain a minimum of 12 characters."\n2. "The system MUST NOT store passwords in plaintext."\n3. "All endpoints SHOULD use HTTPS."\n4. "A token MAY have a maximum validity period of 30 days."\n5. "After 5 consecutive failed login attempts, the account MUST be locked."',
-      explanation: 'Translating requirements into RFC 2119 language is a core skill for engineers working on international or distributed teams. Precise specification language prevents misunderstandings during implementation.'
+      hint: 'Conventional Commits format: type(scope): short description. Types: feat, fix, docs, style, refactor, perf, test, chore. Imperative mood.',
+      solution: 'Правильные ответы:\n1. fix(auth): resolve token validation failure on concurrent requests\n2. perf(database): add Redis caching layer to reduce query latency\n3. refactor(payments): extract payment processor into dedicated service',
+      explanation: 'Professional commit messages tell the story of your codebase. They are valuable documentation and improve collaboration in international teams.'
     },
     {
       id: 6,
-      title: 'Практика: локализация даты, числа, валюты',
+      title: 'Практика: Технический глоссарий',
       type: 'practice',
-      difficulty: 'easy',
-      description: 'Форматирование дат, чисел и валют для разных локалей.',
-      requirements: ['Определите правильный формат для каждой локали', 'Учитывайте контекст отображения', 'Используйте правильные разделители'],
+      difficulty: 'medium',
+      description: 'Создайте двуязычный глоссарий терминов для проекта.',
+      requirements: ['Краткое определение на English', 'Русский термин/эквивалент', 'Пример использования'],
       questions: [
-        { text: 'Format the following values correctly for each locale. The source value is ISO/neutral format:\n\nSource: Date 2024-03-15, Time 14:30:00\nSource: Number 1234567.89\nSource: Currency USD 9999.99\n\nProvide the correctly formatted value for:\n1. en-US (American English)\n2. en-GB (British English)\n3. ru-RU (Russian)\n4. de-DE (German)\n5. What JavaScript Intl API call would you use to format the date for ru-RU?', answer: '1. en-US: March 15, 2024, 2:30 PM / 1,234,567.89 / $9,999.99\n2. en-GB: 15 March 2024, 14:30 / 1,234,567.89 / $9,999.99 (USD)\n3. ru-RU: 15 марта 2024 г., 14:30 / 1 234 567,89 / 9 999,99 $\n4. de-DE: 15. März 2024, 14:30 Uhr / 1.234.567,89 / 9.999,99 $\n5. new Intl.DateTimeFormat(\'ru-RU\', { year: \'numeric\', month: \'long\', day: \'numeric\' }).format(new Date(\'2024-03-15\'))', explanation: 'Locale-aware formatting: en-US uses 12h clock and comma thousands; en-GB uses 24h and comma thousands; ru-RU uses non-breaking space thousands and comma decimal; de-DE uses period thousands and comma decimal.' }
+        { text: 'Create glossary entries for these terms used in your project:\n1. Idempotent\n2. Backpressure\n3. Circuit breaker\n4. Canary deployment', answer: '1. IDEMPOTENT (идемпотентный)\nDefinition: An operation that produces the same result regardless of how many times it is executed.\nExample: "Making the delete endpoint idempotent means calling it multiple times won\'t cause errors — if the resource is already gone, return 200 or 204, not 404."\n\n2. BACKPRESSURE (противодавление)\nDefinition: A mechanism where a downstream consumer signals to an upstream producer to slow down when it cannot keep up.\nExample: "We implemented backpressure in the Kafka consumer — when the processing queue exceeds 1,000 items, it pauses consumption to avoid OOM."\n\n3. CIRCUIT BREAKER (автоматический выключатель)\nDefinition: A pattern that detects failures and prevents an application from repeatedly trying to execute an operation that is likely to fail.\nExample: "The circuit breaker opens after 5 consecutive failures and stops forwarding requests for 30 seconds."\n\n4. CANARY DEPLOYMENT (канареечный деплой)\nDefinition: A technique of rolling out changes to a small subset of users before releasing to everyone.\nExample: "We roll out to 5% of users as a canary — if error rates stay below 0.1%, we proceed to full rollout."', explanation: 'A team glossary ensures consistent terminology and helps onboard new engineers faster.' }
       ],
-      hint: 'Ключевые различия: разделитель тысяч (запятая/точка/пробел), разделитель дробной части (точка/запятая), порядок дата-месяц-год, 12/24-часовой формат.',
-      solution: 'Правильные ответы:\nen-US: March 15, 2024, 2:30 PM / 1,234,567.89 / $9,999.99\nru-RU: 15 марта 2024 г., 14:30 / 1 234 567,89 / 9 999,99 $',
-      explanation: 'Localisation of numbers, dates, and currencies is a common source of bugs in international software. The JavaScript Intl API handles most of this automatically when given the correct locale code.'
+      hint: 'Glossary entry: term + Russian equivalent + one-sentence definition + usage example in context.',
+      solution: 'Правильные ответы:\n1. Idempotent: same result regardless of repetition. Example: DELETE is idempotent.\n2. Backpressure: downstream signals upstream to slow. Example: Kafka consumer pauses at 1,000 items.\n3. Circuit breaker: stops requests to failing service. Opens after 5 failures, reset after 30s.\n4. Canary deployment: roll out to 5% first, check errors, then full rollout.',
+      explanation: 'Shared glossaries prevent miscommunication between engineers who may have different backgrounds and native languages.'
     },
     {
       id: 7,
-      title: 'Практика: перевод commit messages и PR descriptions',
+      title: 'Практика: Перевод README на английский',
       type: 'practice',
       difficulty: 'medium',
-      description: 'Напишите правильные commit messages и PR descriptions на английском.',
-      requirements: ['Переведите описания на английский', 'Следуйте Conventional Commits формату', 'Используйте imperative mood'],
+      description: 'Переведите русскоязычный README на профессиональный английский.',
+      requirements: ['Сохраните всю техническую информацию', 'Используйте стандартный README формат', 'Естественный английский, не дословный перевод'],
       questions: [
-        { text: 'Translate these Russian commit/PR descriptions into proper English following Conventional Commits format (type(scope): description):\n\n1. "Добавил валидацию email на форме регистрации"\n2. "Исправил баг: корзина обнулялась при обновлении страницы"\n3. "Рефакторинг: вынес логику авторизации в отдельный middleware"\n4. "Обновил зависимости до последних версий"\n5. "ЛОМАЮЩЕЕ ИЗМЕНЕНИЕ: изменил формат ответа API /users — убрал поле username, добавил firstName и lastName"', answer: '1. feat(auth): add email validation to registration form\n2. fix(cart): prevent cart from resetting on page refresh\n3. refactor(auth): extract authorization logic into dedicated middleware\n4. chore(deps): update dependencies to latest versions\n5. feat(api)!: change /users response format\n\nBREAKING CHANGE: removed `username` field; added `firstName` and `lastName` fields to user response object', explanation: 'Conventional Commits: feat (new feature), fix (bug fix), refactor (code change without new feature/fix), chore (maintenance), docs, test. Imperative mood: "add", not "added". Breaking changes use ! or BREAKING CHANGE footer.' }
+        { text: 'Translate this README section to professional English:\n\n"## Установка\nТребования: Node.js 18+ и PostgreSQL 14+.\nКлонируйте репозиторий, запустите npm install для установки зависимостей.\nСкопируйте файл .env.example в .env и заполните переменные окружения.\nЗапустите npm run db:migrate для применения миграций базы данных.\nПосле этого запустите npm start для старта сервера."', answer: '## Installation\n\n**Requirements**: Node.js 18 or higher and PostgreSQL 14 or higher.\n\n1. Clone the repository\n2. Install dependencies: `npm install`\n3. Copy the environment configuration: `cp .env.example .env` and fill in the required values\n4. Apply database migrations: `npm run db:migrate`\n5. Start the server: `npm start`', explanation: 'README translation: use numbered steps for sequences, add actual commands in code format, restructure for clarity if needed.' }
       ],
-      hint: 'Imperative mood в коммитах: "add" не "added", "fix" не "fixed", "update" не "updated". Conventional Commits: feat/fix/refactor/chore/docs/test.',
-      solution: 'Правильные ответы:\n1. feat(auth): add email validation to registration form\n2. fix(cart): prevent cart from resetting on page refresh\n3. refactor(auth): extract authorization logic into dedicated middleware\n4. chore(deps): update dependencies to latest versions\n5. feat(api)!: change /users response format',
-      explanation: 'Writing clear, conventional commit messages is a professional skill that enables automated changelogs, better code review, and clearer project history for international teams.'
+      hint: 'README conventions: numbered steps for sequential actions, code blocks for commands, bold for requirements.',
+      solution: 'Правильные ответы:\n1. Professional English README with: numbered steps, inline commands in backticks, bold requirements, cp command made explicit.',
+      explanation: 'A well-written English README makes your project accessible to the global developer community. Code in backticks and numbered steps are standard conventions.'
     },
     {
       id: 8,
-      title: 'Практика: локализация README файла',
+      title: 'Практика: Локализация email-шаблонов',
       type: 'practice',
-      difficulty: 'hard',
-      description: 'Напишите секцию README на профессиональном техническом английском.',
-      requirements: ['Переведите технический README на английский', 'Сохраните структуру и технические детали', 'Используйте профессиональный стиль open-source документации'],
+      difficulty: 'medium',
+      description: 'Переведите и адаптируйте системные email для русскоязычных пользователей.',
+      requirements: ['Подходящий уровень формальности', 'Сохранение переменных шаблона', 'Культурно адаптированный тон'],
       questions: [
-        { text: 'Translate this Russian README section into professional English README format:\n\n"## Установка\n\nДля установки проекта вам нужен Node.js версии 18 или выше и npm версии 9 или выше.\n\nСклонируйте репозиторий и установите зависимости:\n\n1. Скопируйте файл .env.example в .env и заполните нужные переменные\n2. Установите зависимости командой npm install\n3. Запустите миграции базы данных\n4. Запустите сервер для разработки\n\nПосле запуска приложение будет доступно по адресу http://localhost:3000"', answer: '## Installation\n\n**Prerequisites:** Node.js >= 18.0.0 and npm >= 9.0.0\n\nClone the repository and follow these steps:\n\n1. Copy the environment file and configure your variables:\n   cp .env.example .env\n\n2. Install dependencies:\n   npm install\n\n3. Run database migrations:\n   npm run db:migrate\n\n4. Start the development server:\n   npm run dev\n\nThe application will be available at http://localhost:3000', explanation: 'README translation tips: use Prerequisites instead of "you need"; use code blocks for commands; use >= for version requirements; be concise and action-oriented; show the actual commands, not just describe them.' }
+        { text: 'Translate and improve this transactional email:\n"Hi {{user_name}},\n\nYour password was reset. If you didn\'t request this, contact us immediately.\n\nThe {{app_name}} Team"', answer: 'Тема: Ваш пароль был изменён — {{app_name}}\n\nЗдравствуйте, {{user_name}},\n\nВаш пароль в сервисе {{app_name}} был успешно изменён {{reset_date}} в {{reset_time}} UTC.\n\nЕсли вы не запрашивали изменение пароля, немедленно заблокируйте аккаунт и обратитесь в нашу службу поддержки по адресу support@{{app_domain}}.\n\nС уважением,\nКоманда {{app_name}}', explanation: 'Transactional email improvements: add subject line, include timestamp (when?), provide specific contact channel, use appropriate formal greeting and closing.' }
       ],
-      hint: 'Open-source README conventions: Prerequisites section for requirements, code blocks for all commands, brief and scannable, active voice, present tense for descriptions.',
-      solution: 'Правильные ответы:\n## Installation\n\n**Prerequisites:** Node.js >= 18.0.0 and npm >= 9.0.0\n\nClone the repository and follow these steps:\n1. cp .env.example .env\n2. npm install\n3. npm run db:migrate\n4. npm run dev',
-      explanation: 'README files are often the first thing contributors see. Good English README writing is about removing friction: every step should be executable without ambiguity, and readers should be able to scan rather than read carefully.'
+      hint: 'Transactional emails: add subject line (critical for open rates), include relevant timestamp, give specific action steps, use "Здравствуйте" not "Привет" for formal services.',
+      solution: 'Правильные ответы:\n1. Improved elements: subject line added, timestamp included, specific support email provided, formal greeting "Здравствуйте", professional closing "С уважением".',
+      explanation: 'Transactional emails are security-critical. Always include: what changed, when, and what to do if it wasn\'t you. This reduces both fraud risk and support tickets.'
     },
     {
       id: 9,
-      title: 'Практика: интернационализация (i18n) текстов',
+      title: 'Практика: Перевод технического блог-поста',
       type: 'practice',
-      difficulty: 'medium',
-      description: 'Напишите i18n-дружественные строки и избегайте common pitfalls.',
-      requirements: ['Определите проблемы в строках', 'Перепишите для корректной локализации', 'Объясните принцип каждого исправления'],
+      difficulty: 'hard',
+      description: 'Переведите введение технической статьи, сохранив стиль и смысл.',
+      requirements: ['Сохраните авторский голос', 'Адаптируйте идиомы (не дословно)', 'Технические термины оставьте на English'],
       questions: [
-        { text: 'Identify the i18n problems in these strings and rewrite them to be localisation-friendly:\n\n1. "You have " + count + " new messages"\n2. "Click here to continue"\n3. "Enter your credit card number (16 digits, no spaces)"\n4. "Error on line " + lineNum + " of file " + fileName\n5. "Last updated: " + month + "/" + day + "/" + year', answer: '1. Problem: String concatenation breaks in languages with different word order.\n   Fix: Use a template key with count parameter.\n   i18n key: "inbox.newMessages" = { en: "You have {{count}} new message", en_plural: "You have {{count}} new messages", ru: "{{count}} новое сообщение" (1), ru_plural: "{{count}} новых сообщения" (2-4), etc. }\n\n2. Problem: "here" is non-descriptive and inaccessible; translation context is unclear.\n   Fix: "Continue to the next step" — describe the action fully.\n\n3. Problem: Card format varies by country (not all cards are 16 digits).\n   Fix: "Enter your card number" — let the payment library handle format hints.\n\n4. Problem: "of file" may need different word order in some languages.\n   Fix: Use a single key with named parameters: "error.location" = "Error on line {{line}} of {{file}}" — named params allow reordering.\n\n5. Problem: Hard-coded date format is locale-specific (MM/DD/YYYY is US only).\n   Fix: Pass an ISO date and format using Intl.DateTimeFormat with the user\'s locale.', explanation: 'i18n best practices: use named parameters (not positional); support pluralisation via ICU MessageFormat or i18next; never concatenate strings; use locale-aware date/number formatting; provide context for translators.' }
+        { text: 'Translate to Russian, preserving style and readability:\n"Three months ago, our on-call rotation was a nightmare. Every Friday deployment would trigger a wave of alerts. The team was burning out. Something had to change.\n\nThis post is about how we went from 47 incidents per month to 3, using observability tooling that took us less than a sprint to implement."', answer: 'Три месяца назад дежурство в нашей команде было настоящим кошмаром. Каждый деплой по пятницам вызывал шквал алертов. Команда выгорала. Что-то нужно было менять.\n\nЭта статья о том, как мы сократили количество инцидентов с 47 в месяц до 3 — с помощью инструментов observability, на внедрение которых у нас ушло меньше одного спринта.', explanation: 'Good translation preserves the conversational tone, doesn\'t translate "sprint", "observability", "on-call rotation" literally, and maintains the narrative tension.' }
       ],
-      hint: 'Common i18n mistakes: строковая конкатенация, позиционные плейсхолдеры вместо именованных, хардкод форматов дат/чисел, отсутствие plural forms, бессмысленные "click here".',
-      solution: 'Правильные ответы:\n1. Use template key with count parameter for pluralisation support\n2. "Continue to the next step" — full description of action\n3. "Enter your card number" — remove format assumption\n4. "Error on line {{line}} of {{file}}" — named parameters\n5. Use Intl.DateTimeFormat with user locale',
-      explanation: 'Internationalisation is much easier to do right from the start than to retrofit. The key insight is that natural language does not work like code — word order, pluralisation rules, and format conventions vary significantly across languages.'
+      hint: 'Don\'t translate tech terms (sprint, deployment, alert, observability). Adapt idioms naturally ("nightmare" → "кошмар" works here). Preserve the punchy, direct writing style.',
+      solution: 'Правильные ответы:\n1. Key choices: "nightmare" → "кошмар" (natural Russian equivalent), "on-call rotation" → "дежурство", tech terms kept (observability, deployment, sprint, алертов). Tone preserved: direct, personal, narrative.',
+      explanation: 'Technical blog translation preserves author voice and technical vocabulary. Adapt idioms naturally rather than literally — what matters is the effect, not the words.'
     },
     {
       id: 10,
-      title: 'Финальная практика: полный перевод технического поста',
+      title: 'Финальная практика: Комплексная локализация',
       type: 'practice',
       difficulty: 'hard',
-      description: 'Переведите технический блог-пост с русского на профессиональный английский.',
+      description: 'Создайте полный пакет локализации для нового feature release.',
       requirements: [
-        'Переведите текст полностью на английский',
-        'Сохраните технические термины',
-        'Адаптируйте стиль для международной аудитории',
-        'Длина перевода: соответствует оригиналу'
+        'Release notes (100 words)',
+        'In-app notification (50 words)',
+        'Email announcement (150 words)',
+        'Три разных tone and audience'
       ],
-      hint: 'Не переводите дословно — адаптируйте. Заголовок должен быть цепляющим для anglophone аудитории. Технические термины остаются на английском.',
-      solution: 'Why We Migrated from REST to GraphQL (and What We Learned)\n\nFor three years, our mobile app communicated with the backend exclusively via REST. This worked fine at first, but as the number of screens grew, we started running into a classic problem: over-fetching.\n\nThe profile screen was making seven separate API calls just to display basic user information. Each call returned far more data than we needed, and our mobile clients were burning battery and bandwidth for no reason.\n\nWe evaluated GraphQL as a solution. The core appeal was simple: the client requests exactly the fields it needs, and the server returns exactly that — nothing more, nothing less.\n\nThe migration took one quarter. We ran GraphQL alongside REST using a strangler fig pattern, gradually moving endpoints. The result: the profile screen now makes a single query. Data transfer dropped by 60%. The mobile team stopped asking backend engineers to create custom endpoints for specific screens.\n\nThe downsides are real too. Caching becomes more complex. N+1 query problems require DataLoader. Schema design requires upfront thought. But for our use case — a complex mobile app with many different screens and data requirements — the tradeoffs were clearly worth it.\n\nIf you\'re evaluating GraphQL, the honest advice is: start with the problem, not the technology. REST is simpler and easier to cache. GraphQL shines when your clients have diverse, complex data needs that REST endpoints can\'t efficiently serve.',
-      explanation: 'Technical blog post translation requires balancing literal accuracy with natural English flow. The best translated posts read as if they were originally written in English — they adapt idioms, restructure sentences for English rhythm, and use natural technical vocabulary rather than literal equivalents.'
+      hint: 'Release notes: neutral, factual. In-app: brief, benefit-focused. Email: engaging, more detail.',
+      solution: 'RELEASE NOTES:\n## v2.5.0 — Two-Factor Authentication\nTwo-factor authentication (2FA) is now available for all accounts. When enabled, users must verify their identity with a one-time code in addition to their password.\nChanges:\n- New "Security" section in account settings\n- Support for authenticator apps (TOTP) and SMS\n- Recovery codes generated on 2FA setup\n- Admin can enforce 2FA for all team members\n\nIN-APP NOTIFICATION:\nNew: Two-Factor Authentication is now available! Enable it in Settings → Security to add an extra layer of protection to your account. Takes 2 minutes to set up. [Enable 2FA →]\n\nEMAIL ANNOUNCEMENT:\nSubject: Protect your account with Two-Factor Authentication\n\nHi {{name}},\n\nWe\'ve just launched two-factor authentication (2FA) to help keep your {{app_name}} account secure.\n\nWith 2FA enabled, even if your password is compromised, your account remains protected by a second verification step.\n\nSetting it up takes under 2 minutes:\n1. Go to Settings → Security\n2. Click "Enable Two-Factor Authentication"\n3. Scan the QR code with your authenticator app\n\nWe strongly recommend enabling it today.\n\n[Enable 2FA →]\n\nThe {{app_name}} Team',
+      explanation: 'Three formats, three tones: release notes (technical, neutral), notification (brief, action-focused), email (persuasive, benefit-first). The same feature communicated differently for each context.'
     }
   ]
 }
