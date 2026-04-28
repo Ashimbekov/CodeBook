@@ -29,6 +29,37 @@ export default {
     { id: 22, title: 'ДП: задачи на двумерный массив', icon: '🧮', totalLessons: 7 },
     { id: 23, title: 'Жадные алгоритмы', icon: '🤑', totalLessons: 7 },
     { id: 24, title: 'Два указателя и скользящее окно', icon: '👆', totalLessons: 7 },
-    { id: 25, title: 'Алгоритмы на строках', icon: '🔤', totalLessons: 7 }
+    { id: 25, title: 'Алгоритмы на строках', icon: '🔤', totalLessons: 7 },
+
+    // === ДОПОЛНИТЕЛЬНЫЕ СТРУКТУРЫ ДАННЫХ (26-30) ===
+    { id: 26, title: 'Trie (префиксное дерево)', icon: '🌲', totalLessons: 8 },
+    { id: 27, title: 'Union-Find (Disjoint Set)', icon: '🔗', totalLessons: 7 },
+    { id: 28, title: 'Segment Tree', icon: '🌴', totalLessons: 7 },
+    { id: 29, title: 'Monotonic Stack и Queue', icon: '📶', totalLessons: 7 },
+    { id: 30, title: 'Топологическая сортировка', icon: '🔢', totalLessons: 7 },
+
+    // === ПРАКТИКУМ: ПАТТЕРНЫ РЕШЕНИЯ ЗАДАЧ (31-42) ===
+    { id: 31, title: 'Практикум: Array паттерны', icon: '📊', totalLessons: 10 },
+    { id: 32, title: 'Практикум: String паттерны', icon: '🔤', totalLessons: 10 },
+    { id: 33, title: 'Практикум: Two Pointers', icon: '👆', totalLessons: 10 },
+    { id: 34, title: 'Практикум: Sliding Window', icon: '🪟', totalLessons: 10 },
+    { id: 35, title: 'Практикум: Binary Search', icon: '🔍', totalLessons: 10 },
+    { id: 36, title: 'Практикум: Stack и Queue задачи', icon: '📚', totalLessons: 10 },
+    { id: 37, title: 'Практикум: HashMap паттерны', icon: '#️⃣', totalLessons: 10 },
+    { id: 38, title: 'Практикум: Linked List задачи', icon: '🔗', totalLessons: 10 },
+    { id: 39, title: 'Практикум: Tree задачи', icon: '🌳', totalLessons: 10 },
+    { id: 40, title: 'Практикум: Heap задачи', icon: '⛰️', totalLessons: 10 },
+    { id: 41, title: 'Практикум: Graph BFS/DFS', icon: '🕸️', totalLessons: 10 },
+    { id: 42, title: 'Практикум: Backtracking', icon: '🔙', totalLessons: 10 },
+
+    // === ПРАКТИКУМ: DP И ПРОДВИНУТЫЕ (43-50) ===
+    { id: 43, title: 'Практикум: DP — одномерные задачи', icon: '🧩', totalLessons: 10 },
+    { id: 44, title: 'Практикум: DP — двумерные задачи', icon: '🧮', totalLessons: 10 },
+    { id: 45, title: 'Практикум: DP — строки', icon: '🔠', totalLessons: 10 },
+    { id: 46, title: 'Практикум: Greedy задачи', icon: '🤑', totalLessons: 10 },
+    { id: 47, title: 'Практикум: Bit Manipulation', icon: '💻', totalLessons: 10 },
+    { id: 48, title: 'Практикум: Intervals', icon: '📏', totalLessons: 10 },
+    { id: 49, title: 'Практикум: Trie и Union-Find', icon: '🌲', totalLessons: 10 },
+    { id: 50, title: 'Практикум: Mock Interview', icon: '🎤', totalLessons: 10 }
   ]
 }

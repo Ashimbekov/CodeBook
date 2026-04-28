@@ -18,15 +18,15 @@ Python, JavaScript, TypeScript, Java, Kotlin, Go, SQL, React, Django, FastAPI, S
 
 ```bash
 npm install
-npm run dev
+npm run dev -- --port 5569
 ```
 
-Dev-сервер запустится на `http://localhost:5173`.
+Dev-сервер запустится на `http://localhost:5569`.
 
 Для доступа по сети:
 
 ```bash
-npx vite --host 0.0.0.0
+npx vite --host 0.0.0.0 --port 5569
 ```
 
 ## Сборка
